@@ -46,3 +46,36 @@ def test_ssh_custom_ssh_command():
         backend._run(["squeue"])
 
     assert run.call_args.args[0][0] == "/usr/bin/ssh"
+
+
+def test_ssh_options_and_timeout():
+    import subprocess
+
+    from seamm_scheduler.ssh import TASK_SSH_OPTIONS, SshTransport
+
+    fake_proc = MagicMock(returncode=0, stdout="", stderr="")
+    with patch("seamm_scheduler.ssh.subprocess.run", return_value=fake_proc) as run:
+        SshTransport("tc", ssh_options=TASK_SSH_OPTIONS, timeout=5).run(["squeue"])
+    argv = run.call_args.args[0]
+    assert argv[:2] == ["ssh", "-o"] and argv[-2:] == ["tc", "squeue"]
+    assert "ClearAllForwardings=yes" in argv
+    assert run.call_args.kwargs["timeout"] == 5
+
+    with patch(
+        "seamm_scheduler.ssh.subprocess.run",
+        side_effect=subprocess.TimeoutExpired("ssh", 5),
+    ):
+        rc, out, err = SshTransport("tc", timeout=5).run(["squeue"])
+    assert rc == 255 and err.startswith("ssh: tc: timed out")
+
+
+def test_task_backend_uses_task_ssh_options_jobserver_does_not():
+    from seamm_scheduler import TargetSection
+
+    s = TargetSection(name="x", transport="ssh", host="tc", type="local", tasks="queue")
+    assert "BatchMode=yes" in s.build_task_backend().transport.ssh_options
+    assert s.build_task_stager().ssh_options
+    assert s.build_task_backend().transport.timeout == 300
+    j = TargetSection(name="x", transport="ssh", host="tc")
+    assert j.build_backend().transport.ssh_options == []
+    assert j.build_stager().ssh_options == []

@@ -162,3 +162,22 @@ def test_rsync_push_failure_raises():
     with patch("seamm_scheduler.stage.subprocess.run", side_effect=[ok, bad]):
         with pytest.raises(StageError, match="vanished"):
             RsyncStager("tc").push("/l", "/r", ["x"])
+
+
+def test_rsync_with_ssh_options_and_timeout():
+    import subprocess
+
+    fake_proc = MagicMock(returncode=0, stdout="", stderr="")
+    with patch("seamm_scheduler.stage.subprocess.run", return_value=fake_proc) as run:
+        RsyncStager("tc", ssh_options=["-o", "BatchMode=yes"], timeout=9).pull(
+            "/r", "/l", ["a"]
+        )
+    argv = run.call_args.args[0]
+    assert argv[:3] == ["rsync", "-e", "ssh -o BatchMode=yes"]
+    assert run.call_args.kwargs["timeout"] == 9
+    with patch(
+        "seamm_scheduler.stage.subprocess.run",
+        side_effect=subprocess.TimeoutExpired("rsync", 9),
+    ):
+        with pytest.raises(StageError, match="^ssh: rsync .* timed out"):
+            RsyncStager("tc", timeout=9).pull("/r", "/l", ["a"])

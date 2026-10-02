@@ -220,3 +220,21 @@ def test_queue_backend_count_unknown_without_count_cmd():
 def test_queue_backend_without_transport_says_so():
     with pytest.raises(NotImplementedError, match="no transport"):
         QueueBackend(Slurm()).poll_many(["1"])
+
+
+def test_slurm_poll_failed_when_sacct_cannot_answer():
+    s = Slurm()
+
+    def ssh_down(argv, input_text=None):
+        return 255, "", "ssh: connect to host tc port 22: Operation timed out"
+
+    assert s.poll(ssh_down, ["1"]) == {}
+    assert s.poll_failed
+
+    def gone(argv, input_text=None):
+        if argv[0] == "sacct":
+            return 0, json.dumps({"jobs": []}), ""
+        return 1, "", "slurm_load_jobs error: Invalid job id specified"
+
+    assert s.poll(gone, ["1"]) == {}
+    assert not s.poll_failed

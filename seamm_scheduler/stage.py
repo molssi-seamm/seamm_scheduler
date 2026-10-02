@@ -103,10 +103,20 @@ class RsyncStager(JobStager):
     resolve on the remote host.
     """
 
-    def __init__(self, host, *, ssh_command="ssh", rsync_command="rsync"):
+    def __init__(
+        self,
+        host,
+        *,
+        ssh_command="ssh",
+        rsync_command="rsync",
+        ssh_options=(),
+        timeout=None,
+    ):
         self.host = host
         self.ssh_command = ssh_command
         self.rsync_command = rsync_command
+        self.ssh_options = list(ssh_options)
+        self.timeout = timeout
 
     def stage_in(self, local_wdir, remote_wdir):
         self._run_ssh(["mkdir", "-p", str(remote_wdir)])
@@ -147,11 +157,18 @@ class RsyncStager(JobStager):
 
     def _run_ssh(self, argv):
         remote_cmd = " ".join(shlex.quote(a) for a in argv)
-        proc = subprocess.run(
-            [self.ssh_command, self.host, remote_cmd],
-            capture_output=True,
-            text=True,
-        )
+        kwargs = {} if self.timeout is None else {"timeout": self.timeout}
+        try:
+            proc = subprocess.run(
+                [self.ssh_command, *self.ssh_options, self.host, remote_cmd],
+                capture_output=True,
+                text=True,
+                **kwargs,
+            )
+        except subprocess.TimeoutExpired:
+            raise StageError(
+                f"ssh: {self.host} {remote_cmd!r} timed out after {self.timeout} s"
+            ) from None
         if proc.returncode != 0:
             raise StageError(
                 f"{self.ssh_command} {self.host} {remote_cmd!r} failed "
@@ -159,13 +176,22 @@ class RsyncStager(JobStager):
             )
 
     def _rsync(self, src, dst, *, extra=(), input_text=None):
-        argv = [self.rsync_command, "-e", self.ssh_command, "-a", *extra, src, dst]
-        if input_text is None:
-            proc = subprocess.run(argv, capture_output=True, text=True)
-        else:
-            proc = subprocess.run(
-                argv, input=input_text, capture_output=True, text=True
-            )
+        ssh = self.ssh_command
+        if self.ssh_options:
+            ssh = " ".join(shlex.quote(a) for a in [ssh, *self.ssh_options])
+        argv = [self.rsync_command, "-e", ssh, "-a", *extra, src, dst]
+        kwargs = {} if self.timeout is None else {"timeout": self.timeout}
+        try:
+            if input_text is None:
+                proc = subprocess.run(argv, capture_output=True, text=True, **kwargs)
+            else:
+                proc = subprocess.run(
+                    argv, input=input_text, capture_output=True, text=True, **kwargs
+                )
+        except subprocess.TimeoutExpired:
+            raise StageError(
+                f"ssh: rsync {src} -> {dst} timed out after {self.timeout} s"
+            ) from None
         if proc.returncode != 0:
             raise StageError(
                 f"rsync {src} -> {dst} failed ({proc.returncode}): "

@@ -142,6 +142,7 @@ class Slurm(Scheduler):
         # Tri-state: None = not yet probed, True/False = known support.
         self._squeue_json = None
         self._sacct_json = None
+        self._failed = False
 
     # ------------------------------------------------------------------
     # Directives
@@ -232,6 +233,9 @@ class Slurm(Scheduler):
     def cancel_cmd(self, ids):
         return ["scancel"] + [str(i) for i in ids]
 
+    def log_directives(self, directory):
+        return {"output": f"{directory}/slurm-%j.out"}
+
     def count_cmd(self):
         # -r: one line per array element, since each counts against a QOS's
         # per-user job limit.
@@ -245,12 +249,18 @@ class Slurm(Scheduler):
     # ------------------------------------------------------------------
     def poll(self, run, ids):
         ids = [str(i) for i in ids]
+        self.poll_failed = False
         if not ids:
             return {}
+        self._failed = False
         result = self._squeue(run, ids)
         missing = [j for j in ids if j not in result]
         if missing:
+            self._failed = False
             result.update(self._sacct(run, missing))
+            # sacct is the authority for jobs squeue no longer lists; if it
+            # could not answer, a missing job may well still exist.
+            self.poll_failed = self._failed
         return result
 
     def _squeue(self, run, job_ids):
@@ -331,6 +341,7 @@ class Slurm(Scheduler):
             if _is_unrecognized_option(err):
                 self._sacct_json = False
             else:
+                self._failed = True
                 return {}
 
         fmt = "JobID,State,ExitCode"
@@ -338,6 +349,7 @@ class Slurm(Scheduler):
             ["sacct", "--parsable2", "--noheader", f"--format={fmt}", "--jobs", ids]
         )
         if rc != 0:
+            self._failed = True
             return {}
         return self._parse_sacct_text(out)
 
@@ -452,8 +464,12 @@ class LocalSlurm(SlurmBackend):
 class SshSlurm(SlurmBackend):
     """SLURM's CLI on a remote host over passwordless ssh."""
 
-    def __init__(self, host, *, ssh_command="ssh"):
-        super().__init__(SshTransport(host, ssh_command=ssh_command))
+    def __init__(self, host, *, ssh_command="ssh", ssh_options=(), timeout=None):
+        super().__init__(
+            SshTransport(
+                host, ssh_command=ssh_command, ssh_options=ssh_options, timeout=timeout
+            )
+        )
 
     @property
     def host(self):

@@ -30,8 +30,13 @@ from .backend import QueueBackend
 from .local import LocalTransport
 from .scheduler import get_scheduler
 from .slurm import LocalSlurm, SshSlurm
-from .ssh import SshTransport
+from .ssh import TASK_SSH_OPTIONS, SshTransport
 from .stage import LocalStager, RsyncStager
+
+# The task layer's ssh: fail fast, and give up a hung command (see
+# TASK_SSH_OPTIONS). rsync of a large bundle may take long, so it gets more.
+_TASK_COMMAND_TIMEOUT = 300
+_TASK_STAGE_TIMEOUT = 3600
 
 # Section keys that describe JobServer- or task-layer behavior rather than a
 # submission directive -- not forwarded to the scheduler's directives.
@@ -206,13 +211,24 @@ class TargetSection:
                 f"section '{self.name}' has tasks={self.tasks}; only tasks=queue "
                 "submits tasks to a queueing system"
             )
-        return self._backend(self.task_transport, self.host, self.task_scheduler)
+        return self._backend(
+            self.task_transport,
+            self.host,
+            self.task_scheduler,
+            ssh_options=TASK_SSH_OPTIONS,
+            timeout=_TASK_COMMAND_TIMEOUT,
+        )
 
     def build_task_stager(self):
         """The stager for task directories: none on a shared filesystem."""
         if self.tasks_share_filesystem:
             return LocalStager()
-        return self._stager(self.task_transport, self.host)
+        return self._stager(
+            self.task_transport,
+            self.host,
+            ssh_options=TASK_SSH_OPTIONS,
+            timeout=_TASK_STAGE_TIMEOUT,
+        )
 
     def task_settings(self):
         """This section as a JSON-serializable dict, for ``<job>/target.json``.
@@ -238,7 +254,7 @@ class TargetSection:
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------
-    def _backend(self, transport, host, scheduler):
+    def _backend(self, transport, host, scheduler, ssh_options=(), timeout=None):
         if transport not in ("local", "ssh"):
             raise RuntimeError(
                 f"SLURM section '{self.name}' has unknown transport "
@@ -250,11 +266,16 @@ class TargetSection:
             )
         if scheduler == "slurm":
             # The historical classes, so isinstance() checks keep working.
-            return LocalSlurm() if transport == "local" else SshSlurm(host)
-        t = LocalTransport() if transport == "local" else SshTransport(host)
+            if transport == "local":
+                return LocalSlurm()
+            return SshSlurm(host, ssh_options=ssh_options, timeout=timeout)
+        if transport == "local":
+            t = LocalTransport()
+        else:
+            t = SshTransport(host, ssh_options=ssh_options, timeout=timeout)
         return QueueBackend(get_scheduler(scheduler), t)
 
-    def _stager(self, transport, host):
+    def _stager(self, transport, host, ssh_options=(), timeout=None):
         if transport == "local":
             return LocalStager()
         elif transport == "ssh":
@@ -262,7 +283,7 @@ class TargetSection:
                 raise RuntimeError(
                     f"SLURM section '{self.name}' has transport=ssh but no host set"
                 )
-            return RsyncStager(host)
+            return RsyncStager(host, ssh_options=ssh_options, timeout=timeout)
         else:
             raise RuntimeError(
                 f"SLURM section '{self.name}' has unknown transport "

@@ -201,6 +201,9 @@ class Pbs(Scheduler):
             )
         return result
 
+    def log_directives(self, directory):
+        return {"join": "oe", "output": f"{directory}/pbs.out"}
+
     def cancel_cmd(self, ids):
         return ["qdel"] + [str(i) for i in ids]
 
@@ -212,6 +215,7 @@ class Pbs(Scheduler):
     # ------------------------------------------------------------------
     def poll(self, run, ids):
         ids = [str(i) for i in ids]
+        self.poll_failed = False
         if not ids:
             return {}
         if self._qstat_json is not False:
@@ -228,9 +232,13 @@ class Pbs(Scheduler):
             if _is_unsupported(err):
                 self._qstat_json = False
             elif rc != 0:
+                self.poll_failed = True
                 return {}
 
         rc, out, err = run(self.status_cmd(ids))
+        if rc != 0 and not out.strip():
+            self.poll_failed = True
+            return {}
         result = self.parse_status(out, ids)
         # The table has no exit status; ask for the finished ones in full.
         finished = [i for i, s in result.items() if s.category == UNKNOWN]

@@ -85,6 +85,10 @@ class Scheduler:
     name = None
     #: "#SBATCH", "#PBS", ...
     directive_prefix = None
+    #: Set by :meth:`poll`: True when the queue could not be asked (a failed
+    #: command, e.g. ssh could not connect), so a job missing from the answer
+    #: may still exist. Callers must not take "missing" as "gone" then.
+    poll_failed = False
     #: The scheduler-neutral names -> the environment variables a job sees,
     #: e.g. ``{"job_id": "SLURM_JOB_ID", "ntasks": "SLURM_NTASKS"}``. Used by
     #: ``seamm_exec.computational_environment()`` to recognize and read an
@@ -145,6 +149,10 @@ class Scheduler:
         """The command that cancels ``ids``."""
         raise NotImplementedError
 
+    def log_directives(self, directory):
+        """Directives that put the job's own output in ``directory``."""
+        return {}
+
     def count_cmd(self):
         """A command listing the user's own jobs, one per line, or None if the
         scheduler cannot. Used to respect per-user queued-job limits."""
@@ -165,7 +173,8 @@ class Scheduler:
         if not ids:
             return {}
         rc, out, err = run(self.status_cmd(ids))
-        if rc != 0 and not out.strip():
+        self.poll_failed = rc != 0 and not out.strip()
+        if self.poll_failed:
             return {}
         return self.parse_status(out, ids)
 
