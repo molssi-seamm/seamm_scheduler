@@ -237,7 +237,8 @@ class Pbs(Scheduler):
         if finished:
             rc, out, err = run(["qstat", "-x", "-f"] + finished)
             for job_id, status in self._parse_qstat_full(out, ids).items():
-                result[job_id] = status
+                if job_id in result:
+                    result[job_id] = status
         return result
 
     @staticmethod

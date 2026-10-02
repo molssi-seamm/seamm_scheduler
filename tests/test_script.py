@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""Tests for seamm_slurm.script.build_script."""
+"""Tests for seamm_scheduler.script.build_script."""
 
-from seamm_slurm.script import build_script
+from seamm_scheduler.script import build_script
 
 
 def test_build_script_basic_directives():

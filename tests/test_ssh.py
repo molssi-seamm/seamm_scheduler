@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
-"""Tests for seamm_slurm.ssh.SshSlurm."""
+"""Tests for seamm_scheduler.ssh.SshSlurm."""
 
 from unittest.mock import patch, MagicMock
 
-from seamm_slurm.ssh import SshSlurm
+from seamm_scheduler.slurm import SshSlurm
 
 
 def test_ssh_run_wraps_command_through_ssh():
     fake_proc = MagicMock(returncode=0, stdout="42\n", stderr="")
-    with patch("seamm_slurm.ssh.subprocess.run", return_value=fake_proc) as run:
+    with patch("seamm_scheduler.ssh.subprocess.run", return_value=fake_proc) as run:
         backend = SshSlurm("molssi10")
         rc, out, err = backend._run(["sbatch", "--parsable"], input_text="script")
 
@@ -25,7 +25,7 @@ def test_ssh_run_wraps_command_through_ssh():
 
 def test_ssh_run_quotes_arguments_with_special_characters():
     fake_proc = MagicMock(returncode=0, stdout="", stderr="")
-    with patch("seamm_slurm.ssh.subprocess.run", return_value=fake_proc) as run:
+    with patch("seamm_scheduler.ssh.subprocess.run", return_value=fake_proc) as run:
         backend = SshSlurm("chemai")
         backend._run(["squeue", "--jobs", "1,2,3"])
 
@@ -41,7 +41,7 @@ def test_ssh_run_quotes_arguments_with_special_characters():
 
 def test_ssh_custom_ssh_command():
     fake_proc = MagicMock(returncode=0, stdout="", stderr="")
-    with patch("seamm_slurm.ssh.subprocess.run", return_value=fake_proc) as run:
+    with patch("seamm_scheduler.ssh.subprocess.run", return_value=fake_proc) as run:
         backend = SshSlurm("molssi10", ssh_command="/usr/bin/ssh")
         backend._run(["squeue"])
 

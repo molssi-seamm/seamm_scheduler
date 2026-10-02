@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-"""Tests for seamm_slurm.status."""
+"""Tests for seamm_scheduler.status."""
 
 import pytest
 
-from seamm_slurm.status import JobStatus, classify
+from seamm_scheduler.scheduler import JobStatus
+from seamm_scheduler.slurm import classify
 
 
 @pytest.mark.parametrize(

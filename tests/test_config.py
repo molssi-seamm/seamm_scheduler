@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Tests for seamm_slurm.config (load_slurm_config, SlurmSection,
+"""Tests for seamm_scheduler.config (load_slurm_config, SlurmSection,
 FieldLimits, merge_overrides).
 
 Moved here from seamm_jobserver.slurm_config (2026-08-06) so any
@@ -10,8 +10,8 @@ the rest of the SEAMM stack -- see the module docstring.
 
 import pytest
 
-import seamm_slurm
-from seamm_slurm.config import (
+import seamm_scheduler
+from seamm_scheduler.config import (
     FieldLimits,
     SlurmSection,
     list_sections,
@@ -126,13 +126,13 @@ def test_max_concurrent_and_resubmits_overridable(tmp_path):
 def test_build_backend_local():
     section = SlurmSection(name="x", transport="local", host=None)
     backend = section.build_backend()
-    assert isinstance(backend, seamm_slurm.LocalSlurm)
+    assert isinstance(backend, seamm_scheduler.LocalSlurm)
 
 
 def test_build_backend_ssh():
     section = SlurmSection(name="x", transport="ssh", host="molssi10")
     backend = section.build_backend()
-    assert isinstance(backend, seamm_slurm.SshSlurm)
+    assert isinstance(backend, seamm_scheduler.SshSlurm)
     assert backend.host == "molssi10"
 
 
@@ -151,13 +151,13 @@ def test_build_backend_unknown_transport_raises():
 def test_build_stager_local():
     section = SlurmSection(name="x", transport="local", host=None)
     stager = section.build_stager()
-    assert isinstance(stager, seamm_slurm.LocalStager)
+    assert isinstance(stager, seamm_scheduler.LocalStager)
 
 
 def test_build_stager_ssh():
     section = SlurmSection(name="x", transport="ssh", host="molssi10")
     stager = section.build_stager()
-    assert isinstance(stager, seamm_slurm.RsyncStager)
+    assert isinstance(stager, seamm_scheduler.RsyncStager)
     assert stager.host == "molssi10"
 
 

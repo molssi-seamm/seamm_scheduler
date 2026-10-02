@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Tests for seamm_slurm.backend.SlurmBackend.
+"""Tests for seamm_scheduler.backend.SlurmBackend.
 
 Uses a FakeBackend whose ``_run`` is driven by a caller-supplied function, so
 these tests never touch a real SLURM installation -- they exercise the
@@ -13,7 +13,7 @@ import json
 
 import pytest
 
-from seamm_slurm.backend import SlurmBackend, SlurmError, SlurmSubmitError
+from seamm_scheduler.slurm import SlurmBackend, SlurmError, SlurmSubmitError
 
 
 class FakeBackend(SlurmBackend):
