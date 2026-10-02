@@ -1,135 +1,92 @@
 Getting Started
 ===============
 
-``seamm_scheduler`` wraps the SLURM command-line tools (``sbatch``, ``squeue``,
-``sacct``, ``scancel``) behind one interface, ``SlurmBackend``, with two
-transports -- ``LocalSlurm`` (SLURM CLI on the current host) and
-``SshSlurm`` (SLURM CLI on a remote host over passwordless SSH). It has no
-SEAMM-core dependency and no notion of SEAMM's own job-status vocabulary; it
-only speaks SLURM's.
+``seamm_scheduler`` talks to queueing systems -- SLURM and PBS today -- through
+one interface. It has no SEAMM-core dependency and no notion of SEAMM's own job
+states; it only speaks the queueing systems'.
 
 Installing
 ----------
 
 The library has no runtime dependencies::
 
-    pip install seamm_scheduler
+    pip install seamm-scheduler
 
-Basic usage
------------
+Submitting and polling
+----------------------
 
 .. code-block:: python
 
-    from seamm_scheduler import LocalSlurm, SshSlurm
-    from seamm_scheduler.script import build_script
+    from seamm_scheduler import QueueBackend, LocalTransport, SshTransport
+    from seamm_scheduler import build_script, get_scheduler
 
-    backend = LocalSlurm()
-    # or, from a host that is not itself a SLURM submit host:
-    # backend = SshSlurm("molssi10")
+    slurm = get_scheduler("slurm")
+    backend = QueueBackend(slurm, SshTransport("tinkercliffs"))
+    # or, on a login node: QueueBackend(slurm, LocalTransport())
 
-    script = build_script(
-        {
-            "job_name": "my-flowchart",
-            "partition": "batch",
-            "nodes": 1,
-            "ntasks": 1,
-            "time": "01:00:00",
-            "chdir": "/home/psaxe/SEAMM/Jobs/projects/demo/Job_00123",
-        },
-        payload=(
-            "source /home/psaxe/miniconda3/etc/profile.d/conda.sh\n"
-            "conda activate seamm\n"
-            "run_from_jobserver 123 "
-            "/home/psaxe/SEAMM/Jobs/projects/demo/Job_00123 "
-            "/home/psaxe/SEAMM/Jobs/seamm.db\n"
-        ),
+    directives = slurm.directives(
+        {"ntasks": 4, "mem_per_cpu": 2 * 1024**3, "walltime": 3600},
+        extra={"partition": "normal_q", "account": "seamm", "export": "NONE"},
     )
-    job_id = backend.submit(script)
+    script = build_script(directives, "module load ORCA\norca orca.inp > orca.out")
+    job_id = backend.submit(script, job_name="demo")
 
-    statuses = backend.poll_many([job_id])
-    print(statuses[job_id].category)  # "pending" | "running" | "completed" | ...
+    status = backend.poll_many([job_id])[job_id]
+    print(status.state, status.category, status.task_state)
 
-Staging files when there's no shared filesystem
--------------------------------------------------
+``poll_many`` takes many ids and uses as few commands as the scheduler allows.
+A job the scheduler no longer knows is absent from the result; if the queue
+could not be asked at all (``backend.scheduler.poll_failed``), absence means
+nothing.
 
-``SshSlurm`` above only runs SLURM CLI commands remotely -- it assumes the
-job's own working directory is already visible to the remote host (e.g. a
-shared/NFS filesystem, or the caller runs on a login node). If it is not --
-a laptop reaching a cluster it shares no filesystem with, for instance --
-pair it with a stager, mirroring the transport with ``LocalStager`` (a
-no-op, for the shared-filesystem case above) or ``RsyncStager``:
+The historical SLURM classes are still here: ``LocalSlurm()`` and
+``SshSlurm(host)`` are ``QueueBackend`` subclasses with SLURM built in.
 
-.. code-block:: python
+Targets
+-------
 
-    from seamm_scheduler import RsyncStager
+``seamm_scheduler.config`` reads a JobServer's ``<root>/<jobserver-name>.ini``.
+Each section is a target:
 
-    stager = RsyncStager("molssi10")
-    # Pushes local_wdir to molssi10 over rsync -e ssh, mkdir -p first.
-    # Use the returned path for the sbatch script's chdir directive and
-    # for any command line built for the remote host, not local_wdir.
-    remote_wdir = stager.stage_in(local_wdir, remote_wdir)
-    ...
-    # After SLURM reports the job terminal, pull results back:
-    stager.stage_out(remote_wdir, local_wdir)
+.. code-block:: ini
 
-``SlurmSection.build_stager()`` picks the right one automatically from a
-``<root>/<jobserver-name>.ini`` section's ``transport`` key, the same way
-``build_backend()`` picks the transport -- see ``seamm_jobserver``'s user
-guide for the full ini format, including ``remote_root``,
-``remote_run_from_jobserver``/``remote_conda_env``, and ``setup`` (raw
-shell commands, e.g. ``module load ORCA``, run at the top of the
-generated sbatch script before ``run_from_jobserver`` -- for a queue
-whose submission environment doesn't otherwise carry whatever a code's
-own ``installation = modules`` needs).
+    [DEFAULT]
+    default = local
 
-``remote_wdir`` above (a scratch path on the remote host, distinct from
-``local_wdir``) is not something a caller invents -- ``SlurmSection`` also
-computes it, deterministically, from ``remote_root`` and the local
-directory's own name:
+    [local]
+    type = local
+    tasks = pool
 
-.. code-block:: python
-
-    remote_wdir = section.remote_wdir_for(local_wdir)
-
-Because it's a pure function of ``local_wdir`` and the section's own
-config, any caller who knows both can recompute the same path
-independently -- not just whichever process originally called
-``stage_in()``. This is what lets something like a Dashboard pull a
-still-*running* job's files back on demand (``stager.stage_out(section.
-remote_wdir_for(local_wdir), local_wdir)``) without needing to ask the
-process that submitted the job where it put things.
-
-See the design doc under :doc:`developer_guide/campaigns/2026-08-06/index`
-for the full rationale, and the workspace-root
-``~/Work/SEAMM/jobserver-slurm-plan.md`` living plan for how this fits into
-the larger ``seamm_jobserver`` SLURM integration.
-
-Multiple queues per config file
---------------------------------
-
-A ``<root>/<jobserver-name>.ini`` file can describe more than one
-cluster/queue target, one section each. ``load_slurm_config(root,
-jobserver_name)`` resolves a *single* section (via that file's
-``[DEFAULT] default =`` key, or the sole section if there is only one);
-``list_sections(root, jobserver_name)`` instead returns every section as a
-``{name: SlurmSection}`` dict, for a caller that routes jobs across more
-than one queue or wants to advertise "what queues exist" (e.g. to a
-submission UI):
+    [arc]
+    type = local                 ; the evaluator runs on the JobServer's host
+    tasks = queue                ; its tasks go to a queue
+    scheduler = slurm
+    transport = ssh
+    host = tinkercliffs
+    remote_root = /projects/seamm/psaxe/tasks
+    remote_python = /projects/seamm/SEAMM/venv/bin/python
+    account = seamm
+    partition = normal_q
+    qos = tc_normal_short
+    export = NONE
+    bundle_tasks = 8
+    max_queued_tasks = 800
 
 .. code-block:: python
 
-    from seamm_scheduler.config import list_sections
+    from seamm_scheduler import list_sections
 
-    sections = list_sections(root, "molssi10")
-    for name, section in sections.items():
-        print(name, section.type, section.transport)
+    sections = list_sections("~/SEAMM", "chemai")
+    arc = sections["arc"]
+    queue = arc.build_task_backend()     # the QueueBackend for its tasks
+    stager = arc.build_task_stager()     # RsyncStager, or LocalStager if shared
 
-A section's ``type`` (default ``"slurm"``) can also be ``"local"`` -- no
-scheduler at all, for a queue that just means "run this as a plain local
-subprocess" rather than a submission target of its own.
-``build_backend()``/``build_stager()`` raise clearly if called on a
-``type = local`` section, since it has neither; a caller routes those jobs
-through its own local-subprocess path instead. See ``seamm_jobserver``'s
-design doc under ``docs/developer_guide/campaigns/2026-08-10/`` (multi-queue
-routing) for how this is used to let one JobServer instance route jobs to
-several queues -- some local, some real SLURM clusters -- at once.
+A section without ``tasks =`` means exactly what it did before the task keys
+existed. See ``seamm_exec``'s task layer for what the keys do.
+
+Adding a queueing system
+------------------------
+
+Subclass ``seamm_scheduler.scheduler.Scheduler`` in a new module (see
+``pbs.py``), implement the directive, command and parsing methods, and add it
+to ``SCHEDULERS`` in ``scheduler.py``.

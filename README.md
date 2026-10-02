@@ -1,56 +1,48 @@
-seamm_slurm
-===========
+seamm_scheduler
+===============
 [//]: # (Badges)
-[![GitHub Actions Build Status](https://github.com/molssi-seamm/seamm_slurm/workflows/CI/badge.svg)](https://github.com/molssi-seamm/seamm_slurm/actions?query=workflow%3ACI)
+[![GitHub Actions Build Status](https://github.com/molssi-seamm/seamm_scheduler/workflows/CI/badge.svg)](https://github.com/molssi-seamm/seamm_scheduler/actions?query=workflow%3ACI)
 
-A small library that wraps the SLURM command-line tools (`sbatch`, `squeue`,
-`sacct`, `scancel`) behind one interface, `SlurmBackend`, with two transports:
+Queueing systems for SEAMM: one module per queueing system behind a shared
+`Scheduler` interface, with local and ssh transports and staging.
 
-- `LocalSlurm` -- runs the SLURM CLI directly on the current host (the host
-  running the code is itself a SLURM submit host, e.g. a cluster head/login
-  node).
-- `SshSlurm` -- runs the same commands on a remote host over passwordless
-  SSH (the host running the code is *not* a SLURM submit host).
+- `seamm_scheduler.slurm.Slurm` -- SLURM: `#SBATCH` directives, `sbatch`,
+  `squeue`/`sacct` (with `--json` where the cluster has it, text otherwise),
+  `scancel`.
+- `seamm_scheduler.pbs.Pbs` -- PBS Professional / OpenPBS: `#PBS` directives
+  with one `select` statement, `qsub`, `qstat`, `qdel`. Tested against
+  recorded output only so far.
+- `QueueBackend(scheduler, transport)` -- submit a script, poll many jobs in as
+  few commands as the scheduler allows, cancel, count the user's jobs.
+- `LocalTransport` / `SshTransport` -- run the commands on this host, or on a
+  login node over passwordless ssh.
+- `LocalStager` / `RsyncStager` -- move job (or task) directories when the
+  caller and the cluster share no filesystem.
+- `seamm_scheduler.config` -- the JobServer's `<root>/<jobserver-name>.ini`:
+  each section is a *target*, describing where a job's flowchart evaluator
+  runs and, with the optional task keys, where its tasks run.
 
-Both transports share the same submit/poll/cancel logic and SLURM-version
-handling (some clusters support `squeue --json`/`sacct --json`, others only
-have plain columnar output -- this library prefers JSON when available and
-falls back to `--parsable2`/`--format=` text parsing otherwise, transparently
-to the caller).
+Every scheduler translates the same scheduler-neutral resources (`ntasks`,
+`cpus_per_task`, `mem_per_cpu`, `ngpus`, `walltime`, `partition`, `account`,
+`qos`, `nodes`) into its own directives, and reports job states in one small
+vocabulary (pending, running, completed, cancelled, failed).
 
-`submit()` takes the full script text (shebang, `#SBATCH` directives,
-payload) and feeds it to `sbatch --parsable` on stdin -- it never needs the
-script to exist as a file on the target host, so submission works identically
-whether the caller and the SLURM cluster share a filesystem or not.
-`seamm_slurm.script.build_script()` is a small helper for building that
-script text from a directives dict (partition/account/qos/nodes/ntasks/time/
-mem/gpus/...) plus a payload command, matching the
-`<root>/<jobserver-name>.ini` config shape used by `seamm_jobserver`.
+The package has no dependencies. It is used by `seamm_jobserver` (whole
+flowcharts as batch jobs) and `seamm_exec`'s task layer (bundles of tasks as
+batch jobs). `seamm_slurm`, which this package generalizes, remains as a
+compatibility shim that re-exports from here.
 
-`poll_many()` takes a batch of SLURM job IDs (not one call per job) and
-returns a `JobStatus` per ID, merging live state from `squeue` with
-historical/terminal state from `sacct` -- `sacct` is the source of truth once
-a job has left the live queue.
+Features
+--------
 
-`seamm_slurm.config` reads a JobServer's `<root>/<jobserver-name>.ini`
-(`load_slurm_config`/`SlurmSection`) -- the same system/machine config file
-`seamm_jobserver` itself uses, moved here so any dependency-light consumer
-(a future job-submission UI, for instance) can read and validate it without
-pulling in the rest of the SEAMM stack. Includes an optional
-`[<section>.limits]` companion section and `SlurmSection.merge_overrides()`,
-for sites that want to let a job override some of the section's defaults
-(cores, memory, walltime, ...) within enumerated choices or numeric/size/
-time bounds -- secure by default, nothing is overridable unless a site's
-`.limits` section says so.
+- SLURM 20.11 (no `--json`) to 25.11 (nested JSON) handled transparently
+- Per-user queue limits (`count_jobs()`)
+- Poll failures (an ssh outage) are reported as such, never as vanished jobs
+- One `rsync` for many directories (`push`/`pull`)
 
-This package intentionally has no SEAMM-core/`molsystem`/dashboard
-dependency and no notion of SEAMM's own job-status vocabulary -- it only
-speaks SLURM's. `seamm_jobserver`'s whole-flowchart SLURM submission mode is
-the first consumer, validated end-to-end against a real cluster; a future
-`seamm_exec` `Slurm` executor (per-step submission) is expected to reuse the
-same backend rather than duplicating the SLURM-CLI handling.
+Acknowledgements
+----------------
 
-See `docs/developer_guide/campaigns/2026-08-06/index.rst` in this repo, and
-`seamm_jobserver`'s own `docs/developer_guide/campaigns/2026-08-05/` (the
-full cross-repo SLURM-integration campaign, moved there from a
-workspace-level scratch doc), for the design rationale.
+Developed by the Molecular Sciences Software Institute (MolSSI),
+which receives funding from the National Science Foundation under
+award CHE-2136142.

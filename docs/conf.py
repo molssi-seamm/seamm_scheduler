@@ -22,7 +22,7 @@ import seamm_scheduler
 
 # -- Project information -----------------------------------------------------
 
-project = 'SEAMM SLURM'
+project = 'SEAMM Scheduler'
 copyright = ("2026, Paul Saxe. Project structure based on the "
              "Computational Molecular Science Python Cookiecutter version 1.1")
 author = 'Paul Saxe'
