@@ -184,3 +184,20 @@ def test_bad_values_are_reported(tmp_path, text, message):
 )
 def test_parse_time_slurm_forms(text, seconds):
     assert _parse_time(text) == seconds
+
+
+def test_limits_bare_time_is_minutes():
+    """A bare number in a .limits time bound is minutes, as SLURM reads it."""
+    from seamm_scheduler.config import FieldLimits
+
+    s = SlurmSection(
+        name="q",
+        transport="local",
+        host=None,
+        directives={"time": "30"},
+        limits={"time": FieldLimits(maximum="60")},  # 60 minutes
+    )
+    assert s.merge_overrides({"time": "45"})["time"] == "45"
+    assert s.merge_overrides({"time": "00:59:00"})["time"] == "00:59:00"
+    with pytest.raises(ValueError, match="exceeds the maximum"):
+        s.merge_overrides({"time": "01:01:00"})

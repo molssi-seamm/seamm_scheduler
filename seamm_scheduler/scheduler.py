@@ -158,6 +158,18 @@ class Scheduler:
         called ``job_name``, one per line, or None if the scheduler cannot."""
         return None
 
+    def find(self, run, job_name):
+        """The ids of the user's jobs called ``job_name``, queued, running or
+        (where the scheduler remembers them) finished; None if that cannot be
+        known now."""
+        argv = self.find_cmd(job_name)
+        if argv is None:
+            return None
+        rc, out, err = run(argv)
+        if rc != 0:
+            return None
+        return [line.split()[0] for line in out.splitlines() if line.strip()]
+
     def count_cmd(self):
         """A command listing the user's own jobs, one per line, or None if the
         scheduler cannot. Used to respect per-user queued-job limits."""

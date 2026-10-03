@@ -18,3 +18,5 @@ History
     * SLURM 25.11's ``sacct --json`` exit codes; poll failures reported as
       ``poll_failed`` rather than as jobs that disappeared.
     * A bare SLURM time (``30``) is minutes, as SLURM reads it.
+    * ``find_jobs(name)`` finds a user's job by name, queued, running or (from
+      accounting) finished, so a submission whose answer was lost can be checked.

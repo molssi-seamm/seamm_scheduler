@@ -280,6 +280,18 @@ def test_find_jobs_by_name():
     assert transport.calls[0][0][3] == "--name=seamm-b.1-abc"
     down = QueueBackend(Slurm(), FakeTransport([]))
     assert down.find_jobs("x") is None
+    # A finished job is found in accounting
+    finished = FakeTransport(
+        [
+            (["squeue", "--noheader", "--me"], (0, "", "")),
+            (["sacct"], (0, "78\n", "")),
+        ]
+    )
+    assert QueueBackend(Slurm(), finished).find_jobs("seamm-b.1-abc") == ["78"]
+    nowhere = FakeTransport(
+        [(["squeue", "--noheader", "--me"], (0, "", "")), (["sacct"], (0, "", ""))]
+    )
+    assert QueueBackend(Slurm(), nowhere).find_jobs("x") == []
 
 
 def test_local_transport_can_drop_the_allocation(monkeypatch):
@@ -288,9 +300,68 @@ def test_local_transport_can_drop_the_allocation(monkeypatch):
     from seamm_scheduler import LocalTransport
 
     monkeypatch.setenv("SLURM_MEM_PER_CPU", "1000")
+    monkeypatch.setenv("SLURM_CONF", "/etc/slurm/slurm.conf")
     monkeypatch.setenv("SBATCH_ACCOUNT", "seamm")
     fake = MagicMock(returncode=0, stdout="", stderr="")
     with patch("seamm_scheduler.local.subprocess.run", return_value=fake) as run:
         LocalTransport(drop_env_prefixes=("SLURM_",)).run(["sbatch"])
     env = run.call_args.kwargs["env"]
     assert "SLURM_MEM_PER_CPU" not in env and env["SBATCH_ACCOUNT"] == "seamm"
+    assert env["SLURM_CONF"] == "/etc/slurm/slurm.conf"
+
+
+def test_squeue_json_transient_failure_without_accounting():
+    s = Slurm()
+    s._no_accounting = True
+
+    def run(argv, input_text=None):
+        if argv[0] == "squeue":
+            return 255, "", "ssh: tc: timed out after 300 s"
+        return 1, "", "sacct: error: Slurm accounting storage is disabled"
+
+    assert s.poll(run, ["1"]) == {}
+    assert s.poll_failed
+
+
+def test_squeue_json_transient_failure_with_accounting():
+    s = Slurm()
+
+    def run(argv, input_text=None):
+        if argv[0] == "squeue":
+            return 1, "", "slurm_load_jobs error: Unable to contact slurm controller"
+        # sacct has not recorded the new job yet
+        return 0, json.dumps({"jobs": []}), ""
+
+    assert s.poll(run, ["1"]) == {}
+    assert s.poll_failed
+
+    def gone(argv, input_text=None):
+        if argv[0] == "squeue":
+            return 1, "", "slurm_load_jobs error: Invalid job id specified"
+        return 0, json.dumps({"jobs": []}), ""
+
+    assert s.poll(gone, ["1"]) == {}
+    assert not s.poll_failed
+
+    def answered_by_sacct(argv, input_text=None):
+        if argv[0] == "squeue":
+            return 1, "", "slurm_load_jobs error: Unable to contact slurm controller"
+        return 0, json.dumps(SACCT_25), ""
+
+    s.poll(answered_by_sacct, ["7826618"])
+    assert not s.poll_failed
+
+
+def test_find_narrows_a_date_range_the_site_refuses():
+    calls = []
+
+    def run(argv, input_text=None):
+        calls.append(argv)
+        if argv[0] == "squeue":
+            return 0, "", ""
+        if "--starttime=now-14days" in argv:
+            return 1, "", "sacct: error: Too wide of a date range in query"
+        return 0, "79\n", ""
+
+    assert Slurm().find(run, "x") == ["79"]
+    assert sum(1 for c in calls if c[0] == "sacct") == 2

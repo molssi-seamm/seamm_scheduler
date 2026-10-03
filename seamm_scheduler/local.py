@@ -5,6 +5,9 @@
 import os
 import subprocess
 
+# Site settings, not the allocation's: never dropped
+_KEEP = {"SLURM_CONF"}
+
 
 class LocalTransport:
     """Runs commands on this host -- the case where the caller (a JobServer, or
@@ -31,7 +34,7 @@ class LocalTransport:
             env = {
                 k: v
                 for k, v in os.environ.items()
-                if not k.startswith(self.drop_env_prefixes)
+                if not k.startswith(self.drop_env_prefixes) or k in _KEEP
             }
             proc = subprocess.run(
                 argv, input=input_text, capture_output=True, text=True, env=env

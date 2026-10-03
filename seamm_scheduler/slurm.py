@@ -241,6 +241,37 @@ class Slurm(Scheduler):
     def find_cmd(self, job_name):
         return ["squeue", "--noheader", "--me", f"--name={job_name}", "--format=%i"]
 
+    def find(self, run, job_name):
+        """squeue for a queued or running job, then sacct for a finished one."""
+        rc, out, err = run(self.find_cmd(job_name))
+        if rc != 0:
+            return None
+        ids = [line.split()[0] for line in out.splitlines() if line.strip()]
+        if ids or self._no_accounting:
+            return ids
+        # Sites cap sacct's date range (TinkerCliffs refuses 30 days); bundles
+        # are looked up within days of their submission.
+        for days in (14, 2):
+            rc, out, err = run(
+                [
+                    "sacct",
+                    "--noheader",
+                    "--parsable2",
+                    "--allocations",
+                    f"--name={job_name}",
+                    "--format=JobID",
+                    f"--starttime=now-{days}days",
+                ]
+            )
+            if rc == 0 or "too wide" not in err.lower():
+                break
+        if rc != 0:
+            if _no_accounting(err):
+                self._no_accounting = True
+                return []
+            return None
+        return [line.strip() for line in out.splitlines() if line.strip()]
+
     def count_cmd(self):
         # -r: one line per array element, since each counts against a QOS's
         # per-user job limit.
@@ -269,11 +300,12 @@ class Slurm(Scheduler):
                 return result
             self._failed = False
             result.update(self._sacct(run, missing))
-            # sacct is the authority for jobs squeue no longer lists; if it
-            # could not answer, a missing job may well still exist.
-            self.poll_failed = self._failed or (
-                self._no_accounting and self._squeue_failed
-            )
+            # sacct is the authority for jobs squeue no longer lists. If it
+            # could not answer, or squeue could not be asked and a job is in
+            # neither (sacct may not have recorded a new job yet), a missing
+            # job may well still exist.
+            still_missing = any(j not in result for j in ids)
+            self.poll_failed = self._failed or (self._squeue_failed and still_missing)
         return result
 
     def _squeue(self, run, job_ids):
@@ -295,8 +327,11 @@ class Slurm(Scheduler):
             if _is_unrecognized_option(err):
                 self._squeue_json = False
             else:
-                # Transient/other failure (e.g. all the ids are already gone)
-                # -- not a hard error, just nothing to report from squeue.
+                # Nothing to report from squeue. Only "invalid job id" (all
+                # the ids are gone) is an answer; anything else (ssh down,
+                # controller unreachable) means squeue could not be asked.
+                if not _is_invalid_job_id(err):
+                    self._squeue_failed = True
                 return {}
 
         rc, out, err = run(self.status_cmd(job_ids))

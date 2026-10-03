@@ -14,6 +14,9 @@ the keys added for the task layer, where the evaluator's *tasks* run
 optional: a section without ``tasks =`` means exactly what it meant before
 (whole-flowchart submission, the codes running inside the evaluator).
 
+A section is copied verbatim into each job's ``target.json`` (``setup`` text
+included), which the Dashboard can show, so a section must never hold secrets.
+
 Lives here, not in ``seamm_jobserver``, so any dependency-light consumer --
 ``seamm_jobserver``, ``seamm_webui``'s queue list, ``seamm_exec``'s task layer
 -- can read and validate the file without pulling in the rest of the SEAMM
