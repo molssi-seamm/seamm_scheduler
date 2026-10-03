@@ -153,6 +153,11 @@ class Scheduler:
         """Directives that put the job's own output in ``directory``."""
         return {}
 
+    def find_cmd(self, job_name):
+        """A command printing the ids of the user's queued or running jobs
+        called ``job_name``, one per line, or None if the scheduler cannot."""
+        return None
+
     def count_cmd(self):
         """A command listing the user's own jobs, one per line, or None if the
         scheduler cannot. Used to respect per-user queued-job limits."""

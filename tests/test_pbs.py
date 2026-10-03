@@ -80,7 +80,7 @@ def test_classify():
     assert classify("F", "1") == "failed"
     assert classify("F", -1) == "failed"
     assert classify("F", 271) == "cancelled"
-    assert classify("F") == "unknown"
+    assert classify("F") == "cancelled"  # deleted before it ran
     assert classify("C") == "completed"  # Torque
     assert classify("") == "unknown"
 
@@ -190,3 +190,13 @@ def test_cancel():
 def test_env_names():
     assert Pbs.env_names["job_id"] == "PBS_JOBID"
     assert Pbs.env_names["nodefile"] == "PBS_NODEFILE"
+
+
+def test_slurm_spellings_are_dropped_and_find_count():
+    d = Pbs().directives(
+        Res(ntasks=2), extra={"ntasks": "4", "mem": "4G", "queue": "q"}
+    )
+    assert "ntasks" not in d and "mem" not in d
+    assert d["select"] == "1:ncpus=2:mpiprocs=2"
+    assert Pbs().count_cmd()[0] == "sh"
+    assert "-N seamm-x" in Pbs().find_cmd("seamm-x")[2]

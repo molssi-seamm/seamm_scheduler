@@ -143,6 +143,8 @@ class Slurm(Scheduler):
         self._squeue_json = None
         self._sacct_json = None
         self._failed = False
+        self._squeue_failed = False
+        self._no_accounting = False
 
     # ------------------------------------------------------------------
     # Directives
@@ -236,6 +238,9 @@ class Slurm(Scheduler):
     def log_directives(self, directory):
         return {"output": f"{directory}/slurm-%j.out"}
 
+    def find_cmd(self, job_name):
+        return ["squeue", "--noheader", "--me", f"--name={job_name}", "--format=%i"]
+
     def count_cmd(self):
         # -r: one line per array element, since each counts against a QOS's
         # per-user job limit.
@@ -253,14 +258,22 @@ class Slurm(Scheduler):
         if not ids:
             return {}
         self._failed = False
+        self._squeue_failed = False
         result = self._squeue(run, ids)
         missing = [j for j in ids if j not in result]
         if missing:
+            if self._no_accounting:
+                # Without accounting squeue is all there is; trust it unless
+                # it failed.
+                self.poll_failed = self._failed or self._squeue_failed
+                return result
             self._failed = False
             result.update(self._sacct(run, missing))
             # sacct is the authority for jobs squeue no longer lists; if it
             # could not answer, a missing job may well still exist.
-            self.poll_failed = self._failed
+            self.poll_failed = self._failed or (
+                self._no_accounting and self._squeue_failed
+            )
         return result
 
     def _squeue(self, run, job_ids):
@@ -272,8 +285,12 @@ class Slurm(Scheduler):
                 self._squeue_json = True
                 try:
                     return self._parse_squeue_json(out)
-                except (ValueError, KeyError) as e:
+                except (ValueError, KeyError, TypeError) as e:
+                    # Never an empty, trusted answer: that would read as
+                    # "every job is gone".
                     logger.warning(f"Could not parse squeue --json output: {e}")
+                    self._failed = True
+                    self._squeue_failed = True
                     return {}
             if _is_unrecognized_option(err):
                 self._squeue_json = False
@@ -284,6 +301,8 @@ class Slurm(Scheduler):
 
         rc, out, err = run(self.status_cmd(job_ids))
         if rc != 0:
+            if not _is_invalid_job_id(err):
+                self._squeue_failed = True
             return {}
         return self._parse_squeue_text(out)
 
@@ -335,11 +354,15 @@ class Slurm(Scheduler):
                 self._sacct_json = True
                 try:
                     return self._parse_sacct_json(out)
-                except (ValueError, KeyError) as e:
+                except (ValueError, KeyError, TypeError) as e:
                     logger.warning(f"Could not parse sacct --json output: {e}")
+                    self._failed = True
                     return {}
             if _is_unrecognized_option(err):
                 self._sacct_json = False
+            elif _no_accounting(err):
+                self._no_accounting = True
+                return {}
             else:
                 self._failed = True
                 return {}
@@ -349,7 +372,10 @@ class Slurm(Scheduler):
             ["sacct", "--parsable2", "--noheader", f"--format={fmt}", "--jobs", ids]
         )
         if rc != 0:
-            self._failed = True
+            if _no_accounting(err):
+                self._no_accounting = True
+            else:
+                self._failed = True
             return {}
         return self._parse_sacct_text(out)
 
@@ -414,6 +440,16 @@ class Slurm(Scheduler):
         return result
 
 
+def _is_invalid_job_id(stderr):
+    """squeue's answer when none of the ids is in the queue any more."""
+    return "invalid job id" in stderr.lower()
+
+
+def _no_accounting(stderr):
+    """sacct on a cluster without accounting storage."""
+    return "accounting storage is disabled" in stderr.lower()
+
+
 def _is_unrecognized_option(stderr):
     stderr = stderr.lower()
     return "unrecognized option" in stderr or "invalid option" in stderr
@@ -457,8 +493,8 @@ class LocalSlurm(SlurmBackend):
     """SLURM's CLI directly on the current host -- the case where the caller
     runs on a SLURM submit host with those commands on ``PATH``."""
 
-    def __init__(self):
-        super().__init__(LocalTransport())
+    def __init__(self, *, drop_env_prefixes=()):
+        super().__init__(LocalTransport(drop_env_prefixes=drop_env_prefixes))
 
 
 class SshSlurm(SlurmBackend):

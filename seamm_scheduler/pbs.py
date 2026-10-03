@@ -64,7 +64,8 @@ def classify(raw_state, exit_status=None):
         return RUNNING
     if state in _FINISHED_STATES:
         if exit_status is None or str(exit_status).strip() == "":
-            return COMPLETED if state == "C" else UNKNOWN
+            # F without an exit status: deleted before it ran.
+            return COMPLETED if state == "C" else CANCELLED
         try:
             code = int(str(exit_status).strip())
         except ValueError:
@@ -105,6 +106,11 @@ class Pbs(Scheduler):
             directives.setdefault("queue", directives.pop("partition"))
         if "time" in directives:
             directives.setdefault("walltime", directives.pop("time"))
+        # SLURM spellings that are not PBS resources; resources set the select.
+        for key in _SLURM_ONLY:
+            if key in directives:
+                logger.warning(f"PBS ignores the SLURM directive '{key}'")
+                directives.pop(key)
 
         partition = _get(resources, "partition")
         if partition:
@@ -204,6 +210,13 @@ class Pbs(Scheduler):
     def log_directives(self, directory):
         return {"join": "oe", "output": f"{directory}/pbs.out"}
 
+    def find_cmd(self, job_name):
+        return ["sh", "-c", f'qselect -u "$USER" -N {_sh_quote(job_name)}']
+
+    def count_cmd(self):
+        # qselect lists the user's jobs that have not finished, one per line
+        return ["sh", "-c", 'qselect -u "$USER"']
+
     def cancel_cmd(self, ids):
         return ["qdel"] + [str(i) for i in ids]
 
@@ -241,7 +254,11 @@ class Pbs(Scheduler):
             return {}
         result = self.parse_status(out, ids)
         # The table has no exit status; ask for the finished ones in full.
-        finished = [i for i, s in result.items() if s.category == UNKNOWN]
+        finished = [
+            i
+            for i, s in result.items()
+            if s.state[:1].upper() in ("F", "X") and s.exit_code is None
+        ]
         if finished:
             rc, out, err = run(["qstat", "-x", "-f"] + finished)
             for job_id, status in self._parse_qstat_full(out, ids).items():
@@ -299,6 +316,26 @@ class Pbs(Scheduler):
                 fields[key.strip()] = value.strip()
         finish()
         return result
+
+
+_SLURM_ONLY = (
+    "ntasks",
+    "cpus_per_task",
+    "nodes",
+    "mem",
+    "mem_per_cpu",
+    "gpus",
+    "export",
+    "constraint",
+    "qos",
+    "chdir",
+)
+
+
+def _sh_quote(text):
+    import shlex
+
+    return shlex.quote(str(text))
 
 
 def _match_id(job_id, ids):

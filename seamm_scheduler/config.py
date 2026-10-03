@@ -217,6 +217,7 @@ class TargetSection:
             self.task_scheduler,
             ssh_options=TASK_SSH_OPTIONS,
             timeout=_TASK_COMMAND_TIMEOUT,
+            drop_env_prefixes=("SLURM_", "PBS_"),
         )
 
     def build_task_stager(self):
@@ -254,7 +255,15 @@ class TargetSection:
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------
-    def _backend(self, transport, host, scheduler, ssh_options=(), timeout=None):
+    def _backend(
+        self,
+        transport,
+        host,
+        scheduler,
+        ssh_options=(),
+        timeout=None,
+        drop_env_prefixes=(),
+    ):
         if transport not in ("local", "ssh"):
             raise RuntimeError(
                 f"SLURM section '{self.name}' has unknown transport "
@@ -267,10 +276,10 @@ class TargetSection:
         if scheduler == "slurm":
             # The historical classes, so isinstance() checks keep working.
             if transport == "local":
-                return LocalSlurm()
+                return LocalSlurm(drop_env_prefixes=drop_env_prefixes)
             return SshSlurm(host, ssh_options=ssh_options, timeout=timeout)
         if transport == "local":
-            t = LocalTransport()
+            t = LocalTransport(drop_env_prefixes=drop_env_prefixes)
         else:
             t = SshTransport(host, ssh_options=ssh_options, timeout=timeout)
         return QueueBackend(get_scheduler(scheduler), t)

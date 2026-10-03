@@ -2,6 +2,7 @@
 
 """Run queueing-system commands directly on the current host."""
 
+import os
 import subprocess
 
 
@@ -13,6 +14,11 @@ class LocalTransport:
     name = "local"
     host = None
 
+    def __init__(self, *, drop_env_prefixes=()):
+        # An evaluator that is itself a batch job must not pass its own
+        # allocation (SLURM_MEM_PER_CPU, ...) on to the jobs it submits.
+        self.drop_env_prefixes = tuple(drop_env_prefixes)
+
     def run(self, argv, input_text=None):
         """Run a command.
 
@@ -21,10 +27,20 @@ class LocalTransport:
         (int, str, str)
             ``(returncode, stdout, stderr)``.
         """
-        proc = subprocess.run(
-            argv,
-            input=input_text,
-            capture_output=True,
-            text=True,
-        )
+        if self.drop_env_prefixes:
+            env = {
+                k: v
+                for k, v in os.environ.items()
+                if not k.startswith(self.drop_env_prefixes)
+            }
+            proc = subprocess.run(
+                argv, input=input_text, capture_output=True, text=True, env=env
+            )
+        else:
+            proc = subprocess.run(
+                argv,
+                input=input_text,
+                capture_output=True,
+                text=True,
+            )
         return proc.returncode, proc.stdout, proc.stderr

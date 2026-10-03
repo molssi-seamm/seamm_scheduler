@@ -238,3 +238,59 @@ def test_slurm_poll_failed_when_sacct_cannot_answer():
 
     assert s.poll(gone, ["1"]) == {}
     assert not s.poll_failed
+
+
+def test_slurm_unparseable_output_is_a_failed_poll():
+    s = Slurm()
+
+    def garbled(argv, input_text=None):
+        return 0, "Welcome to the cluster!\n{not json", ""
+
+    assert s.poll(garbled, ["1"]) == {}
+    assert s.poll_failed
+
+
+def test_slurm_without_accounting_trusts_squeue():
+    s = Slurm()
+
+    def no_accounting(argv, input_text=None):
+        if argv[0] == "sacct":
+            return 1, "", "sacct: error: Slurm accounting storage is disabled"
+        if "--json" in argv:
+            return 0, json.dumps({"jobs": []}), ""
+        return 0, "", ""
+
+    assert s.poll(no_accounting, ["1"]) == {}
+    assert not s.poll_failed
+    # Remembered: sacct is not asked again
+    calls = []
+
+    def recording(argv, input_text=None):
+        calls.append(argv[0])
+        return no_accounting(argv, input_text)
+
+    s.poll(recording, ["1"])
+    assert "sacct" not in calls and not s.poll_failed
+
+
+def test_find_jobs_by_name():
+    transport = FakeTransport([(["squeue", "--noheader", "--me"], (0, "77\n", ""))])
+    backend = QueueBackend(Slurm(), transport)
+    assert backend.find_jobs("seamm-b.1-abc") == ["77"]
+    assert transport.calls[0][0][3] == "--name=seamm-b.1-abc"
+    down = QueueBackend(Slurm(), FakeTransport([]))
+    assert down.find_jobs("x") is None
+
+
+def test_local_transport_can_drop_the_allocation(monkeypatch):
+    from unittest.mock import MagicMock, patch
+
+    from seamm_scheduler import LocalTransport
+
+    monkeypatch.setenv("SLURM_MEM_PER_CPU", "1000")
+    monkeypatch.setenv("SBATCH_ACCOUNT", "seamm")
+    fake = MagicMock(returncode=0, stdout="", stderr="")
+    with patch("seamm_scheduler.local.subprocess.run", return_value=fake) as run:
+        LocalTransport(drop_env_prefixes=("SLURM_",)).run(["sbatch"])
+    env = run.call_args.kwargs["env"]
+    assert "SLURM_MEM_PER_CPU" not in env and env["SBATCH_ACCOUNT"] == "seamm"

@@ -94,6 +94,17 @@ class QueueBackend:
         """
         return self.scheduler.poll(self._run, [str(j) for j in job_ids])
 
+    def find_jobs(self, job_name):
+        """The ids of the user's queued or running jobs called ``job_name``,
+        or None if that cannot be known now (the queue could not be asked)."""
+        argv = self.scheduler.find_cmd(job_name)
+        if argv is None:
+            return None
+        rc, out, err = self._run(argv)
+        if rc != 0:
+            return None
+        return [line.split()[0] for line in out.splitlines() if line.strip()]
+
     def count_jobs(self):
         """How many jobs the user has in the queue now, or None if unknown."""
         argv = self.scheduler.count_cmd()
