@@ -209,6 +209,50 @@ Done (2026-10-03)
      inside the evaluator job (tasks = queue, bundle 1, nothing inline); three
      bundle jobs, exit 0, identical table.
 
+Follow-ups from the design session (2026-10-03)
+------------------------------------------------
+
+**Remaining checks against "slurm"** (workspace grep):
+
+- ``seamm_webui`` ``routers/jobs.py``: on-demand sync of a remote job's files
+  tested ``type != "slurm"``, so it skipped PBS-over-ssh jobs. Fixed
+  (seamm_webui 6be2499, with a test).
+- ``seamm_exec`` ``computational_environment.py``: ``scheduler == "slurm"`` /
+  ``"pbs"`` picks how to read the allocation (``_slurm()``/``_pbs()``); correct
+  as is.
+- ``seamm_jobserver``: ``mode == "slurm"`` is the internal name of a job running
+  as a batch job on any scheduler (in ``job_data``-like state and the reattach
+  path); harmless, left as is to keep the state format.
+- ``seamm_scheduler`` ``config.py``: the ``"slurm"`` alias and the historical
+  ``LocalSlurm``/``SshSlurm`` classes; intended.
+- seamm-manager's ini templates and seamm_dashboard_client have none.
+
+**SLURM 20.11 coverage:** the replayed calls are exactly those the back end
+makes: ``sbatch --parsable``, ``squeue --json`` (refused by 20.11) and the text
+``squeue --format=%i|%T|%R``, ``sacct --json`` (refused) and the text
+``sacct --parsable2``, the ``sacct --allocations`` and ``squeue --me`` finds,
+``squeue -r`` count, and ``scancel``. The back end does not call ``sinfo`` or
+``scontrol``; their recorded output (``sinfo.txt``, ``sinfo-Nl.txt``,
+``scontrol-show-node.txt``, ``scontrol-show-partition.txt``) is kept beside the
+fixture as reference, not replayed.
+
+Draft HISTORY lines (for the release PRs):
+
+- **seamm_scheduler:** "PBS validated on a real OpenPBS 23.06 site: dependencies
+  as ``-W depend``, the job starts with a ``cd`` into its directory, ``export=ALL``
+  becomes ``-V``, and finished jobs are found again (``qselect -x``). A section
+  can run the flowchart itself as a batch job on any scheduler: ``type = queue``
+  with ``scheduler = pbs`` or ``slurm`` (``type = slurm`` still works). Recorded
+  output from real SLURM 20.11 and OpenPBS 23.06 sites is replayed by the tests."
+- **seamm_jobserver:** "Flowcharts can run as PBS jobs: a queue with
+  ``type = queue`` and ``scheduler = pbs``. Like SLURM's default, the job gets the
+  JobServer's environment unless the queue sets ``export = NONE``. Requires
+  seamm-scheduler >= the new version."
+- **seamm_webui:** "Queues are read with seamm_scheduler (no longer the
+  seamm_slurm shim); ``type = queue`` queues, such as PBS, are listed, and remote
+  ones sync their files on demand. Requires seamm-scheduler >= the new
+  version."
+
 Still to do: release seamm_scheduler, seamm_jobserver and seamm_webui (pins:
 jobserver and webui on the new seamm_scheduler); MolSSI10's own ``~/SEAMM``
 (old, pre-phase 2, services stopped) rewritten for PBS if it is to run jobs
