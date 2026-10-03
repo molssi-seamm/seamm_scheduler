@@ -1,0 +1,85 @@
+seamm\_scheduler package
+========================
+
+Submodules
+----------
+
+seamm\_scheduler.backend module
+-------------------------------
+
+.. automodule:: seamm_scheduler.backend
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+seamm\_scheduler.config module
+------------------------------
+
+.. automodule:: seamm_scheduler.config
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+seamm\_scheduler.local module
+-----------------------------
+
+.. automodule:: seamm_scheduler.local
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+seamm\_scheduler.pbs module
+---------------------------
+
+.. automodule:: seamm_scheduler.pbs
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+seamm\_scheduler.scheduler module
+---------------------------------
+
+.. automodule:: seamm_scheduler.scheduler
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+seamm\_scheduler.script module
+------------------------------
+
+.. automodule:: seamm_scheduler.script
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+seamm\_scheduler.slurm module
+-----------------------------
+
+.. automodule:: seamm_scheduler.slurm
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+seamm\_scheduler.ssh module
+---------------------------
+
+.. automodule:: seamm_scheduler.ssh
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+seamm\_scheduler.stage module
+-----------------------------
+
+.. automodule:: seamm_scheduler.stage
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: seamm_scheduler
+   :members:
+   :show-inheritance:
+   :undoc-members:

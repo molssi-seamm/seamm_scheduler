@@ -1,0 +1,7 @@
+seamm_scheduler
+===============
+
+.. toctree::
+   :maxdepth: 4
+
+   seamm_scheduler

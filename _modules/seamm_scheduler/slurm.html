@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>seamm_scheduler.slurm &#8212; SEAMM Scheduler  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/seamm_scheduler/slurm';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SEAMM Scheduler  documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+    Developer Documentation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+    Developer Documentation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">seamm_scheduler.slurm</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for seamm_scheduler.slurm</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">"""SLURM: ``#SBATCH`` directives, ``sbatch``/``squeue``/``sacct``/``scancel``.</span>
+
+<span class="sd">Not every SLURM version supports ``squeue --json``/``sacct --json``: SLURM</span>
+<span class="sd">21.08 has it, 20.11 (MolSSI10) does not. :class:`Slurm` probes for it once per</span>
+<span class="sd">instance and falls back to the text formats. SLURM 25.11 (TinkerCliffs) nests</span>
+<span class="sd">the exit code of ``sacct --json`` one level deeper; both shapes are read.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">QueueBackend</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.local</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalTransport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.scheduler</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CANCELLED</span><span class="p">,</span>
+    <span class="n">COMPLETED</span><span class="p">,</span>
+    <span class="n">FAILED</span><span class="p">,</span>
+    <span class="n">PENDING</span><span class="p">,</span>
+    <span class="n">RUNNING</span><span class="p">,</span>
+    <span class="n">UNKNOWN</span><span class="p">,</span>
+    <span class="n">JobStatus</span><span class="p">,</span>
+    <span class="n">Scheduler</span><span class="p">,</span>
+    <span class="n">SchedulerError</span><span class="p">,</span>
+    <span class="n">SubmitError</span><span class="p">,</span>
+    <span class="n">_get</span><span class="p">,</span>
+    <span class="n">format_memory_mb</span><span class="p">,</span>
+    <span class="n">format_walltime</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ssh</span><span class="w"> </span><span class="kn">import</span> <span class="n">SshTransport</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"seamm_scheduler"</span><span class="p">)</span>
+
+<span class="c1"># SLURM job states, classified into the categories this library exposes. Not</span>
+<span class="c1"># exhaustive of every SLURM release's state list, but covers the states</span>
+<span class="c1"># relevant to whether/how a job should be treated as done.</span>
+<span class="n">_PENDING_STATES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"PENDING"</span><span class="p">,</span>
+    <span class="s2">"CONFIGURING"</span><span class="p">,</span>
+    <span class="s2">"REQUEUE_HOLD"</span><span class="p">,</span>
+    <span class="s2">"REQUEUE_FED"</span><span class="p">,</span>
+    <span class="s2">"REQUEUED"</span><span class="p">,</span>
+    <span class="s2">"RESIZING"</span><span class="p">,</span>
+    <span class="s2">"RESV_DEL_HOLD"</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">_RUNNING_STATES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"RUNNING"</span><span class="p">,</span>
+    <span class="s2">"COMPLETING"</span><span class="p">,</span>
+    <span class="s2">"SUSPENDED"</span><span class="p">,</span>
+    <span class="s2">"STAGE_OUT"</span><span class="p">,</span>
+    <span class="s2">"SIGNALING"</span><span class="p">,</span>
+    <span class="s2">"STOPPED"</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">_COMPLETED_STATES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"COMPLETED"</span><span class="p">}</span>
+<span class="n">_CANCELLED_STATES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"CANCELLED"</span><span class="p">}</span>
+<span class="n">_FAILED_STATES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"FAILED"</span><span class="p">,</span>
+    <span class="s2">"TIMEOUT"</span><span class="p">,</span>
+    <span class="s2">"NODE_FAIL"</span><span class="p">,</span>
+    <span class="s2">"OUT_OF_MEMORY"</span><span class="p">,</span>
+    <span class="s2">"BOOT_FAIL"</span><span class="p">,</span>
+    <span class="s2">"DEADLINE"</span><span class="p">,</span>
+    <span class="s2">"PREEMPTED"</span><span class="p">,</span>
+    <span class="s2">"REVOKED"</span><span class="p">,</span>
+    <span class="s2">"SPECIAL_EXIT"</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="classify">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.classify">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">classify</span><span class="p">(</span><span class="n">raw_state</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Classify a raw SLURM state string into one of this library's</span>
+<span class="sd">    categories.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    raw_state : str</span>
+<span class="sd">        A SLURM job state, e.g. ``"RUNNING"``, ``"COMPLETED"``, or (as</span>
+<span class="sd">        ``sacct`` sometimes reports for a cancelled job) ``"CANCELLED by</span>
+<span class="sd">        1234"``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        One of ``"pending"``, ``"running"``, ``"completed"``,</span>
+<span class="sd">        ``"cancelled"``, ``"failed"``, or ``"unknown"``.</span>
+<span class="sd">    """</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">raw_state</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">if</span> <span class="n">raw_state</span> <span class="k">else</span> <span class="s2">""</span>
+    <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">_PENDING_STATES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PENDING</span>
+    <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">_RUNNING_STATES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">RUNNING</span>
+    <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">_COMPLETED_STATES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">COMPLETED</span>
+    <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">_CANCELLED_STATES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">CANCELLED</span>
+    <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">_FAILED_STATES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FAILED</span>
+    <span class="k">return</span> <span class="n">UNKNOWN</span></div>
+
+
+
+<span class="c1"># Directive keys with a dedicated, human-friendly name (rather than the</span>
+<span class="c1"># literal `--flag` spelling) and the #SBATCH flag they map to. Order here is</span>
+<span class="c1"># the order they're emitted in, for reproducible script text.</span>
+<span class="n">_DIRECTIVE_FLAGS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"job_name"</span><span class="p">:</span> <span class="s2">"--job-name"</span><span class="p">,</span>
+    <span class="s2">"partition"</span><span class="p">:</span> <span class="s2">"--partition"</span><span class="p">,</span>
+    <span class="s2">"account"</span><span class="p">:</span> <span class="s2">"--account"</span><span class="p">,</span>
+    <span class="s2">"qos"</span><span class="p">:</span> <span class="s2">"--qos"</span><span class="p">,</span>
+    <span class="s2">"nodes"</span><span class="p">:</span> <span class="s2">"--nodes"</span><span class="p">,</span>
+    <span class="s2">"ntasks"</span><span class="p">:</span> <span class="s2">"--ntasks"</span><span class="p">,</span>
+    <span class="s2">"cpus_per_task"</span><span class="p">:</span> <span class="s2">"--cpus-per-task"</span><span class="p">,</span>
+    <span class="s2">"time"</span><span class="p">:</span> <span class="s2">"--time"</span><span class="p">,</span>
+    <span class="s2">"mem"</span><span class="p">:</span> <span class="s2">"--mem"</span><span class="p">,</span>
+    <span class="s2">"gpus"</span><span class="p">:</span> <span class="s2">"--gpus"</span><span class="p">,</span>
+    <span class="s2">"output"</span><span class="p">:</span> <span class="s2">"--output"</span><span class="p">,</span>
+    <span class="s2">"error"</span><span class="p">:</span> <span class="s2">"--error"</span><span class="p">,</span>
+    <span class="s2">"chdir"</span><span class="p">:</span> <span class="s2">"--chdir"</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="Slurm">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Slurm</span><span class="p">(</span><span class="n">Scheduler</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The SLURM queueing system."""</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"slurm"</span>
+    <span class="n">directive_prefix</span> <span class="o">=</span> <span class="s2">"#SBATCH"</span>
+    <span class="n">env_names</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"job_id"</span><span class="p">:</span> <span class="s2">"SLURM_JOB_ID"</span><span class="p">,</span>
+        <span class="s2">"ntasks"</span><span class="p">:</span> <span class="s2">"SLURM_NTASKS"</span><span class="p">,</span>
+        <span class="s2">"cpus_per_task"</span><span class="p">:</span> <span class="s2">"SLURM_CPUS_PER_TASK"</span><span class="p">,</span>
+        <span class="s2">"nnodes"</span><span class="p">:</span> <span class="s2">"SLURM_NNODES"</span><span class="p">,</span>
+        <span class="s2">"nodelist"</span><span class="p">:</span> <span class="s2">"SLURM_NODELIST"</span><span class="p">,</span>
+        <span class="s2">"ntasks_per_node"</span><span class="p">:</span> <span class="s2">"SLURM_NTASKS_PER_NODE"</span><span class="p">,</span>
+        <span class="s2">"mem_per_cpu"</span><span class="p">:</span> <span class="s2">"SLURM_MEM_PER_CPU"</span><span class="p">,</span>
+        <span class="s2">"mem_per_node"</span><span class="p">:</span> <span class="s2">"SLURM_MEM_PER_NODE"</span><span class="p">,</span>
+        <span class="s2">"gpus"</span><span class="p">:</span> <span class="s2">"SLURM_JOB_GPUS"</span><span class="p">,</span>
+        <span class="s2">"submit_dir"</span><span class="p">:</span> <span class="s2">"SLURM_SUBMIT_DIR"</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="c1">#: The prefixes of every variable SLURM sets in a job.</span>
+    <span class="n">env_prefixes</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"SLURM_"</span><span class="p">,</span> <span class="s2">"SBATCH_"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Tri-state: None = not yet probed, True/False = known support.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_squeue_json</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sacct_json</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_failed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_squeue_failed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_no_accounting</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Directives</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Slurm.directives">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.directives">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">directives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resources</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">directives</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">extra</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">"partition"</span><span class="p">,</span> <span class="s2">"partition"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"account"</span><span class="p">,</span> <span class="s2">"account"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"qos"</span><span class="p">,</span> <span class="s2">"qos"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"nodes"</span><span class="p">,</span> <span class="s2">"nodes"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"ntasks"</span><span class="p">,</span> <span class="s2">"ntasks"</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"cpus_per_task"</span><span class="p">,</span> <span class="s2">"cpus_per_task"</span><span class="p">),</span>
+        <span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">""</span><span class="p">):</span>
+                <span class="n">directives</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">mem_per_cpu</span> <span class="o">=</span> <span class="n">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="s2">"mem_per_cpu"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mem_per_cpu</span><span class="p">:</span>
+            <span class="n">directives</span><span class="p">[</span><span class="s2">"mem_per_cpu"</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_memory_mb</span><span class="p">(</span><span class="n">mem_per_cpu</span><span class="p">)</span>
+            <span class="c1"># --mem and --mem-per-cpu are mutually exclusive.</span>
+            <span class="n">directives</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"mem"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">walltime</span> <span class="o">=</span> <span class="n">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="s2">"walltime"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">walltime</span><span class="p">:</span>
+            <span class="n">directives</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_walltime</span><span class="p">(</span><span class="n">walltime</span><span class="p">)</span>
+        <span class="n">ngpus</span> <span class="o">=</span> <span class="n">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="s2">"ngpus"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ngpus</span><span class="p">:</span>
+            <span class="n">directives</span><span class="p">[</span><span class="s2">"gpus"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ngpus</span>
+        <span class="k">return</span> <span class="n">directives</span></div>
+
+
+<div class="viewcode-block" id="Slurm.directive_lines">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.directive_lines">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">directive_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directives</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""``#SBATCH --flag=value`` lines.</span>
+
+<span class="sd">        Keys are the plain names in ``_DIRECTIVE_FLAGS`` (e.g. ``"partition"``,</span>
+<span class="sd">        not ``"--partition"``). A blank or None value is skipped. Other keys</span>
+<span class="sd">        pass through, underscores becoming dashes (``{"gres": "gpu:1"}`` -&gt;</span>
+<span class="sd">        ``#SBATCH --gres=gpu:1``), so a target section can carry options this</span>
+<span class="sd">        module does not special-case.</span>
+<span class="sd">        """</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">flag</span> <span class="ow">in</span> <span class="n">_DIRECTIVE_FLAGS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">directives</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">""</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"#SBATCH </span><span class="si">{</span><span class="n">flag</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">directives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">seen</span> <span class="ow">or</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">""</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">flag</span> <span class="o">=</span> <span class="s2">"--"</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"#SBATCH </span><span class="si">{</span><span class="n">flag</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lines</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Commands</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Slurm.submit_cmd">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.submit_cmd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">submit_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">script_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"sbatch"</span><span class="p">,</span> <span class="s2">"--parsable"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">job_name</span><span class="p">:</span>
+            <span class="n">argv</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"--job-name"</span><span class="p">,</span> <span class="n">job_name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">script_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">argv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">script_path</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">argv</span></div>
+
+
+<div class="viewcode-block" id="Slurm.parse_submit">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.parse_submit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="p">):</span>
+        <span class="c1"># --parsable prints "&lt;jobid&gt;" or "&lt;jobid&gt;;&lt;cluster&gt;"</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"no job id"</span><span class="p">)</span>
+        <span class="n">job_id</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">";"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">job_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"no job id"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">job_id</span></div>
+
+
+<div class="viewcode-block" id="Slurm.status_cmd">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.status_cmd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">status_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="s2">"squeue"</span><span class="p">,</span>
+            <span class="s2">"--noheader"</span><span class="p">,</span>
+            <span class="s2">"--format=</span><span class="si">%i</span><span class="s2">|%T|%R"</span><span class="p">,</span>
+            <span class="s2">"--jobs"</span><span class="p">,</span>
+            <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">),</span>
+        <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Slurm.parse_status">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.parse_status">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_squeue_text</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Slurm.cancel_cmd">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.cancel_cmd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cancel_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">"scancel"</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Slurm.log_directives">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.log_directives">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_directives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"output"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">/slurm-%j.out"</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Slurm.find_cmd">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.find_cmd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">"squeue"</span><span class="p">,</span> <span class="s2">"--noheader"</span><span class="p">,</span> <span class="s2">"--me"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"--name=</span><span class="si">{</span><span class="n">job_name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"--format=</span><span class="si">%i</span><span class="s2">"</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Slurm.find">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.find">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">job_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""squeue for a queued or running job, then sacct for a finished one."""</span>
+        <span class="n">rc</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">find_cmd</span><span class="p">(</span><span class="n">job_name</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">rc</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="n">ids</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_accounting</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ids</span>
+        <span class="c1"># Sites cap sacct's date range (TinkerCliffs refuses 30 days); bundles</span>
+        <span class="c1"># are looked up within days of their submission.</span>
+        <span class="k">for</span> <span class="n">days</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">rc</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="s2">"sacct"</span><span class="p">,</span>
+                    <span class="s2">"--noheader"</span><span class="p">,</span>
+                    <span class="s2">"--parsable2"</span><span class="p">,</span>
+                    <span class="s2">"--allocations"</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"--name=</span><span class="si">{</span><span class="n">job_name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                    <span class="s2">"--format=JobID"</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"--starttime=now-</span><span class="si">{</span><span class="n">days</span><span class="si">}</span><span class="s2">days"</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">rc</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="s2">"too wide"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">err</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">rc</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_no_accounting</span><span class="p">(</span><span class="n">err</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_no_accounting</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="Slurm.count_cmd">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.count_cmd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">count_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># -r: one line per array element, since each counts against a QOS's</span>
+        <span class="c1"># per-user job limit.</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">"squeue"</span><span class="p">,</span> <span class="s2">"--noheader"</span><span class="p">,</span> <span class="s2">"--me"</span><span class="p">,</span> <span class="s2">"-r"</span><span class="p">,</span> <span class="s2">"--format=</span><span class="si">%i</span><span class="s2">"</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Slurm.classify">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.classify">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">classify</span><span class="p">(</span><span class="n">raw_state</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Polling: squeue for live jobs, then sacct for the ones it no longer lists</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Slurm.poll">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.poll">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">poll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">poll_failed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ids</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_failed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_squeue_failed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_squeue</span><span class="p">(</span><span class="n">run</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">ids</span> <span class="k">if</span> <span class="n">j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_accounting</span><span class="p">:</span>
+                <span class="c1"># Without accounting squeue is all there is; trust it unless</span>
+                <span class="c1"># it failed.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">poll_failed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failed</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_squeue_failed</span>
+                <span class="k">return</span> <span class="n">result</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_failed</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sacct</span><span class="p">(</span><span class="n">run</span><span class="p">,</span> <span class="n">missing</span><span class="p">))</span>
+            <span class="c1"># sacct is the authority for jobs squeue no longer lists. If it</span>
+            <span class="c1"># could not answer, or squeue could not be asked and a job is in</span>
+            <span class="c1"># neither (sacct may not have recorded a new job yet), a missing</span>
+            <span class="c1"># job may well still exist.</span>
+            <span class="n">still_missing</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">poll_failed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failed</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_squeue_failed</span> <span class="ow">and</span> <span class="n">still_missing</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_squeue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">job_ids</span><span class="p">):</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job_ids</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_squeue_json</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">rc</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">run</span><span class="p">([</span><span class="s2">"squeue"</span><span class="p">,</span> <span class="s2">"--json"</span><span class="p">,</span> <span class="s2">"--jobs"</span><span class="p">,</span> <span class="n">ids</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">rc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_squeue_json</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_squeue_json</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="c1"># Never an empty, trusted answer: that would read as</span>
+                    <span class="c1"># "every job is gone".</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not parse squeue --json output: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_failed</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_squeue_failed</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">return</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">_is_unrecognized_option</span><span class="p">(</span><span class="n">err</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_squeue_json</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Nothing to report from squeue. Only "invalid job id" (all</span>
+                <span class="c1"># the ids are gone) is an answer; anything else (ssh down,</span>
+                <span class="c1"># controller unreachable) means squeue could not be asked.</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_invalid_job_id</span><span class="p">(</span><span class="n">err</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_squeue_failed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">rc</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status_cmd</span><span class="p">(</span><span class="n">job_ids</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">rc</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_invalid_job_id</span><span class="p">(</span><span class="n">err</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_squeue_failed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_squeue_text</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_squeue_json</span><span class="p">(</span><span class="n">out</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jobs"</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="n">job_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="s2">"job_id"</span><span class="p">])</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">j</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"job_state"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="c1"># Some SLURM/OpenAPI versions report job_state as a list of</span>
+                <span class="c1"># flags rather than a single string.</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">state</span> <span class="k">else</span> <span class="s2">""</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="p">(</span>
+                <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span>
+                <span class="n">category</span><span class="o">=</span><span class="n">classify</span><span class="p">(</span><span class="n">state</span><span class="p">),</span>
+                <span class="n">raw</span><span class="o">=</span><span class="n">j</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_squeue_text</span><span class="p">(</span><span class="n">out</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"|"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">job_id</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="p">(</span>
+                <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span>
+                <span class="n">category</span><span class="o">=</span><span class="n">classify</span><span class="p">(</span><span class="n">state</span><span class="p">),</span>
+                <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sacct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">job_ids</span><span class="p">):</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job_ids</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sacct_json</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">rc</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">run</span><span class="p">([</span><span class="s2">"sacct"</span><span class="p">,</span> <span class="s2">"--json"</span><span class="p">,</span> <span class="s2">"--jobs"</span><span class="p">,</span> <span class="n">ids</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">rc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sacct_json</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_sacct_json</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not parse sacct --json output: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_failed</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">return</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">_is_unrecognized_option</span><span class="p">(</span><span class="n">err</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sacct_json</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="n">_no_accounting</span><span class="p">(</span><span class="n">err</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_no_accounting</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="p">{}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_failed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">fmt</span> <span class="o">=</span> <span class="s2">"JobID,State,ExitCode"</span>
+        <span class="n">rc</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">"sacct"</span><span class="p">,</span> <span class="s2">"--parsable2"</span><span class="p">,</span> <span class="s2">"--noheader"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"--format=</span><span class="si">{</span><span class="n">fmt</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"--jobs"</span><span class="p">,</span> <span class="n">ids</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_no_accounting</span><span class="p">(</span><span class="n">err</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_no_accounting</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_failed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_sacct_text</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_sacct_json</span><span class="p">(</span><span class="n">out</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jobs"</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="n">job_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="s2">"job_id"</span><span class="p">])</span>
+            <span class="n">state_field</span> <span class="o">=</span> <span class="n">j</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"state"</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_field</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">state_field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"current"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+                <span class="n">reason</span> <span class="o">=</span> <span class="n">state_field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"reason"</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Fall back gracefully if a SLURM version reports state as a</span>
+                <span class="c1"># plain string here too.</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">state_field</span>
+                <span class="n">reason</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">state</span> <span class="k">else</span> <span class="s2">""</span>
+            <span class="n">exit_field</span> <span class="o">=</span> <span class="n">j</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"exit_code"</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">exit_code</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">exit_field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"return_code"</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exit_field</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+                <span class="k">else</span> <span class="n">exit_field</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exit_code</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="c1"># SLURM 25.x: {"set": true, "infinite": false, "number": 0}</span>
+                <span class="n">exit_code</span> <span class="o">=</span> <span class="n">exit_code</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"number"</span><span class="p">)</span> <span class="k">if</span> <span class="n">exit_code</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"set"</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="p">(</span>
+                <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span>
+                <span class="n">category</span><span class="o">=</span><span class="n">classify</span><span class="p">(</span><span class="n">state</span><span class="p">),</span>
+                <span class="n">exit_code</span><span class="o">=</span><span class="n">exit_code</span><span class="p">,</span>
+                <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">,</span>
+                <span class="n">raw</span><span class="o">=</span><span class="n">j</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_sacct_text</span><span class="p">(</span><span class="n">out</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"|"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">job_id</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="c1"># Sub-step rows (e.g. "123.batch", "123.extern") describe pieces</span>
+            <span class="c1"># of the job, not the job itself -- skip them.</span>
+            <span class="k">if</span> <span class="s2">"."</span> <span class="ow">in</span> <span class="n">job_id</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">exit_code</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="p">(</span>
+                <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span>
+                <span class="n">category</span><span class="o">=</span><span class="n">classify</span><span class="p">(</span><span class="n">state</span><span class="p">),</span>
+                <span class="n">exit_code</span><span class="o">=</span><span class="n">exit_code</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_invalid_job_id</span><span class="p">(</span><span class="n">stderr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""squeue's answer when none of the ids is in the queue any more."""</span>
+    <span class="k">return</span> <span class="s2">"invalid job id"</span> <span class="ow">in</span> <span class="n">stderr</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_no_accounting</span><span class="p">(</span><span class="n">stderr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""sacct on a cluster without accounting storage."""</span>
+    <span class="k">return</span> <span class="s2">"accounting storage is disabled"</span> <span class="ow">in</span> <span class="n">stderr</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_unrecognized_option</span><span class="p">(</span><span class="n">stderr</span><span class="p">):</span>
+    <span class="n">stderr</span> <span class="o">=</span> <span class="n">stderr</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s2">"unrecognized option"</span> <span class="ow">in</span> <span class="n">stderr</span> <span class="ow">or</span> <span class="s2">"invalid option"</span> <span class="ow">in</span> <span class="n">stderr</span>
+
+
+<span class="c1"># ----------------------------------------------------------------------</span>
+<span class="c1"># Backends with SLURM built in: the classes seamm_slurm has always offered.</span>
+<span class="c1"># ----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="SlurmError">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.SlurmError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SlurmError</span><span class="p">(</span><span class="n">SchedulerError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Raised when a SLURM CLI command fails unexpectedly."""</span></div>
+
+
+
+<div class="viewcode-block" id="SlurmSubmitError">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.SlurmSubmitError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SlurmSubmitError</span><span class="p">(</span><span class="n">SlurmError</span><span class="p">,</span> <span class="n">SubmitError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Raised when ``sbatch`` fails to submit a job."""</span></div>
+
+
+
+<div class="viewcode-block" id="SlurmBackend">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.SlurmBackend">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SlurmBackend</span><span class="p">(</span><span class="n">QueueBackend</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A :class:`QueueBackend` for SLURM. Subclasses either pass a transport or</span>
+<span class="sd">    implement ``_run`` themselves."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transport</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">Slurm</span><span class="p">(),</span> <span class="n">transport</span><span class="p">)</span>
+
+    <span class="c1"># The probe results live on the scheduler; kept visible here as before.</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_squeue_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">_squeue_json</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sacct_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">_sacct_json</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">SlurmError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_submit_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">SlurmSubmitError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="LocalSlurm">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.LocalSlurm">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LocalSlurm</span><span class="p">(</span><span class="n">SlurmBackend</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""SLURM's CLI directly on the current host -- the case where the caller</span>
+<span class="sd">    runs on a SLURM submit host with those commands on ``PATH``."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">drop_env_prefixes</span><span class="o">=</span><span class="p">()):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">LocalTransport</span><span class="p">(</span><span class="n">drop_env_prefixes</span><span class="o">=</span><span class="n">drop_env_prefixes</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="SshSlurm">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.SshSlurm">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SshSlurm</span><span class="p">(</span><span class="n">SlurmBackend</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""SLURM's CLI on a remote host over passwordless ssh."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ssh_command</span><span class="o">=</span><span class="s2">"ssh"</span><span class="p">,</span> <span class="n">ssh_options</span><span class="o">=</span><span class="p">(),</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">SshTransport</span><span class="p">(</span>
+                <span class="n">host</span><span class="p">,</span> <span class="n">ssh_command</span><span class="o">=</span><span class="n">ssh_command</span><span class="p">,</span> <span class="n">ssh_options</span><span class="o">=</span><span class="n">ssh_options</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">host</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">host</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ssh_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">ssh_command</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Paul Saxe. Project structure based on the Computational Molecular Science Python Cookiecutter version 1.1.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

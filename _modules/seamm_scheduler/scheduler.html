@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>seamm_scheduler.scheduler &#8212; SEAMM Scheduler  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/seamm_scheduler/scheduler';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SEAMM Scheduler  documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+    Developer Documentation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+    Developer Documentation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">seamm_scheduler.scheduler</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for seamm_scheduler.scheduler</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">"""The interface every queueing system implements, and the job status it reports.</span>
+
+<span class="sd">A :class:`Scheduler` knows one queueing system's syntax and nothing else: how</span>
+<span class="sd">to write its directives, which commands submit, poll and cancel, how to read</span>
+<span class="sd">their output, and the names of the environment variables it sets inside a job.</span>
+<span class="sd">It never runs anything itself. A :class:`~seamm_scheduler.backend.QueueBackend`</span>
+<span class="sd">pairs a scheduler with a transport (local commands or ssh) to actually talk to</span>
+<span class="sd">a cluster.</span>
+
+<span class="sd">Adding a queueing system is one module with a ``Scheduler`` subclass, plus an</span>
+<span class="sd">entry in :data:`SCHEDULERS`.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="SchedulerError">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.SchedulerError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SchedulerError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Raised when a queueing-system command fails unexpectedly."""</span></div>
+
+
+
+<div class="viewcode-block" id="SubmitError">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.SubmitError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SubmitError</span><span class="p">(</span><span class="n">SchedulerError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Raised when a job cannot be submitted."""</span></div>
+
+
+
+<span class="c1"># The categories every scheduler classifies its own states into.</span>
+<span class="n">PENDING</span> <span class="o">=</span> <span class="s2">"pending"</span>
+<span class="n">RUNNING</span> <span class="o">=</span> <span class="s2">"running"</span>
+<span class="n">COMPLETED</span> <span class="o">=</span> <span class="s2">"completed"</span>
+<span class="n">CANCELLED</span> <span class="o">=</span> <span class="s2">"cancelled"</span>
+<span class="n">FAILED</span> <span class="o">=</span> <span class="s2">"failed"</span>
+<span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s2">"unknown"</span>
+
+<span class="n">_TERMINAL_CATEGORIES</span> <span class="o">=</span> <span class="p">{</span><span class="n">COMPLETED</span><span class="p">,</span> <span class="n">CANCELLED</span><span class="p">,</span> <span class="n">FAILED</span><span class="p">}</span>
+
+<span class="c1">#: The category of a job -&gt; the task layer's vocabulary</span>
+<span class="c1">#: (queued | running | finished | failed | lost). A cancelled job is "lost"</span>
+<span class="c1">#: to the task layer: something outside it removed the job, so the tasks in</span>
+<span class="c1">#: it are worth resubmitting.</span>
+<span class="n">TASK_STATES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">PENDING</span><span class="p">:</span> <span class="s2">"queued"</span><span class="p">,</span>
+    <span class="n">RUNNING</span><span class="p">:</span> <span class="s2">"running"</span><span class="p">,</span>
+    <span class="n">COMPLETED</span><span class="p">:</span> <span class="s2">"finished"</span><span class="p">,</span>
+    <span class="n">FAILED</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span>
+    <span class="n">CANCELLED</span><span class="p">:</span> <span class="s2">"lost"</span><span class="p">,</span>
+    <span class="n">UNKNOWN</span><span class="p">:</span> <span class="s2">"running"</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="JobStatus">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.JobStatus">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JobStatus</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""The status of one queued job, as last polled."""</span>
+
+    <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">state</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">category</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">exit_code</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">reason</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">raw</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Whether this job has finished (successfully or not) and is no</span>
+<span class="sd">        longer pending or running."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">category</span> <span class="ow">in</span> <span class="n">_TERMINAL_CATEGORIES</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">task_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The state in the task layer's vocabulary (see :data:`TASK_STATES`)."""</span>
+        <span class="k">return</span> <span class="n">TASK_STATES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="p">,</span> <span class="s2">"running"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Scheduler">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Scheduler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""One queueing system's syntax: directives, commands and states.</span>
+
+<span class="sd">    Subclasses set :attr:`name`, :attr:`directive_prefix` and</span>
+<span class="sd">    :attr:`env_names`, and implement the ``*_cmd``/``parse_*`` methods.</span>
+<span class="sd">    :meth:`poll` composes them; a scheduler whose status needs more than one</span>
+<span class="sd">    command (SLURM: ``squeue`` then ``sacct``) overrides it.</span>
+<span class="sd">    """</span>
+
+    <span class="c1">#: "slurm", "pbs", ...</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1">#: "#SBATCH", "#PBS", ...</span>
+    <span class="n">directive_prefix</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1">#: Set by :meth:`poll`: True when the queue could not be asked (a failed</span>
+    <span class="c1">#: command, e.g. ssh could not connect), so a job missing from the answer</span>
+    <span class="c1">#: may still exist. Callers must not take "missing" as "gone" then.</span>
+    <span class="n">poll_failed</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1">#: The scheduler-neutral names -&gt; the environment variables a job sees,</span>
+    <span class="c1">#: e.g. ``{"job_id": "SLURM_JOB_ID", "ntasks": "SLURM_NTASKS"}``. Used by</span>
+    <span class="c1">#: ``seamm_exec.computational_environment()`` to recognize and read an</span>
+    <span class="c1">#: allocation.</span>
+    <span class="n">env_names</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Directives</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Scheduler.directives">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.directives">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">directives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resources</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Translate scheduler-neutral resources into this scheduler's</span>
+<span class="sd">        directive dict (the form :meth:`directive_lines` and</span>
+<span class="sd">        ``seamm_scheduler.script.build_script`` take).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        resources : object or dict</span>
+<span class="sd">            Anything with the attributes (or keys) ``ntasks``,</span>
+<span class="sd">            ``cpus_per_task``, ``mem_per_cpu`` (bytes), ``ngpus``, ``walltime``</span>
+<span class="sd">            (seconds), ``partition``, ``account``, ``qos`` and ``nodes``, e.g.</span>
+<span class="sd">            ``seamm_exec.Resources``. Missing or None values are left out.</span>
+<span class="sd">        extra : dict, optional</span>
+<span class="sd">            Directives in this scheduler's own spelling (a target section's</span>
+<span class="sd">            site defaults), applied first; the resources override them.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">        """</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Scheduler.directive_lines">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.directive_lines">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">directive_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directives</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The script's directive lines, e.g. ``["#SBATCH --ntasks=4"]``."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Commands</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Scheduler.submit_cmd">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.submit_cmd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">submit_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">script_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The command that submits a script. With ``script_path`` None the</span>
+<span class="sd">        script is fed on the command's standard input."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Scheduler.parse_submit">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.parse_submit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The job id from the submit command's output."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Scheduler.status_cmd">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.status_cmd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">status_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The command that reports the state of ``ids``."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Scheduler.parse_status">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.parse_status">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""``{id: JobStatus}`` from the status command's output. An id the</span>
+<span class="sd">        output does not mention is left out."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Scheduler.cancel_cmd">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.cancel_cmd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cancel_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The command that cancels ``ids``."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Scheduler.log_directives">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.log_directives">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_directives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Directives that put the job's own output in ``directory``."""</span>
+        <span class="k">return</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="Scheduler.find_cmd">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.find_cmd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""A command printing the ids of the user's queued or running jobs</span>
+<span class="sd">        called ``job_name``, one per line, or None if the scheduler cannot."""</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Scheduler.find">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.find">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">job_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The ids of the user's jobs called ``job_name``, queued, running or</span>
+<span class="sd">        (where the scheduler remembers them) finished; None if that cannot be</span>
+<span class="sd">        known now."""</span>
+        <span class="n">argv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_cmd</span><span class="p">(</span><span class="n">job_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">argv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">rc</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="Scheduler.count_cmd">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.count_cmd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">count_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""A command listing the user's own jobs, one per line, or None if the</span>
+<span class="sd">        scheduler cannot. Used to respect per-user queued-job limits."""</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Composition</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Scheduler.poll">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.poll">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">poll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The status of ``ids``, using ``run(argv) -&gt; (rc, out, err)``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        {str: JobStatus}</span>
+<span class="sd">            An id the scheduler has no record of is absent.</span>
+<span class="sd">        """</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ids</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="n">rc</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status_cmd</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">poll_failed</span> <span class="o">=</span> <span class="n">rc</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">out</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">poll_failed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_status</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Scheduler.classify">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.Scheduler.classify">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""This scheduler's state string -&gt; one of the categories above."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""An attribute or key of ``resources``, or None."""</span>
+    <span class="k">if</span> <span class="n">resources</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">resources</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="format_walltime">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.format_walltime">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_walltime</span><span class="p">(</span><span class="n">seconds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Seconds -&gt; ``HH:MM:SS`` (hours may exceed 24), the form SLURM and PBS</span>
+<span class="sd">    both accept."""</span>
+    <span class="n">seconds</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">seconds</span><span class="p">)))</span>
+    <span class="n">hours</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="mi">3600</span><span class="p">)</span>
+    <span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">rest</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">hours</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">minutes</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">seconds</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">"</span></div>
+
+
+
+<div class="viewcode-block" id="format_memory_mb">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.format_memory_mb">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_memory_mb</span><span class="p">(</span><span class="n">nbytes</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Bytes -&gt; whole megabytes with an ``M`` suffix, rounded up."""</span>
+    <span class="n">mb</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">nbytes</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">))</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">mb</span><span class="p">)</span><span class="si">}</span><span class="s2">M"</span></div>
+
+
+
+<div class="viewcode-block" id="get_scheduler">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.get_scheduler">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_scheduler</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The scheduler called ``name`` ("slurm", "pbs")."""</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SCHEDULERS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Unknown scheduler '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">' (expected one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">SCHEDULERS</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="p">)</span>
+    <span class="n">module</span><span class="p">,</span> <span class="bp">cls</span> <span class="o">=</span> <span class="n">SCHEDULERS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">),</span> <span class="bp">cls</span><span class="p">)()</span></div>
+
+
+
+<span class="c1">#: name -&gt; (module, class)</span>
+<span class="n">SCHEDULERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"slurm"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"seamm_scheduler.slurm"</span><span class="p">,</span> <span class="s2">"Slurm"</span><span class="p">),</span>
+    <span class="s2">"pbs"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"seamm_scheduler.pbs"</span><span class="p">,</span> <span class="s2">"Pbs"</span><span class="p">),</span>
+<span class="p">}</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Paul Saxe. Project structure based on the Computational Molecular Science Python Cookiecutter version 1.1.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>seamm_scheduler.config &#8212; SEAMM Scheduler  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/seamm_scheduler/config';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SEAMM Scheduler  documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+    Developer Documentation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+    Developer Documentation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">seamm_scheduler.config</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for seamm_scheduler.config</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">"""Load a JobServer's ``&lt;root&gt;/&lt;jobserver-name&gt;.ini``: its *targets*.</span>
+
+<span class="sd">System/machine config, not a user preference -- lives at ``&lt;root&gt;``</span>
+<span class="sd">(``~/SEAMM`` by default), alongside ``orca.ini``/``lammps.ini``/</span>
+<span class="sd">``dashboards.ini``, not in ``~/.seamm.d/seamm.ini``. Named after the JobServer</span>
+<span class="sd">instance (its ``--name``, default hostname), one section per target.</span>
+
+<span class="sd">A target says where a job's flowchart *evaluator* runs (``type``: ``local`` for</span>
+<span class="sd">a subprocess of the JobServer, ``slurm`` for a batch job of its own) and, with</span>
+<span class="sd">the keys added for the task layer, where the evaluator's *tasks* run</span>
+<span class="sd">(``tasks = pool | taskserver | queue``). Every key the task layer added is</span>
+<span class="sd">optional: a section without ``tasks =`` means exactly what it meant before</span>
+<span class="sd">(whole-flowchart submission, the codes running inside the evaluator).</span>
+
+<span class="sd">A section is copied verbatim into each job's ``target.json`` (``setup`` text</span>
+<span class="sd">included), which the Dashboard can show, so a section must never hold secrets.</span>
+
+<span class="sd">Lives here, not in ``seamm_jobserver``, so any dependency-light consumer --</span>
+<span class="sd">``seamm_jobserver``, ``seamm_webui``'s queue list, ``seamm_exec``'s task layer</span>
+<span class="sd">-- can read and validate the file without pulling in the rest of the SEAMM</span>
+<span class="sd">stack. See ``seamm_exec``'s ``docs/developer_guide/campaigns/2026-10-02/``.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">configparser</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">fields</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span><span class="p">,</span> <span class="n">PurePosixPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">QueueBackend</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.local</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalTransport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.scheduler</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_scheduler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.slurm</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalSlurm</span><span class="p">,</span> <span class="n">SshSlurm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ssh</span><span class="w"> </span><span class="kn">import</span> <span class="n">TASK_SSH_OPTIONS</span><span class="p">,</span> <span class="n">SshTransport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.stage</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalStager</span><span class="p">,</span> <span class="n">RsyncStager</span>
+
+<span class="c1"># The task layer's ssh: fail fast, and give up a hung command (see</span>
+<span class="c1"># TASK_SSH_OPTIONS). rsync of a large bundle may take long, so it gets more.</span>
+<span class="n">_TASK_COMMAND_TIMEOUT</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">_TASK_STAGE_TIMEOUT</span> <span class="o">=</span> <span class="mi">3600</span>
+
+<span class="c1"># Section keys that describe JobServer- or task-layer behavior rather than a</span>
+<span class="c1"># submission directive -- not forwarded to the scheduler's directives.</span>
+<span class="n">_NON_DIRECTIVE_KEYS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"type"</span><span class="p">,</span>
+    <span class="s2">"transport"</span><span class="p">,</span>
+    <span class="s2">"host"</span><span class="p">,</span>
+    <span class="s2">"max_concurrent_jobs"</span><span class="p">,</span>
+    <span class="s2">"max_resubmits"</span><span class="p">,</span>
+    <span class="s2">"default"</span><span class="p">,</span>
+    <span class="s2">"remote_root"</span><span class="p">,</span>
+    <span class="s2">"remote_conda_env"</span><span class="p">,</span>
+    <span class="s2">"remote_run_from_jobserver"</span><span class="p">,</span>
+    <span class="s2">"setup"</span><span class="p">,</span>
+    <span class="c1"># The task layer (2026-10-02)</span>
+    <span class="s2">"tasks"</span><span class="p">,</span>
+    <span class="s2">"scheduler"</span><span class="p">,</span>
+    <span class="s2">"shared_filesystem"</span><span class="p">,</span>
+    <span class="s2">"bundle_tasks"</span><span class="p">,</span>
+    <span class="s2">"bundle_walltime"</span><span class="p">,</span>
+    <span class="s2">"max_queued_tasks"</span><span class="p">,</span>
+    <span class="s2">"inline_below"</span><span class="p">,</span>
+    <span class="s2">"url"</span><span class="p">,</span>
+    <span class="s2">"remote_python"</span><span class="p">,</span>
+    <span class="s2">"remote_seamm_root"</span><span class="p">,</span>
+    <span class="s2">"poll_interval"</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Recognized values for a section's "type" key: where the *evaluator* runs.</span>
+<span class="c1"># "local" means "no scheduler -- the JobServer's local-subprocess path";</span>
+<span class="c1"># "slurm" means the JobServer submits the whole flowchart as a SLURM job. A</span>
+<span class="c1"># PBS evaluator would be a new value here *and* a JobServer change, so it is</span>
+<span class="c1"># not accepted yet; tasks may already use PBS through `scheduler = pbs`.</span>
+<span class="n">_VALID_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"slurm"</span><span class="p">,</span> <span class="s2">"local"</span><span class="p">}</span>
+
+<span class="c1"># Recognized values for "tasks": where the evaluator's tasks run.</span>
+<span class="n">_VALID_TASKS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pool"</span><span class="p">,</span> <span class="s2">"taskserver"</span><span class="p">,</span> <span class="s2">"queue"</span><span class="p">}</span>
+
+<span class="n">_TRUE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"1"</span><span class="p">,</span> <span class="s2">"yes"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">,</span> <span class="s2">"on"</span><span class="p">}</span>
+<span class="n">_FALSE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"0"</span><span class="p">,</span> <span class="s2">"no"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">,</span> <span class="s2">"off"</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="FieldLimits">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.FieldLimits">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FieldLimits</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Constraints on a per-job override of one directive.</span>
+
+<span class="sd">    All fields optional: a directive can be listed as overridable with no</span>
+<span class="sd">    constraint at all, meaning "any value the scheduler itself accepts."</span>
+<span class="sd">    """</span>
+
+    <span class="n">choices</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">minimum</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">maximum</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="TargetSection">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.TargetSection">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TargetSection</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""One target from a ``&lt;root&gt;/&lt;jobserver-name&gt;.ini`` file."""</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">transport</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"slurm"</span>
+    <span class="n">directives</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">max_concurrent_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">max_resubmits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">limits</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>  <span class="c1"># {directive: FieldLimits}</span>
+    <span class="c1"># Only meaningful for transport=ssh, where the JobServer shares no</span>
+    <span class="c1"># filesystem with the submit host (see RsyncStager): the base directory</span>
+    <span class="c1"># under which each job's remote scratch tree is created, and how to invoke</span>
+    <span class="c1"># run_from_jobserver on the remote host, since its own local install can't</span>
+    <span class="c1"># be reused there. Either remote_run_from_jobserver (an explicit absolute</span>
+    <span class="c1"># path, preferred) or remote_conda_env (falls back to ``conda run -n &lt;env&gt;</span>
+    <span class="c1"># run_from_jobserver``) must be set for a type=slurm, transport=ssh</span>
+    <span class="c1"># section; neither is meaningful for transport=local.</span>
+    <span class="n">remote_root</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">remote_conda_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">remote_run_from_jobserver</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Raw shell commands run at the top of the batch script -- e.g. "module</span>
+    <span class="c1"># load ORCA" -- before the payload. Ini multi-line syntax (indented</span>
+    <span class="c1"># continuation lines) allows more than one command. Not templated/escaped</span>
+    <span class="c1"># in any way -- trusted config, not job input.</span>
+    <span class="n">setup</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># ---- the task layer (all optional; None = as before) -------------------</span>
+    <span class="c1"># Where the evaluator's tasks run: "pool" (its own LocalPool), "queue"</span>
+    <span class="c1"># (a scheduler), "taskserver". None: the codes run in the evaluator, as</span>
+    <span class="c1"># before the task layer existed.</span>
+    <span class="n">tasks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># The queueing system for tasks = queue. Default: slurm.</span>
+    <span class="n">scheduler</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Whether the evaluator and the cluster see the same storage, so task</span>
+    <span class="c1"># directories need no staging. Default: yes for transport=local (or an</span>
+    <span class="c1"># evaluator inside the cluster, type=slurm), no for transport=ssh.</span>
+    <span class="n">shared_filesystem</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Bundling: tasks per allocation, and the most walltime (seconds) a bundle</span>
+    <span class="c1"># may add up to from its tasks' estimates.</span>
+    <span class="n">bundle_tasks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">bundle_walltime</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Most queued + running jobs of this user at once (TinkerCliffs: 1,000,</span>
+    <span class="c1"># every array element counting).</span>
+    <span class="n">max_queued_tasks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Tasks estimated below this many seconds run in the evaluator's pool.</span>
+    <span class="n">inline_below</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># tasks = taskserver: the TaskServer's URL.</span>
+    <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># transport=ssh: a Python with seamm_exec on the cluster, which runs the</span>
+    <span class="c1"># task worker and resolves each program from the cluster's own</span>
+    <span class="c1"># &lt;program&gt;.ini, and the SEAMM root holding those files (default: the</span>
+    <span class="c1"># root the venv belongs to).</span>
+    <span class="n">remote_python</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">remote_seamm_root</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Seconds between status polls of the queue.</span>
+    <span class="n">poll_interval</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># The evaluator's back end (the JobServer's whole-flowchart submission)</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+<div class="viewcode-block" id="TargetSection.build_backend">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.TargetSection.build_backend">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_backend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct the backend that submits this section's evaluator jobs."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">"local"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has type=local; it has no SLURM "</span>
+                <span class="s2">"backend to build -- route jobs for it through the "</span>
+                <span class="s2">"JobServer's existing local-subprocess path instead"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TargetSection.build_stager">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.TargetSection.build_stager">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_stager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct the stager for this section's evaluator jobs -- paired</span>
+<span class="sd">        with the transport the same way ``build_backend()`` picks a</span>
+<span class="sd">        backend."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">"local"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has type=local; it has no stager "</span>
+                <span class="s2">"to build -- route jobs for it through the "</span>
+                <span class="s2">"JobServer's existing local-subprocess path instead"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># The tasks' back end</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">task_transport</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""How the evaluator reaches the queue for its tasks.</span>
+
+<span class="sd">        An evaluator that is itself a batch job (type=slurm) runs inside the</span>
+<span class="sd">        cluster and submits its tasks there with local commands, whatever</span>
+<span class="sd">        transport the JobServer uses to reach the cluster.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">"slurm"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"local"</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tasks_share_filesystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Whether task directories need no staging."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_filesystem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_filesystem</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_transport</span> <span class="o">==</span> <span class="s2">"local"</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">task_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The name of the queueing system for tasks."""</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="ow">or</span> <span class="s2">"slurm"</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+<div class="viewcode-block" id="TargetSection.build_task_backend">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.TargetSection.build_task_backend">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_task_backend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The ``QueueBackend`` the evaluator submits its tasks through."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span> <span class="o">!=</span> <span class="s2">"queue"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has tasks=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="si">}</span><span class="s2">; only tasks=queue "</span>
+                <span class="s2">"submits tasks to a queueing system"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_transport</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_scheduler</span><span class="p">,</span>
+            <span class="n">ssh_options</span><span class="o">=</span><span class="n">TASK_SSH_OPTIONS</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="n">_TASK_COMMAND_TIMEOUT</span><span class="p">,</span>
+            <span class="n">drop_env_prefixes</span><span class="o">=</span><span class="p">(</span><span class="s2">"SLURM_"</span><span class="p">,</span> <span class="s2">"PBS_"</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TargetSection.build_task_stager">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.TargetSection.build_task_stager">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_task_stager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The stager for task directories: none on a shared filesystem."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks_share_filesystem</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">LocalStager</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stager</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_transport</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+            <span class="n">ssh_options</span><span class="o">=</span><span class="n">TASK_SSH_OPTIONS</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="n">_TASK_STAGE_TIMEOUT</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TargetSection.task_settings">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.TargetSection.task_settings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">task_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""This section as a JSON-serializable dict, for ``&lt;job&gt;/target.json``.</span>
+
+<span class="sd">        The JobServer writes it into each job's directory so that an evaluator</span>
+<span class="sd">        can find its target wherever it runs (on the JobServer's host, or as a</span>
+<span class="sd">        batch job on a cluster that cannot read this ini file).</span>
+<span class="sd">        """</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"limits"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">asdict</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="TargetSection.from_settings">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.TargetSection.from_settings">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_settings</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The inverse of :meth:`task_settings`."""</span>
+        <span class="n">known</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="bp">cls</span><span class="p">)}</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">known</span><span class="p">}</span>
+        <span class="n">values</span><span class="p">[</span><span class="s2">"limits"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">FieldLimits</span><span class="p">(</span><span class="o">**</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"limits"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">values</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Helpers</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_backend</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">transport</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="p">,</span>
+        <span class="n">ssh_options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">drop_env_prefixes</span><span class="o">=</span><span class="p">(),</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">transport</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"local"</span><span class="p">,</span> <span class="s2">"ssh"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"SLURM section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has unknown transport "</span>
+                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">transport</span><span class="si">}</span><span class="s2">' (expected 'local' or 'ssh')"</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">transport</span> <span class="o">==</span> <span class="s2">"ssh"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">host</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"SLURM section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has transport=ssh but no host set"</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">scheduler</span> <span class="o">==</span> <span class="s2">"slurm"</span><span class="p">:</span>
+            <span class="c1"># The historical classes, so isinstance() checks keep working.</span>
+            <span class="k">if</span> <span class="n">transport</span> <span class="o">==</span> <span class="s2">"local"</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">LocalSlurm</span><span class="p">(</span><span class="n">drop_env_prefixes</span><span class="o">=</span><span class="n">drop_env_prefixes</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">SshSlurm</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">ssh_options</span><span class="o">=</span><span class="n">ssh_options</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">transport</span> <span class="o">==</span> <span class="s2">"local"</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">LocalTransport</span><span class="p">(</span><span class="n">drop_env_prefixes</span><span class="o">=</span><span class="n">drop_env_prefixes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">SshTransport</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">ssh_options</span><span class="o">=</span><span class="n">ssh_options</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">QueueBackend</span><span class="p">(</span><span class="n">get_scheduler</span><span class="p">(</span><span class="n">scheduler</span><span class="p">),</span> <span class="n">t</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_stager</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transport</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">ssh_options</span><span class="o">=</span><span class="p">(),</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">transport</span> <span class="o">==</span> <span class="s2">"local"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">LocalStager</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">transport</span> <span class="o">==</span> <span class="s2">"ssh"</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">host</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"SLURM section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has transport=ssh but no host set"</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">RsyncStager</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">ssh_options</span><span class="o">=</span><span class="n">ssh_options</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"SLURM section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has unknown transport "</span>
+                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">transport</span><span class="si">}</span><span class="s2">' (expected 'local' or 'ssh')"</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="TargetSection.remote_wdir_for">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.TargetSection.remote_wdir_for">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remote_wdir_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_wdir</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The remote scratch path a ``transport = ssh`` section's job</span>
+<span class="sd">        should run in (or, for an already-running job, where its files</span>
+<span class="sd">        currently live), derived from its local working directory's name</span>
+<span class="sd">        and this section's ``remote_root``.</span>
+
+<span class="sd">        Deterministic and side-effect-free -- callers besides the one that</span>
+<span class="sd">        originally submitted the job (e.g. a Dashboard pulling a running</span>
+<span class="sd">        job's files back on demand, rather than waiting for the job to</span>
+<span class="sd">        finish) can recompute the same path independently, as long as they</span>
+<span class="sd">        agree on ``local_wdir`` and this section's config. Job directory</span>
+<span class="sd">        names (``Job_NNNNNN``) are unique across the whole datastore, not</span>
+<span class="sd">        just within a project, so no collision risk.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If this section has no ``remote_root`` set -- only meaningful</span>
+<span class="sd">            for ``transport = ssh``.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_root</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"SLURM section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has transport=ssh but "</span>
+                <span class="s2">"no remote_root is set -- can't determine where to stage "</span>
+                <span class="sa">f</span><span class="s2">"jobs on </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">."</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">PurePosixPath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remote_root</span><span class="p">)</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">local_wdir</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TargetSection.merge_overrides">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.TargetSection.merge_overrides">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_overrides</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requested</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Merge a job's requested per-directive overrides on top of this</span>
+<span class="sd">        section's defaults, validating each against ``self.limits``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        requested : dict(str, any)</span>
+<span class="sd">            Directive overrides a job asked for, e.g. ``{"ntasks": 4}`` --</span>
+<span class="sd">            typically a job's ``parameters["slurm"]``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The final directives dict (this section's defaults with the</span>
+<span class="sd">            validated overrides applied), ready for</span>
+<span class="sd">            ``seamm_scheduler.script.build_script``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If a requested field isn't overridable for this section, or its</span>
+<span class="sd">            value is outside the configured choices/bounds. Never trust a</span>
+<span class="sd">            caller (e.g. a web UI) to have already enforced this --</span>
+<span class="sd">            validate here regardless of what constrained the request's</span>
+<span class="sd">            origin.</span>
+<span class="sd">        """</span>
+        <span class="n">directives</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directives</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">requested</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">limits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">limits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">' is not an overridable SLURM directive for "</span>
+                    <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">'"</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">limits</span><span class="o">.</span><span class="n">choices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">limits</span><span class="o">.</span><span class="n">choices</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">' is not one of the allowed choices for "</span>
+                    <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">limits</span><span class="o">.</span><span class="n">choices</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">limits</span><span class="o">.</span><span class="n">minimum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">limits</span><span class="o">.</span><span class="n">maximum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">parsed</span> <span class="o">=</span> <span class="n">_parse_slurm_value</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">limits</span><span class="o">.</span><span class="n">minimum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">lo</span> <span class="o">=</span> <span class="n">_parse_slurm_value</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">limits</span><span class="o">.</span><span class="n">minimum</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">parsed</span> <span class="o">&lt;</span> <span class="n">lo</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">' is below the minimum "</span>
+                            <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">limits</span><span class="o">.</span><span class="n">minimum</span><span class="si">}</span><span class="s2">) for section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">'"</span>
+                        <span class="p">)</span>
+                <span class="k">if</span> <span class="n">limits</span><span class="o">.</span><span class="n">maximum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">hi</span> <span class="o">=</span> <span class="n">_parse_slurm_value</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">limits</span><span class="o">.</span><span class="n">maximum</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">parsed</span> <span class="o">&gt;</span> <span class="n">hi</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">' exceeds the maximum "</span>
+                            <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">limits</span><span class="o">.</span><span class="n">maximum</span><span class="si">}</span><span class="s2">) for section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">'"</span>
+                        <span class="p">)</span>
+            <span class="n">directives</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">directives</span></div>
+</div>
+
+
+
+<span class="c1">#: The historical name.</span>
+<span class="n">SlurmSection</span> <span class="o">=</span> <span class="n">TargetSection</span>
+
+
+<div class="viewcode-block" id="load_target">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.load_target">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_target</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">jobserver_name</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Load one target from ``&lt;root&gt;/&lt;jobserver_name&gt;.ini``, if it exists.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    root : str or Path</span>
+<span class="sd">        The SEAMM root directory (e.g. ``~/SEAMM``), same as every other</span>
+<span class="sd">        per-code ``.ini`` file.</span>
+<span class="sd">    jobserver_name : str</span>
+<span class="sd">        This JobServer instance's ``--name`` (default: hostname).</span>
+<span class="sd">    section : str or None</span>
+<span class="sd">        Which section to use. If ``None``, uses ``[DEFAULT]``'s</span>
+<span class="sd">        ``default =`` key, falling back to the sole section if there is</span>
+<span class="sd">        exactly one and no ``default`` is set.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    TargetSection or None</span>
+<span class="sd">        ``None`` means "no such file" -- the caller should fall back to</span>
+<span class="sd">        running jobs as local subprocesses, exactly as if this feature did</span>
+<span class="sd">        not exist.</span>
+<span class="sd">    """</span>
+    <span class="n">ini_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">jobserver_name</span><span class="si">}</span><span class="s2">.ini"</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ini_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">(</span><span class="n">interpolation</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">ini_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">section</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">defaults</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"default"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">section</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># A ".limits" section is a companion, not a routable target itself.</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">sections</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".limits"</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">section</span> <span class="o">=</span> <span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ini_path</span><span class="si">}</span><span class="s2"> has no [DEFAULT] default= and no single, "</span>
+                <span class="s2">"unambiguous section to use."</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">section</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ini_path</span><span class="si">}</span><span class="s2"> has no section '</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_build_section</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span></div>
+
+
+
+<span class="c1">#: The historical name.</span>
+<span class="n">load_slurm_config</span> <span class="o">=</span> <span class="n">load_target</span>
+
+
+<div class="viewcode-block" id="list_sections">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.list_sections">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_sections</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">jobserver_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Load every routable section from ``&lt;root&gt;/&lt;jobserver_name&gt;.ini``, not</span>
+<span class="sd">    just the one ``load_target()`` resolves via ``default=``/single-section</span>
+<span class="sd">    fallback.</span>
+
+<span class="sd">    For per-job routing (a job asks for a named queue) and for surfacing</span>
+<span class="sd">    "what queues exist" to a submission UI (e.g. ``seamm_webui``'s</span>
+<span class="sd">    ``GET /api/queues``).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict(str, TargetSection)</span>
+<span class="sd">        Empty if the config file doesn't exist.</span>
+<span class="sd">    """</span>
+    <span class="n">ini_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">jobserver_name</span><span class="si">}</span><span class="s2">.ini"</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ini_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">(</span><span class="n">interpolation</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">ini_path</span><span class="p">)</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">sections</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".limits"</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">_build_section</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">}</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_section</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Parse one ``[section]`` (plus its optional ``[section.limits]``</span>
+<span class="sd">    companion) of an already-loaded config file into a ``TargetSection``."""</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">section</span><span class="p">))</span>
+
+    <span class="n">section_type</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"slurm"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">section_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_TYPES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">' has unknown type '</span><span class="si">{</span><span class="n">section_type</span><span class="si">}</span><span class="s2">' "</span>
+            <span class="sa">f</span><span class="s2">"(expected one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_VALID_TYPES</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="p">)</span>
+
+    <span class="n">tasks</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tasks"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">tasks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="n">tasks</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">tasks</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_TASKS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">' has unknown tasks '</span><span class="si">{</span><span class="n">tasks</span><span class="si">}</span><span class="s2">' "</span>
+                <span class="sa">f</span><span class="s2">"(expected one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_VALID_TASKS</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span>
+            <span class="p">)</span>
+    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"scheduler"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Fails early on a typo.</span>
+        <span class="n">get_scheduler</span><span class="p">(</span><span class="n">scheduler</span><span class="p">)</span>
+
+    <span class="n">directives</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_NON_DIRECTIVE_KEYS</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s2">""</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">TargetSection</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">section</span><span class="p">,</span>
+        <span class="n">transport</span><span class="o">=</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"transport"</span><span class="p">,</span> <span class="s2">"local"</span><span class="p">),</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"host"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">section_type</span><span class="p">,</span>
+        <span class="n">directives</span><span class="o">=</span><span class="n">directives</span><span class="p">,</span>
+        <span class="n">max_concurrent_jobs</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"max_concurrent_jobs"</span><span class="p">,</span> <span class="mi">20</span><span class="p">)),</span>
+        <span class="n">max_resubmits</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"max_resubmits"</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+        <span class="n">limits</span><span class="o">=</span><span class="n">_load_limits</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">section</span><span class="p">),</span>
+        <span class="n">remote_root</span><span class="o">=</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"remote_root"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">remote_conda_env</span><span class="o">=</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"remote_conda_env"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">remote_run_from_jobserver</span><span class="o">=</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"remote_run_from_jobserver"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">setup</span><span class="o">=</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"setup"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tasks</span><span class="o">=</span><span class="n">tasks</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+        <span class="n">shared_filesystem</span><span class="o">=</span><span class="n">_bool</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"shared_filesystem"</span><span class="p">),</span>
+        <span class="n">bundle_tasks</span><span class="o">=</span><span class="n">_int</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"bundle_tasks"</span><span class="p">),</span>
+        <span class="n">bundle_walltime</span><span class="o">=</span><span class="n">_seconds</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"bundle_walltime"</span><span class="p">),</span>
+        <span class="n">max_queued_tasks</span><span class="o">=</span><span class="n">_int</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"max_queued_tasks"</span><span class="p">),</span>
+        <span class="n">inline_below</span><span class="o">=</span><span class="n">_float</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"inline_below"</span><span class="p">),</span>
+        <span class="n">url</span><span class="o">=</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"url"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">remote_python</span><span class="o">=</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"remote_python"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">remote_seamm_root</span><span class="o">=</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"remote_seamm_root"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">poll_interval</span><span class="o">=</span><span class="n">_float</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"poll_interval"</span><span class="p">),</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_bool</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">_TRUE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">_FALSE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is not yes or no"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_int</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is not an integer"</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_float</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is not a number"</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_seconds</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">_parse_time</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is not a time "</span>
+            <span class="s2">"(minutes, MM:SS, HH:MM:SS or D-HH:MM:SS)"</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_limits</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Parse the optional ``[&lt;section&gt;.limits]`` companion section.</span>
+
+<span class="sd">    Secure by default: absent entirely means nothing is overridable.</span>
+<span class="sd">    """</span>
+    <span class="n">limits_section</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">.limits"</span>
+    <span class="k">if</span> <span class="n">limits_section</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="n">items</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">limits_section</span><span class="p">))</span>
+    <span class="c1"># dict(config.items(...)) inherits [DEFAULT] keys too (e.g. "default")</span>
+    <span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"default"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">overridable_raw</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"overridable"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+    <span class="n">overridable</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">overridable_raw</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+
+    <span class="n">per_field</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s2">"."</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">field_name</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">"."</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"choices"</span><span class="p">,</span> <span class="s2">"min"</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">per_field</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="p">{})[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">limits</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">overridable</span><span class="p">:</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="n">per_field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">choices</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="s2">"choices"</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+            <span class="n">choices</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">"choices"</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="n">limits</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">FieldLimits</span><span class="p">(</span>
+            <span class="n">choices</span><span class="o">=</span><span class="n">choices</span><span class="p">,</span>
+            <span class="n">minimum</span><span class="o">=</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"min"</span><span class="p">),</span>
+            <span class="n">maximum</span><span class="o">=</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"max"</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">limits</span>
+
+
+<span class="c1"># Known unit-aware directive names -- everything else is compared as a plain</span>
+<span class="c1"># number. Not a general value-type system, just what's needed for the</span>
+<span class="c1"># directives sites actually bound today (see FieldLimits/.limits).</span>
+<span class="n">_SIZE_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(\d+(?:\.\d+)?)\s*([KMGT]?)"</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+<span class="n">_SIZE_MULTIPLIER_MB</span> <span class="o">=</span> <span class="p">{</span><span class="s2">""</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"K"</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">1024</span><span class="p">,</span> <span class="s2">"M"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"G"</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span> <span class="s2">"T"</span><span class="p">:</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_size</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Parse a SLURM-style memory size (e.g. ``"100G"``, ``"2048"``,</span>
+<span class="sd">    ``"20000M"``) into MB -- SLURM's own default unit for ``--mem`` when no</span>
+<span class="sd">    suffix is given."""</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">_SIZE_RE</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"cannot parse SLURM size value: </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">number</span><span class="p">,</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="o">*</span> <span class="n">_SIZE_MULTIPLIER_MB</span><span class="p">[</span><span class="n">suffix</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_time</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Parse a SLURM time value into seconds.</span>
+
+<span class="sd">    SLURM's forms: ``M``, ``M:S``, ``H:M:S``, ``D-H``, ``D-H:M``, ``D-H:M:S``.</span>
+<span class="sd">    A bare number is minutes.</span>
+<span class="sd">    """</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">"-"</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="n">days_str</span><span class="p">,</span> <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">days</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">days_str</span><span class="p">)</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)]</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># D-H and D-H:M count from the hours</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">days</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># minutes</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">days</span> <span class="o">*</span> <span class="mi">86400</span> <span class="o">+</span> <span class="n">hours</span> <span class="o">*</span> <span class="mi">3600</span> <span class="o">+</span> <span class="n">minutes</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">seconds</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_slurm_value</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Parse a directive value into a comparable float."""</span>
+    <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="s2">"mem"</span> <span class="ow">or</span> <span class="n">field_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"mem_per_"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_parse_size</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="s2">"time"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_parse_time</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Paul Saxe. Project structure based on the Computational Molecular Science Python Cookiecutter version 1.1.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
