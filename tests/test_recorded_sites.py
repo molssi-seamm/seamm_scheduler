@@ -82,6 +82,10 @@ def test_poll_finished(path):
     assert result[ids["ok"]].category == "completed"
     assert result[ids["fail"]].category == "failed"
     assert result[ids["long"]].category == "cancelled"
+    # SLURM reports exit:signal, PBS the shell's exit status (271 = killed)
+    assert result[ids["fail"]].exit_code in ("3:0", "3")
+    assert result[ids["ok"]].exit_code in ("0:0", "0")
+    assert not backend.scheduler.poll_failed
     # The held job ran once the long one was cancelled (afterany).
     assert result[ids["held"]].category == "completed"
 
@@ -98,6 +102,7 @@ def test_find(path):
 def test_unknown_id(path):
     data, backend = _replay(path, "poll unknown id")
     assert backend.poll_many(["999999"]) == {}
+    assert not backend.scheduler.poll_failed
 
 
 def _name(data, which):

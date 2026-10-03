@@ -281,12 +281,12 @@ class TargetSection:
     ):
         if transport not in ("local", "ssh"):
             raise RuntimeError(
-                f"SLURM section '{self.name}' has unknown transport "
+                f"section '{self.name}' has unknown transport "
                 f"'{transport}' (expected 'local' or 'ssh')"
             )
         if transport == "ssh" and not host:
             raise RuntimeError(
-                f"SLURM section '{self.name}' has transport=ssh but no host set"
+                f"section '{self.name}' has transport=ssh but no host set"
             )
         if scheduler == "slurm":
             # The historical classes, so isinstance() checks keep working.
@@ -305,12 +305,12 @@ class TargetSection:
         elif transport == "ssh":
             if not host:
                 raise RuntimeError(
-                    f"SLURM section '{self.name}' has transport=ssh but no host set"
+                    f"section '{self.name}' has transport=ssh but no host set"
                 )
             return RsyncStager(host, ssh_options=ssh_options, timeout=timeout)
         else:
             raise RuntimeError(
-                f"SLURM section '{self.name}' has unknown transport "
+                f"section '{self.name}' has unknown transport "
                 f"'{transport}' (expected 'local' or 'ssh')"
             )
 
@@ -336,7 +336,7 @@ class TargetSection:
         """
         if not self.remote_root:
             raise RuntimeError(
-                f"SLURM section '{self.name}' has transport=ssh but "
+                f"section '{self.name}' has transport=ssh but "
                 "no remote_root is set -- can't determine where to stage "
                 f"jobs on {self.host}."
             )
@@ -486,7 +486,7 @@ def _build_section(config, section):
     companion) of an already-loaded config file into a ``TargetSection``."""
     items = dict(config.items(section))
 
-    section_type = items.get("type", "slurm")
+    section_type = (items.get("type") or "slurm").strip().lower()
     if section_type not in _VALID_TYPES:
         raise RuntimeError(
             f"section '{section}' has unknown type '{section_type}' "
@@ -670,6 +670,6 @@ def _parse_slurm_value(field_name, value):
     """Parse a directive value into a comparable float."""
     if field_name == "mem" or field_name.startswith("mem_per_"):
         return _parse_size(value)
-    if field_name == "time":
+    if field_name in ("time", "walltime"):
         return _parse_time(value)
     return float(value)
