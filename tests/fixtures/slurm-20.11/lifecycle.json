@@ -1,0 +1,243 @@
+{
+  "site": "molssi10",
+  "scheduler": "slurm",
+  "ids": {
+    "ok": "4403",
+    "fail": "4404",
+    "long": "4405",
+    "held": "4406"
+  },
+  "calls": [
+    {
+      "label": "",
+      "argv": [
+        "mkdir",
+        "-p",
+        "/tmp/seamm_fixtures"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "submit ok",
+      "argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name",
+        "seammfx55118-ok"
+      ],
+      "input": "#!/bin/bash\n#SBATCH --partition=batch\n#SBATCH --ntasks=1\n#SBATCH --time=00:05:00\n#SBATCH --mem=1G\n#SBATCH --output=/tmp/seamm_fixtures/slurm-%j.out\n\ncd /tmp/seamm_fixtures\nsleep 20\nexit 0\n",
+      "rc": 0,
+      "stdout": "4403\n",
+      "stderr": ""
+    },
+    {
+      "label": "submit fail",
+      "argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name",
+        "seammfx55118-fail"
+      ],
+      "input": "#!/bin/bash\n#SBATCH --partition=batch\n#SBATCH --ntasks=1\n#SBATCH --time=00:05:00\n#SBATCH --mem=1G\n#SBATCH --output=/tmp/seamm_fixtures/slurm-%j.out\n\ncd /tmp/seamm_fixtures\nsleep 20\nexit 3\n",
+      "rc": 0,
+      "stdout": "4404\n",
+      "stderr": ""
+    },
+    {
+      "label": "submit long",
+      "argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name",
+        "seammfx55118-long"
+      ],
+      "input": "#!/bin/bash\n#SBATCH --partition=batch\n#SBATCH --ntasks=1\n#SBATCH --time=00:05:00\n#SBATCH --mem=1G\n#SBATCH --output=/tmp/seamm_fixtures/slurm-%j.out\n\ncd /tmp/seamm_fixtures\nsleep 600\n",
+      "rc": 0,
+      "stdout": "4405\n",
+      "stderr": ""
+    },
+    {
+      "label": "submit held",
+      "argv": [
+        "sbatch",
+        "--parsable",
+        "--job-name",
+        "seammfx55118-held"
+      ],
+      "input": "#!/bin/bash\n#SBATCH --partition=batch\n#SBATCH --ntasks=1\n#SBATCH --time=00:05:00\n#SBATCH --mem=1G\n#SBATCH --output=/tmp/seamm_fixtures/slurm-%j.out\n#SBATCH --dependency=afterany:4405\n\ncd /tmp/seamm_fixtures\nsleep 5\n",
+      "rc": 0,
+      "stdout": "4406\n",
+      "stderr": ""
+    },
+    {
+      "label": "poll running/pending",
+      "argv": [
+        "squeue",
+        "--json",
+        "--jobs",
+        "4403,4404,4405,4406"
+      ],
+      "input": null,
+      "rc": 1,
+      "stdout": "",
+      "stderr": "squeue: unrecognized option '--json'\nTry \"squeue --help\" for more information\n"
+    },
+    {
+      "label": "poll running/pending",
+      "argv": [
+        "squeue",
+        "--noheader",
+        "--format=%i|%T|%R",
+        "--jobs",
+        "4403,4404,4405,4406"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "4406|PENDING|(Dependency)\n4403|RUNNING|molssi10\n4404|RUNNING|molssi10\n4405|RUNNING|molssi10\n",
+      "stderr": ""
+    },
+    {
+      "label": "find long",
+      "argv": [
+        "squeue",
+        "--noheader",
+        "--me",
+        "--name=seammfx55118-long",
+        "--format=%i"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "4405\n",
+      "stderr": ""
+    },
+    {
+      "label": "count",
+      "argv": [
+        "squeue",
+        "--noheader",
+        "--me",
+        "-r",
+        "--format=%i"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "4406\n4403\n4404\n4405\n",
+      "stderr": ""
+    },
+    {
+      "label": "cancel long",
+      "argv": [
+        "scancel",
+        "4405"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "poll finished",
+      "argv": [
+        "squeue",
+        "--noheader",
+        "--format=%i|%T|%R",
+        "--jobs",
+        "4403,4404,4405,4406"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "poll finished",
+      "argv": [
+        "sacct",
+        "--json",
+        "--jobs",
+        "4403,4404,4405,4406"
+      ],
+      "input": null,
+      "rc": 1,
+      "stdout": "",
+      "stderr": "sacct: unrecognized option '--json'\n"
+    },
+    {
+      "label": "poll finished",
+      "argv": [
+        "sacct",
+        "--parsable2",
+        "--noheader",
+        "--format=JobID,State,ExitCode",
+        "--jobs",
+        "4403,4404,4405,4406"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "4403|COMPLETED|0:0\n4403.batch|COMPLETED|0:0\n4404|FAILED|3:0\n4404.batch|FAILED|3:0\n4405|CANCELLED by 1003|0:0\n4405.batch|CANCELLED|0:15\n4406|COMPLETED|0:0\n4406.batch|COMPLETED|0:0\n",
+      "stderr": ""
+    },
+    {
+      "label": "find finished ok",
+      "argv": [
+        "squeue",
+        "--noheader",
+        "--me",
+        "--name=seammfx55118-ok",
+        "--format=%i"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "find finished ok",
+      "argv": [
+        "sacct",
+        "--noheader",
+        "--parsable2",
+        "--allocations",
+        "--name=seammfx55118-ok",
+        "--format=JobID",
+        "--starttime=now-14days"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "4403\n",
+      "stderr": ""
+    },
+    {
+      "label": "poll unknown id",
+      "argv": [
+        "squeue",
+        "--noheader",
+        "--format=%i|%T|%R",
+        "--jobs",
+        "999999"
+      ],
+      "input": null,
+      "rc": 1,
+      "stdout": "",
+      "stderr": "slurm_load_jobs error: Invalid job id specified\n"
+    },
+    {
+      "label": "poll unknown id",
+      "argv": [
+        "sacct",
+        "--parsable2",
+        "--noheader",
+        "--format=JobID,State,ExitCode",
+        "--jobs",
+        "999999"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

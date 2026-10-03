@@ -1,0 +1,2 @@
+PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+batch*       up   infinite      1   idle molssi10
