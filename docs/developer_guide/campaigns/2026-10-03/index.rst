@@ -143,3 +143,73 @@ C. **On the host or in a container?** OpenPBS in a container on MolSSI10
    with the container only if the build fails.
 D. **The window:** when MolSSI10 can have no jobs running (its production
    JobServer submits to TinkerCliffs as well as locally).
+
+Paul's decisions (2026-10-03)
+-----------------------------
+
+- MolSSI10 is no longer production; it is used only for testing this work.
+  Remove SLURM and change its queues freely.
+- Remove MariaDB (after the dump). Install OpenPBS on the host.
+- Debian 11 is end of life (2026-08-31): point apt at the archives.
+- A (implied by the test-only role): the JobServer gets a scheduler-neutral
+  ``type = queue`` with ``scheduler = pbs|slurm``.
+
+Done (2026-10-03)
+-----------------
+
+1. **SLURM 20.11 frozen:** ``devtools/capture_fixtures.py`` drives the back end
+   over ssh against a real site and records every command;
+   ``tests/fixtures/slurm-20.11/lifecycle.json`` (completed, failed 3:0,
+   cancelled, pending on a dependency, unknown id) plus ``sinfo``/``scontrol``
+   text, replayed by ``tests/test_recorded_sites.py``. Snapshot on MolSSI10 in
+   ``~/slurm_snapshot_2026-10-03`` (``/etc/slurm``, munge key, the
+   ``slurm_acct_db`` dump, ``sacct`` history, the ini); a copy without the munge
+   key in ``~/Work/SEAMM/molssi10_slurm_snapshot_2026-10-03``.
+2. **apt:** ``/etc/apt`` backed up to ``~/apt_backup_2026-10-03``; Debian
+   sources now ``archive.debian.org`` (bullseye, -updates, -security), pgdg
+   ``apt-archive.postgresql.org``, pgadmin4 commented out,
+   ``Acquire::Check-Valid-Until "false"``.
+3. **Removed:** slurmctld, slurmd, slurmdbd, slurm-client, slurm-wlm,
+   munge and MariaDB (``remove``, configuration kept; ``libmunge2`` remains).
+4. **OpenPBS 23.06.06** built from source in ``~/build`` (build dependencies
+   from Debian; ``libpq-dev`` 17 already installed), installed in ``/opt/pbs``,
+   ``PBS_HOME`` ``/var/spool/pbs``, systemd unit ``pbs`` enabled; commands
+   linked into ``/usr/local/bin`` for non-interactive ssh. Its data service
+   runs on port 15007 with the PostgreSQL 15 binaries, beside the pubchemqc
+   cluster on 5437. Two gotchas:
+
+   - ``/etc/hosts`` mapped the hostname to 127.0.1.1 (Debian's default), and
+     PBS insists on an interface address: now ``198.82.19.68``
+     (``hosts.orig`` in the apt backup). If the address changes, PBS stops.
+   - A first start needs ``pbs_server -t create``; without it the server exits
+     silently after connecting to its database.
+
+   Configured with qmgr: node ``molssi10`` (6 CPUs, 125 GB), queue ``workq``
+   (default, enabled, started), ``job_history_enable = True`` (7 days).
+5. **Back end made real** (seamm_scheduler d3d16c0): dependencies are
+   ``-W depend=`` (real qsub refuses ``-l depend``); ``chdir`` becomes a ``cd``
+   (``Scheduler.prologue_lines``); ``export=ALL`` becomes ``-V``; ``find`` uses
+   ``qselect -x`` so finished jobs are found after a restart. Recorded OpenPBS
+   fixtures (``tests/fixtures/openpbs-23.06``): running, queued, held,
+   completed, failed (3), cancelled (271), unknown id.
+6. **JobServer** (seamm_scheduler 542ca51, seamm_jobserver 67073be):
+   ``type = queue`` + ``scheduler``; ``is_batch``/``batch_scheduler``; a PBS
+   evaluator job gets ``-V`` (like SLURM's default) unless ``export = NONE``.
+   **Web UI** (seamm_webui dc587ee): imports from seamm_scheduler instead of the
+   seamm_slurm shim (an old seamm_slurm refused ``type = queue``), and treats
+   ``type = queue`` as a batch queue.
+7. **Validated** from the Mac's SEAMM_DEV (ini ``[molssi10]`` and
+   ``[molssi10-tasks]``; the SLURM version saved as
+   ``PaulVT.local.ini.slurm-2026-10-03``) to MolSSI10's PBS over ssh, with a test
+   environment ``~/SEAMM_PBS`` there (released phase 4 + the two checkouts):
+
+   - job 4006: the flowchart as a PBS job; results and the ``seamm.db`` table
+     staged back, values identical to local runs;
+   - job 4007: the same, with each MOPAC calculation a PBS job submitted from
+     inside the evaluator job (tasks = queue, bundle 1, nothing inline); three
+     bundle jobs, exit 0, identical table.
+
+Still to do: release seamm_scheduler, seamm_jobserver and seamm_webui (pins:
+jobserver and webui on the new seamm_scheduler); MolSSI10's own ``~/SEAMM``
+(old, pre-phase 2, services stopped) rewritten for PBS if it is to run jobs
+again; the design doc's phase 7 entry.
