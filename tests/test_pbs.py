@@ -116,7 +116,7 @@ def test_directives_select_statement():
 def test_directives_portable_section_keys():
     d = Pbs().directives(Res(ntasks=1), extra={"partition": "q", "time": "1:00:00"})
     assert d["queue"] == "q"
-    assert d["walltime"] == "1:00:00"
+    assert d["walltime"] == "01:00:00"
     assert d["select"] == "1:ncpus=1:mpiprocs=1"
 
 
@@ -192,11 +192,88 @@ def test_env_names():
     assert Pbs.env_names["nodefile"] == "PBS_NODEFILE"
 
 
-def test_slurm_spellings_are_dropped_and_find_count():
+def test_slurm_spellings_become_resources_and_find_count():
+    """SLURM spellings in a section become the select chunk; the explicit
+    resources win where both give a value."""
     d = Pbs().directives(
         Res(ntasks=2), extra={"ntasks": "4", "mem": "4G", "queue": "q"}
     )
     assert "ntasks" not in d and "mem" not in d
-    assert d["select"] == "1:ncpus=2:mpiprocs=2"
+    assert d["select"] == "1:ncpus=2:mpiprocs=2:mem=4096mb"
     assert Pbs().count_cmd()[0] == "sh"
     assert "-N seamm-x" in Pbs().find_cmd("seamm-x")[2]
+
+
+def test_dependency_is_a_W_attribute():
+    """qsub takes a dependency with -W, not as a resource (real OpenPBS refuses
+    -l depend). SLURM's spelling 'dependency' is accepted."""
+    pbs = Pbs()
+    lines = pbs.directive_lines(pbs.directives({}, {"dependency": "afterany:11.x"}))
+    assert "#PBS -W depend=afterany:11.x" in lines
+    assert not any("-l depend" in line for line in lines)
+
+
+def test_chdir_becomes_a_cd():
+    """A PBS job starts in the home directory: chdir becomes a cd."""
+    pbs = Pbs()
+    directives = pbs.directives({}, {"chdir": "/data/job 7"})
+    assert not any("chdir" in line for line in pbs.directive_lines(directives))
+    script = build_script(directives, "run_flowchart", scheduler=pbs)
+    lines = script.splitlines()
+    assert "cd '/data/job 7' || exit 1" in lines
+    assert lines.index("cd '/data/job 7' || exit 1") < lines.index("run_flowchart")
+
+
+def test_export():
+    pbs = Pbs()
+    assert "#PBS -V" in pbs.directive_lines(pbs.directives({}, {"export": "ALL"}))
+    assert "#PBS -V" not in pbs.directive_lines(pbs.directives({}, {"export": "NONE"}))
+
+
+def test_find_includes_finished_jobs():
+    assert "qselect -x" in Pbs().find_cmd("bundle-1")[-1]
+
+
+def test_section_select_memory_is_kept():
+    """A bundle's resources set the cores; the section's memory stays."""
+    d = Pbs().directives(Res(ntasks=1), extra={"select": "1:ncpus=1:mem=4gb"})
+    assert d["select"] == "1:ncpus=1:mem=4gb:mpiprocs=1"
+
+
+def test_jobserver_overrides_in_slurm_spellings():
+    """A job's ntasks/mem overrides (SLURM spellings) reach the select."""
+    d = Pbs().directives(
+        {}, extra={"queue": "workq", "ntasks": "6", "mem": "8G", "time": "1-00:00:00"}
+    )
+    assert d["select"] == "1:ncpus=6:mpiprocs=6:mem=8192mb"
+    assert d["walltime"] == "24:00:00"
+
+
+def test_walltime_limits_parse():
+    from seamm_scheduler.config import _parse_slurm_value
+
+    assert _parse_slurm_value("walltime", "02:00:00") == 7200
+
+
+def test_garbled_json_is_a_failed_poll():
+    """A truncated qstat reply must not look like 'every job is gone'."""
+    for reply in ('{"Jobs": {"1.x": {"job_state"', '{"Jobs": []}'):
+        backend = QueueBackend(Pbs(), FakeTransport(lambda a, t, r=reply: (0, r, "")))
+        assert backend.poll_many(["1.x"]) == {}
+        assert backend.scheduler.poll_failed is True
+
+
+def test_text_fallback_unknown_ids_are_gone():
+    """qstat -x (text) with only unknown ids: the jobs are gone, not a failure."""
+    pbs = Pbs()
+    pbs._qstat_json = False
+    backend = QueueBackend(
+        pbs, FakeTransport(lambda a, t: (153, "", "qstat: Unknown Job Id 9.x"))
+    )
+    assert backend.poll_many(["9.x"]) == {}
+    assert pbs.poll_failed is False
+
+
+def test_cd_failure_stops_the_job():
+    pbs = Pbs()
+    assert pbs.prologue_lines({"chdir": "/a b"}) == ["cd '/a b' || exit 1"]

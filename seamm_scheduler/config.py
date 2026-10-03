@@ -70,10 +70,10 @@ _NON_DIRECTIVE_KEYS = {
 
 # Recognized values for a section's "type" key: where the *evaluator* runs.
 # "local" means "no scheduler -- the JobServer's local-subprocess path";
-# "slurm" means the JobServer submits the whole flowchart as a SLURM job. A
-# PBS evaluator would be a new value here *and* a JobServer change, so it is
-# not accepted yet; tasks may already use PBS through `scheduler = pbs`.
-_VALID_TYPES = {"slurm", "local"}
+# "queue" means the JobServer submits the whole flowchart as a batch job to the
+# queueing system named by `scheduler` (slurm, the default, or pbs); "slurm" is
+# the original spelling of "queue" with SLURM.
+_VALID_TYPES = {"slurm", "queue", "local"}
 
 # Recognized values for "tasks": where the evaluator's tasks run.
 _VALID_TASKS = {"pool", "taskserver", "queue"}
@@ -158,15 +158,27 @@ class TargetSection:
     # ------------------------------------------------------------------
     # The evaluator's back end (the JobServer's whole-flowchart submission)
     # ------------------------------------------------------------------
+    @property
+    def is_batch(self):
+        """Whether the JobServer runs this section's evaluators as batch jobs."""
+        return self.type in ("slurm", "queue")
+
+    @property
+    def batch_scheduler(self):
+        """The queueing system the evaluator jobs are submitted to."""
+        if self.type == "slurm":
+            return "slurm"
+        return (self.scheduler or "slurm").lower()
+
     def build_backend(self):
         """Construct the backend that submits this section's evaluator jobs."""
-        if self.type == "local":
+        if not self.is_batch:
             raise RuntimeError(
-                f"section '{self.name}' has type=local; it has no SLURM "
-                "backend to build -- route jobs for it through the "
+                f"section '{self.name}' has type=local; it has no queueing "
+                "back end to build -- route jobs for it through the "
                 "JobServer's existing local-subprocess path instead"
             )
-        return self._backend(self.transport, self.host, self.type)
+        return self._backend(self.transport, self.host, self.batch_scheduler)
 
     def build_stager(self):
         """Construct the stager for this section's evaluator jobs -- paired
@@ -187,11 +199,11 @@ class TargetSection:
     def task_transport(self):
         """How the evaluator reaches the queue for its tasks.
 
-        An evaluator that is itself a batch job (type=slurm) runs inside the
-        cluster and submits its tasks there with local commands, whatever
+        An evaluator that is itself a batch job (type=slurm or queue) runs inside
+        the cluster and submits its tasks there with local commands, whatever
         transport the JobServer uses to reach the cluster.
         """
-        if self.type == "slurm":
+        if self.is_batch:
             return "local"
         return self.transport
 
@@ -269,12 +281,12 @@ class TargetSection:
     ):
         if transport not in ("local", "ssh"):
             raise RuntimeError(
-                f"SLURM section '{self.name}' has unknown transport "
+                f"section '{self.name}' has unknown transport "
                 f"'{transport}' (expected 'local' or 'ssh')"
             )
         if transport == "ssh" and not host:
             raise RuntimeError(
-                f"SLURM section '{self.name}' has transport=ssh but no host set"
+                f"section '{self.name}' has transport=ssh but no host set"
             )
         if scheduler == "slurm":
             # The historical classes, so isinstance() checks keep working.
@@ -293,12 +305,12 @@ class TargetSection:
         elif transport == "ssh":
             if not host:
                 raise RuntimeError(
-                    f"SLURM section '{self.name}' has transport=ssh but no host set"
+                    f"section '{self.name}' has transport=ssh but no host set"
                 )
             return RsyncStager(host, ssh_options=ssh_options, timeout=timeout)
         else:
             raise RuntimeError(
-                f"SLURM section '{self.name}' has unknown transport "
+                f"section '{self.name}' has unknown transport "
                 f"'{transport}' (expected 'local' or 'ssh')"
             )
 
@@ -324,7 +336,7 @@ class TargetSection:
         """
         if not self.remote_root:
             raise RuntimeError(
-                f"SLURM section '{self.name}' has transport=ssh but "
+                f"section '{self.name}' has transport=ssh but "
                 "no remote_root is set -- can't determine where to stage "
                 f"jobs on {self.host}."
             )
@@ -474,7 +486,7 @@ def _build_section(config, section):
     companion) of an already-loaded config file into a ``TargetSection``."""
     items = dict(config.items(section))
 
-    section_type = items.get("type", "slurm")
+    section_type = (items.get("type") or "slurm").strip().lower()
     if section_type not in _VALID_TYPES:
         raise RuntimeError(
             f"section '{section}' has unknown type '{section_type}' "
@@ -658,6 +670,6 @@ def _parse_slurm_value(field_name, value):
     """Parse a directive value into a comparable float."""
     if field_name == "mem" or field_name.startswith("mem_per_"):
         return _parse_size(value)
-    if field_name == "time":
+    if field_name in ("time", "walltime"):
         return _parse_time(value)
     return float(value)

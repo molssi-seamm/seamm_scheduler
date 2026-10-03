@@ -124,6 +124,11 @@ class Scheduler:
         """The script's directive lines, e.g. ``["#SBATCH --ntasks=4"]``."""
         raise NotImplementedError
 
+    def prologue_lines(self, directives):
+        """Commands the script runs first, for directives the scheduler has no
+        option for (e.g. PBS has no working-directory option: ``cd`` instead)."""
+        return []
+
     # ------------------------------------------------------------------
     # Commands
     # ------------------------------------------------------------------

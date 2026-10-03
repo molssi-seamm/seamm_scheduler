@@ -1,0 +1,170 @@
+{
+  "site": "molssi10",
+  "scheduler": "pbs",
+  "ids": {
+    "ok": "13.molssi10",
+    "fail": "14.molssi10",
+    "long": "15.molssi10",
+    "held": "16.molssi10"
+  },
+  "calls": [
+    {
+      "label": "",
+      "argv": [
+        "mkdir",
+        "-p",
+        "/tmp/seamm_fixtures"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "submit ok",
+      "argv": [
+        "qsub",
+        "-N",
+        "seammfx57512-ok"
+      ],
+      "input": "#!/bin/bash\n#PBS -q workq\n#PBS -o /tmp/seamm_fixtures/pbs.out\n#PBS -j oe\n#PBS -l walltime=00:05:00\n\ncd /tmp/seamm_fixtures\nsleep 20\nexit 0\n",
+      "rc": 0,
+      "stdout": "13.molssi10\n",
+      "stderr": ""
+    },
+    {
+      "label": "submit fail",
+      "argv": [
+        "qsub",
+        "-N",
+        "seammfx57512-fail"
+      ],
+      "input": "#!/bin/bash\n#PBS -q workq\n#PBS -o /tmp/seamm_fixtures/pbs.out\n#PBS -j oe\n#PBS -l walltime=00:05:00\n\ncd /tmp/seamm_fixtures\nsleep 20\nexit 3\n",
+      "rc": 0,
+      "stdout": "14.molssi10\n",
+      "stderr": ""
+    },
+    {
+      "label": "submit long",
+      "argv": [
+        "qsub",
+        "-N",
+        "seammfx57512-long"
+      ],
+      "input": "#!/bin/bash\n#PBS -q workq\n#PBS -o /tmp/seamm_fixtures/pbs.out\n#PBS -j oe\n#PBS -l walltime=00:05:00\n\ncd /tmp/seamm_fixtures\nsleep 600\n",
+      "rc": 0,
+      "stdout": "15.molssi10\n",
+      "stderr": ""
+    },
+    {
+      "label": "submit held",
+      "argv": [
+        "qsub",
+        "-N",
+        "seammfx57512-held"
+      ],
+      "input": "#!/bin/bash\n#PBS -q workq\n#PBS -o /tmp/seamm_fixtures/pbs.out\n#PBS -j oe\n#PBS -W depend=afterany:15.molssi10\n#PBS -l walltime=00:05:00\n\ncd /tmp/seamm_fixtures\nsleep 5\n",
+      "rc": 0,
+      "stdout": "16.molssi10\n",
+      "stderr": ""
+    },
+    {
+      "label": "poll running/pending",
+      "argv": [
+        "qstat",
+        "-x",
+        "-f",
+        "-F",
+        "json",
+        "13.molssi10",
+        "14.molssi10",
+        "15.molssi10",
+        "16.molssi10"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "{\n    \"timestamp\":1791057523,\n    \"pbs_version\":\"23.06.06\",\n    \"pbs_server\":\"molssi10\",\n    \"Jobs\":{\n        \"13.molssi10\":{\n            \"Job_Name\":\"seammfx57512-ok\",\n            \"Job_Owner\":\"psaxe@molssi10.chem.vt.edu\",\n            \"resources_used\":{\n                \"cpupercent\":0,\n                \"cput\":\"00:00:00\",\n                \"mem\":\"0kb\",\n                \"ncpus\":1,\n                \"vmem\":\"0kb\",\n                \"walltime\":\"00:00:00\"\n            },\n            \"job_state\":\"R\",\n            \"queue\":\"workq\",\n            \"server\":\"molssi10\",\n            \"Checkpoint\":\"u\",\n            \"ctime\":\"Sat Oct  3 15:58:33 2026\",\n            \"Error_Path\":\"molssi10.chem.vt.edu:/home/psaxe/seammfx57512-ok.e13\",\n            \"exec_host\":\"molssi10/0\",\n            \"exec_vnode\":\"(molssi10:ncpus=1)\",\n            \"Hold_Types\":\"n\",\n            \"Join_Path\":\"oe\",\n            \"Keep_Files\":\"n\",\n            \"Mail_Points\":\"a\",\n            \"mtime\":\"Sat Oct  3 15:58:35 2026\",\n            \"Output_Path\":\"molssi10.chem.vt.edu:/tmp/seamm_fixtures/pbs.out\",\n            \"Priority\":0,\n            \"qtime\":\"Sat Oct  3 15:58:33 2026\",\n            \"Rerunable\":\"True\",\n            \"Resource_List\":{\n                \"ncpus\":1,\n                \"nodect\":1,\n                \"place\":\"pack\",\n                \"select\":\"1:ncpus=1\",\n                \"walltime\":\"00:05:00\"\n            },\n            \"stime\":\"Sat Oct  3 15:58:33 2026\",\n            \"session_id\":1063201,\n            \"jobdir\":\"/home/psaxe\",\n            \"substate\":42,\n            \"Variable_List\":{\n                \"PBS_O_HOME\":\"/home/psaxe\",\n                \"PBS_O_LANG\":\"en_US.UTF-8\",\n                \"PBS_O_LOGNAME\":\"psaxe\",\n                \"PBS_O_PATH\":\"/usr/local/bin:/usr/bin:/bin:/usr/games\",\n                \"PBS_O_SHELL\":\"/bin/bash\",\n                \"PBS_O_WORKDIR\":\"/home/psaxe\",\n                \"PBS_O_SYSTEM\":\"Linux\",\n                \"PBS_O_QUEUE\":\"workq\",\n                \"PBS_O_HOST\":\"molssi10.chem.vt.edu\"\n            },\n            \"comment\":\"Job run at Sat Oct 03 at 15:58 on (molssi10:ncpus=1)\",\n            \"etime\":\"Sat Oct  3 15:58:33 2026\",\n            \"run_count\":1,\n            \"Submit_arguments\":\"-N seammfx57512-ok\",\n            \"project\":\"_pbs_project_default\",\n            \"Submit_Host\":\"molssi10.chem.vt.edu\"\n        },\n        \"14.molssi10\":{\n            \"Job_Name\":\"seammfx57512-fail\",\n            \"Job_Owner\":\"psaxe@molssi10.chem.vt.edu\",\n            \"resources_used\":{\n                \"cpupercent\":0,\n                \"cput\":\"00:00:00\",\n                \"mem\":\"0kb\",\n                \"ncpus\":1,\n                \"vmem\":\"0kb\",\n                \"walltime\":\"00:00:00\"\n            },\n            \"job_state\":\"R\",\n            \"queue\":\"workq\",\n            \"server\":\"molssi10\",\n            \"Checkpoint\":\"u\",\n            \"ctime\":\"Sat Oct  3 15:58:34 2026\",\n            \"Error_Path\":\"molssi10.chem.vt.edu:/home/psaxe/seammfx57512-fail.e14\",\n            \"exec_host\":\"molssi10/1\",\n            \"exec_vnode\":\"(molssi10:ncpus=1)\",\n            \"Hold_Types\":\"n\",\n            \"Join_Path\":\"oe\",\n            \"Keep_Files\":\"n\",\n            \"Mail_Points\":\"a\",\n            \"mtime\":\"Sat Oct  3 15:58:35 2026\",\n            \"Output_Path\":\"molssi10.chem.vt.edu:/tmp/seamm_fixtures/pbs.out\",\n            \"Priority\":0,\n            \"qtime\":\"Sat Oct  3 15:58:34 2026\",\n            \"Rerunable\":\"True\",\n            \"Resource_List\":{\n                \"ncpus\":1,\n                \"nodect\":1,\n                \"place\":\"pack\",\n                \"select\":\"1:ncpus=1\",\n                \"walltime\":\"00:05:00\"\n            },\n            \"stime\":\"Sat Oct  3 15:58:34 2026\",\n            \"session_id\":1063237,\n            \"jobdir\":\"/home/psaxe\",\n            \"substate\":42,\n            \"Variable_List\":{\n                \"PBS_O_HOME\":\"/home/psaxe\",\n                \"PBS_O_LANG\":\"en_US.UTF-8\",\n                \"PBS_O_LOGNAME\":\"psaxe\",\n                \"PBS_O_PATH\":\"/usr/local/bin:/usr/bin:/bin:/usr/games\",\n                \"PBS_O_SHELL\":\"/bin/bash\",\n                \"PBS_O_WORKDIR\":\"/home/psaxe\",\n                \"PBS_O_SYSTEM\":\"Linux\",\n                \"PBS_O_QUEUE\":\"workq\",\n                \"PBS_O_HOST\":\"molssi10.chem.vt.edu\"\n            },\n            \"comment\":\"Job run at Sat Oct 03 at 15:58 on (molssi10:ncpus=1)\",\n            \"etime\":\"Sat Oct  3 15:58:34 2026\",\n            \"run_count\":1,\n            \"Submit_arguments\":\"-N seammfx57512-fail\",\n            \"project\":\"_pbs_project_default\",\n            \"Submit_Host\":\"molssi10.chem.vt.edu\"\n        },\n        \"15.molssi10\":{\n            \"Job_Name\":\"seammfx57512-long\",\n            \"Job_Owner\":\"psaxe@molssi10.chem.vt.edu\",\n            \"resources_used\":{\n                \"cpupercent\":0,\n                \"cput\":\"00:00:00\",\n                \"mem\":\"0kb\",\n                \"ncpus\":1,\n                \"vmem\":\"0kb\",\n                \"walltime\":\"00:00:00\"\n            },\n            \"job_state\":\"R\",\n            \"queue\":\"workq\",\n            \"server\":\"molssi10\",\n            \"Checkpoint\":\"u\",\n            \"ctime\":\"Sat Oct  3 15:58:34 2026\",\n            \"depend\":\"beforeany:16.molssi10@molssi10\",\n            \"Error_Path\":\"molssi10.chem.vt.edu:/home/psaxe/seammfx57512-long.e15\",\n            \"exec_host\":\"molssi10/4\",\n            \"exec_vnode\":\"(molssi10:ncpus=1)\",\n            \"Hold_Types\":\"n\",\n            \"Join_Path\":\"oe\",\n            \"Keep_Files\":\"n\",\n            \"Mail_Points\":\"a\",\n            \"mtime\":\"Sat Oct  3 15:58:35 2026\",\n            \"Output_Path\":\"molssi10.chem.vt.edu:/tmp/seamm_fixtures/pbs.out\",\n            \"Priority\":0,\n            \"qtime\":\"Sat Oct  3 15:58:34 2026\",\n            \"Rerunable\":\"True\",\n            \"Resource_List\":{\n                \"ncpus\":1,\n                \"nodect\":1,\n                \"place\":\"pack\",\n                \"select\":\"1:ncpus=1\",\n                \"walltime\":\"00:05:00\"\n            },\n            \"stime\":\"Sat Oct  3 15:58:34 2026\",\n            \"session_id\":1063273,\n            \"jobdir\":\"/home/psaxe\",\n            \"substate\":42,\n            \"Variable_List\":{\n                \"PBS_O_HOME\":\"/home/psaxe\",\n                \"PBS_O_LANG\":\"en_US.UTF-8\",\n                \"PBS_O_LOGNAME\":\"psaxe\",\n                \"PBS_O_PATH\":\"/usr/local/bin:/usr/bin:/bin:/usr/games\",\n                \"PBS_O_SHELL\":\"/bin/bash\",\n                \"PBS_O_WORKDIR\":\"/home/psaxe\",\n                \"PBS_O_SYSTEM\":\"Linux\",\n                \"PBS_O_QUEUE\":\"workq\",\n                \"PBS_O_HOST\":\"molssi10.chem.vt.edu\"\n            },\n            \"comment\":\"Job run at Sat Oct 03 at 15:58 on (molssi10:ncpus=1)\",\n            \"etime\":\"Sat Oct  3 15:58:34 2026\",\n            \"run_count\":1,\n            \"Submit_arguments\":\"-N seammfx57512-long\",\n            \"project\":\"_pbs_project_default\",\n            \"Submit_Host\":\"molssi10.chem.vt.edu\"\n        },\n        \"16.molssi10\":{\n            \"Job_Name\":\"seammfx57512-held\",\n            \"Job_Owner\":\"psaxe@molssi10.chem.vt.edu\",\n            \"job_state\":\"H\",\n            \"queue\":\"workq\",\n            \"server\":\"molssi10\",\n            \"Checkpoint\":\"u\",\n            \"ctime\":\"Sat Oct  3 15:58:35 2026\",\n            \"depend\":\"afterany:15.molssi10@molssi10\",\n            \"Error_Path\":\"molssi10.chem.vt.edu:/home/psaxe/seammfx57512-held.e16\",\n            \"Hold_Types\":\"s\",\n            \"Join_Path\":\"oe\",\n            \"Keep_Files\":\"n\",\n            \"Mail_Points\":\"a\",\n            \"mtime\":\"Sat Oct  3 15:58:35 2026\",\n            \"Output_Path\":\"molssi10.chem.vt.edu:/tmp/seamm_fixtures/pbs.out\",\n            \"Priority\":0,\n            \"qtime\":\"Sat Oct  3 15:58:35 2026\",\n            \"Rerunable\":\"True\",\n            \"Resource_List\":{\n                \"ncpus\":1,\n                \"nodect\":1,\n                \"place\":\"pack\",\n                \"select\":\"1:ncpus=1\",\n                \"walltime\":\"00:05:00\"\n            },\n            \"substate\":22,\n            \"Variable_List\":{\n                \"PBS_O_HOME\":\"/home/psaxe\",\n                \"PBS_O_LANG\":\"en_US.UTF-8\",\n                \"PBS_O_LOGNAME\":\"psaxe\",\n                \"PBS_O_PATH\":\"/usr/local/bin:/usr/bin:/bin:/usr/games\",\n                \"PBS_O_SHELL\":\"/bin/bash\",\n                \"PBS_O_WORKDIR\":\"/home/psaxe\",\n                \"PBS_O_SYSTEM\":\"Linux\",\n                \"PBS_O_QUEUE\":\"workq\",\n                \"PBS_O_HOST\":\"molssi10.chem.vt.edu\"\n            },\n            \"Submit_arguments\":\"-N seammfx57512-held\",\n            \"project\":\"_pbs_project_default\",\n            \"Submit_Host\":\"molssi10.chem.vt.edu\"\n        }\n    }\n}\n",
+      "stderr": ""
+    },
+    {
+      "label": "find long",
+      "argv": [
+        "sh",
+        "-c",
+        "qselect -x -u \"$USER\" -N seammfx57512-long"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "15.molssi10\n",
+      "stderr": ""
+    },
+    {
+      "label": "count",
+      "argv": [
+        "sh",
+        "-c",
+        "qselect -u \"$USER\""
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "3.molssi10\n7.molssi10\n13.molssi10\n14.molssi10\n15.molssi10\n16.molssi10\n",
+      "stderr": ""
+    },
+    {
+      "label": "cancel long",
+      "argv": [
+        "qdel",
+        "15.molssi10"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "poll finished",
+      "argv": [
+        "qstat",
+        "-x",
+        "-f",
+        "-F",
+        "json",
+        "13.molssi10",
+        "14.molssi10",
+        "15.molssi10",
+        "16.molssi10"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "{\n    \"timestamp\":1791057575,\n    \"pbs_version\":\"23.06.06\",\n    \"pbs_server\":\"molssi10\",\n    \"Jobs\":{\n        \"13.molssi10\":{\n            \"Job_Name\":\"seammfx57512-ok\",\n            \"Job_Owner\":\"psaxe@molssi10.chem.vt.edu\",\n            \"resources_used\":{\n                \"cpupercent\":0,\n                \"cput\":\"00:00:00\",\n                \"mem\":\"6516kb\",\n                \"ncpus\":1,\n                \"vmem\":\"10236kb\",\n                \"walltime\":\"00:00:20\"\n            },\n            \"job_state\":\"F\",\n            \"queue\":\"workq\",\n            \"server\":\"molssi10\",\n            \"Checkpoint\":\"u\",\n            \"ctime\":\"Sat Oct  3 15:58:33 2026\",\n            \"Error_Path\":\"molssi10.chem.vt.edu:/home/psaxe/seammfx57512-ok.e13\",\n            \"exec_host\":\"molssi10/0\",\n            \"exec_vnode\":\"(molssi10:ncpus=1)\",\n            \"Hold_Types\":\"n\",\n            \"Join_Path\":\"oe\",\n            \"Keep_Files\":\"n\",\n            \"Mail_Points\":\"a\",\n            \"mtime\":\"Sat Oct  3 15:58:54 2026\",\n            \"Output_Path\":\"molssi10.chem.vt.edu:/tmp/seamm_fixtures/pbs.out\",\n            \"Priority\":0,\n            \"qtime\":\"Sat Oct  3 15:58:33 2026\",\n            \"Rerunable\":\"True\",\n            \"Resource_List\":{\n                \"ncpus\":1,\n                \"nodect\":1,\n                \"place\":\"pack\",\n                \"select\":\"1:ncpus=1\",\n                \"walltime\":\"00:05:00\"\n            },\n            \"stime\":\"Sat Oct  3 15:58:33 2026\",\n            \"obittime\":\"Sat Oct  3 15:58:54 2026\",\n            \"session_id\":1063201,\n            \"jobdir\":\"/home/psaxe\",\n            \"substate\":92,\n            \"Variable_List\":{\n                \"PBS_O_HOME\":\"/home/psaxe\",\n                \"PBS_O_LANG\":\"en_US.UTF-8\",\n                \"PBS_O_LOGNAME\":\"psaxe\",\n                \"PBS_O_PATH\":\"/usr/local/bin:/usr/bin:/bin:/usr/games\",\n                \"PBS_O_SHELL\":\"/bin/bash\",\n                \"PBS_O_WORKDIR\":\"/home/psaxe\",\n                \"PBS_O_SYSTEM\":\"Linux\",\n                \"PBS_O_QUEUE\":\"workq\",\n                \"PBS_O_HOST\":\"molssi10.chem.vt.edu\"\n            },\n            \"comment\":\"Job run at Sat Oct 03 at 15:58 on (molssi10:ncpus=1) and finished\",\n            \"etime\":\"Sat Oct  3 15:58:33 2026\",\n            \"run_count\":1,\n            \"Stageout_status\":1,\n            \"Exit_status\":0,\n            \"Submit_arguments\":\"-N seammfx57512-ok\",\n            \"history_timestamp\":1791057534,\n            \"project\":\"_pbs_project_default\",\n            \"Submit_Host\":\"molssi10.chem.vt.edu\"\n        },\n        \"14.molssi10\":{\n            \"Job_Name\":\"seammfx57512-fail\",\n            \"Job_Owner\":\"psaxe@molssi10.chem.vt.edu\",\n            \"resources_used\":{\n                \"cpupercent\":0,\n                \"cput\":\"00:00:00\",\n                \"mem\":\"6468kb\",\n                \"ncpus\":1,\n                \"vmem\":\"10236kb\",\n                \"walltime\":\"00:00:20\"\n            },\n            \"job_state\":\"F\",\n            \"queue\":\"workq\",\n            \"server\":\"molssi10\",\n            \"Checkpoint\":\"u\",\n            \"ctime\":\"Sat Oct  3 15:58:34 2026\",\n            \"Error_Path\":\"molssi10.chem.vt.edu:/home/psaxe/seammfx57512-fail.e14\",\n            \"exec_host\":\"molssi10/1\",\n            \"exec_vnode\":\"(molssi10:ncpus=1)\",\n            \"Hold_Types\":\"n\",\n            \"Join_Path\":\"oe\",\n            \"Keep_Files\":\"n\",\n            \"Mail_Points\":\"a\",\n            \"mtime\":\"Sat Oct  3 15:58:54 2026\",\n            \"Output_Path\":\"molssi10.chem.vt.edu:/tmp/seamm_fixtures/pbs.out\",\n            \"Priority\":0,\n            \"qtime\":\"Sat Oct  3 15:58:34 2026\",\n            \"Rerunable\":\"True\",\n            \"Resource_List\":{\n                \"ncpus\":1,\n                \"nodect\":1,\n                \"place\":\"pack\",\n                \"select\":\"1:ncpus=1\",\n                \"walltime\":\"00:05:00\"\n            },\n            \"stime\":\"Sat Oct  3 15:58:34 2026\",\n            \"obittime\":\"Sat Oct  3 15:58:54 2026\",\n            \"session_id\":1063237,\n            \"jobdir\":\"/home/psaxe\",\n            \"substate\":93,\n            \"Variable_List\":{\n                \"PBS_O_HOME\":\"/home/psaxe\",\n                \"PBS_O_LANG\":\"en_US.UTF-8\",\n                \"PBS_O_LOGNAME\":\"psaxe\",\n                \"PBS_O_PATH\":\"/usr/local/bin:/usr/bin:/bin:/usr/games\",\n                \"PBS_O_SHELL\":\"/bin/bash\",\n                \"PBS_O_WORKDIR\":\"/home/psaxe\",\n                \"PBS_O_SYSTEM\":\"Linux\",\n                \"PBS_O_QUEUE\":\"workq\",\n                \"PBS_O_HOST\":\"molssi10.chem.vt.edu\"\n            },\n            \"comment\":\"Job run at Sat Oct 03 at 15:58 on (molssi10:ncpus=1) and failed\",\n            \"etime\":\"Sat Oct  3 15:58:34 2026\",\n            \"run_count\":1,\n            \"Stageout_status\":1,\n            \"Exit_status\":3,\n            \"Submit_arguments\":\"-N seammfx57512-fail\",\n            \"history_timestamp\":1791057534,\n            \"project\":\"_pbs_project_default\",\n            \"Submit_Host\":\"molssi10.chem.vt.edu\"\n        },\n        \"15.molssi10\":{\n            \"Job_Name\":\"seammfx57512-long\",\n            \"Job_Owner\":\"psaxe@molssi10.chem.vt.edu\",\n            \"resources_used\":{\n                \"cpupercent\":0,\n                \"cput\":\"00:00:00\",\n                \"mem\":\"6336kb\",\n                \"ncpus\":1,\n                \"vmem\":\"10236kb\",\n                \"walltime\":\"00:00:41\"\n            },\n            \"job_state\":\"F\",\n            \"queue\":\"workq\",\n            \"server\":\"molssi10\",\n            \"Checkpoint\":\"u\",\n            \"ctime\":\"Sat Oct  3 15:58:34 2026\",\n            \"depend\":\"beforeany:16.molssi10@molssi10\",\n            \"Error_Path\":\"molssi10.chem.vt.edu:/home/psaxe/seammfx57512-long.e15\",\n            \"exec_host\":\"molssi10/4\",\n            \"exec_vnode\":\"(molssi10:ncpus=1)\",\n            \"Hold_Types\":\"n\",\n            \"Join_Path\":\"oe\",\n            \"Keep_Files\":\"n\",\n            \"Mail_Points\":\"a\",\n            \"mtime\":\"Sat Oct  3 15:59:16 2026\",\n            \"Output_Path\":\"molssi10.chem.vt.edu:/tmp/seamm_fixtures/pbs.out\",\n            \"Priority\":0,\n            \"qtime\":\"Sat Oct  3 15:58:34 2026\",\n            \"Rerunable\":\"True\",\n            \"Resource_List\":{\n                \"ncpus\":1,\n                \"nodect\":1,\n                \"place\":\"pack\",\n                \"select\":\"1:ncpus=1\",\n                \"walltime\":\"00:05:00\"\n            },\n            \"stime\":\"Sat Oct  3 15:58:34 2026\",\n            \"obittime\":\"Sat Oct  3 15:59:16 2026\",\n            \"session_id\":1063273,\n            \"jobdir\":\"/home/psaxe\",\n            \"substate\":91,\n            \"Variable_List\":{\n                \"PBS_O_HOME\":\"/home/psaxe\",\n                \"PBS_O_LANG\":\"en_US.UTF-8\",\n                \"PBS_O_LOGNAME\":\"psaxe\",\n                \"PBS_O_PATH\":\"/usr/local/bin:/usr/bin:/bin:/usr/games\",\n                \"PBS_O_SHELL\":\"/bin/bash\",\n                \"PBS_O_WORKDIR\":\"/home/psaxe\",\n                \"PBS_O_SYSTEM\":\"Linux\",\n                \"PBS_O_QUEUE\":\"workq\",\n                \"PBS_O_HOST\":\"molssi10.chem.vt.edu\"\n            },\n            \"comment\":\"Job run at Sat Oct 03 at 15:58 on (molssi10:ncpus=1) and terminated by psaxe@molssi10.chem.vt.edu\",\n            \"etime\":\"Sat Oct  3 15:58:34 2026\",\n            \"run_count\":1,\n            \"Stageout_status\":1,\n            \"Exit_status\":271,\n            \"Submit_arguments\":\"-N seammfx57512-long\",\n            \"history_timestamp\":1791057556,\n            \"project\":\"_pbs_project_default\",\n            \"Submit_Host\":\"molssi10.chem.vt.edu\"\n        },\n        \"16.molssi10\":{\n            \"Job_Name\":\"seammfx57512-held\",\n            \"Job_Owner\":\"psaxe@molssi10.chem.vt.edu\",\n            \"resources_used\":{\n                \"cpupercent\":0,\n                \"cput\":\"00:00:00\",\n                \"mem\":\"0kb\",\n                \"ncpus\":1,\n                \"vmem\":\"0kb\",\n                \"walltime\":\"00:00:05\"\n            },\n            \"job_state\":\"F\",\n            \"queue\":\"workq\",\n            \"server\":\"molssi10\",\n            \"Checkpoint\":\"u\",\n            \"ctime\":\"Sat Oct  3 15:58:35 2026\",\n            \"Error_Path\":\"molssi10.chem.vt.edu:/home/psaxe/seammfx57512-held.e16\",\n            \"exec_host\":\"molssi10/0\",\n            \"exec_vnode\":\"(molssi10:ncpus=1)\",\n            \"Hold_Types\":\"n\",\n            \"Join_Path\":\"oe\",\n            \"Keep_Files\":\"n\",\n            \"Mail_Points\":\"a\",\n            \"mtime\":\"Sat Oct  3 15:59:22 2026\",\n            \"Output_Path\":\"molssi10.chem.vt.edu:/tmp/seamm_fixtures/pbs.out\",\n            \"Priority\":0,\n            \"qtime\":\"Sat Oct  3 15:58:35 2026\",\n            \"Rerunable\":\"True\",\n            \"Resource_List\":{\n                \"ncpus\":1,\n                \"nodect\":1,\n                \"place\":\"pack\",\n                \"select\":\"1:ncpus=1\",\n                \"walltime\":\"00:05:00\"\n            },\n            \"stime\":\"Sat Oct  3 15:59:16 2026\",\n            \"obittime\":\"Sat Oct  3 15:59:22 2026\",\n            \"session_id\":1063397,\n            \"jobdir\":\"/home/psaxe\",\n            \"substate\":92,\n            \"Variable_List\":{\n                \"PBS_O_HOME\":\"/home/psaxe\",\n                \"PBS_O_LANG\":\"en_US.UTF-8\",\n                \"PBS_O_LOGNAME\":\"psaxe\",\n                \"PBS_O_PATH\":\"/usr/local/bin:/usr/bin:/bin:/usr/games\",\n                \"PBS_O_SHELL\":\"/bin/bash\",\n                \"PBS_O_WORKDIR\":\"/home/psaxe\",\n                \"PBS_O_SYSTEM\":\"Linux\",\n                \"PBS_O_QUEUE\":\"workq\",\n                \"PBS_O_HOST\":\"molssi10.chem.vt.edu\"\n            },\n            \"comment\":\"Job run at Sat Oct 03 at 15:59 on (molssi10:ncpus=1) and finished\",\n            \"etime\":\"Sat Oct  3 15:59:16 2026\",\n            \"run_count\":1,\n            \"Stageout_status\":1,\n            \"Exit_status\":0,\n            \"Submit_arguments\":\"-N seammfx57512-held\",\n            \"history_timestamp\":1791057562,\n            \"project\":\"_pbs_project_default\",\n            \"Submit_Host\":\"molssi10.chem.vt.edu\"\n        }\n    }\n}\n",
+      "stderr": ""
+    },
+    {
+      "label": "find finished ok",
+      "argv": [
+        "sh",
+        "-c",
+        "qselect -x -u \"$USER\" -N seammfx57512-ok"
+      ],
+      "input": null,
+      "rc": 0,
+      "stdout": "13.molssi10\n",
+      "stderr": ""
+    },
+    {
+      "label": "poll unknown id",
+      "argv": [
+        "qstat",
+        "-x",
+        "-f",
+        "-F",
+        "json",
+        "999999"
+      ],
+      "input": null,
+      "rc": 153,
+      "stdout": "{\n    \"timestamp\":1791057576,\n    \"pbs_version\":\"23.06.06\",\n    \"pbs_server\":\"molssi10\"\n}",
+      "stderr": "qstat: Unknown Job Id 999999.molssi10\n"
+    }
+  ]
+}
