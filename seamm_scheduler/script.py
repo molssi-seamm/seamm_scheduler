@@ -40,6 +40,10 @@ def build_script(directives, payload, *, shell="/bin/bash", scheduler="slurm"):
     lines = [f"#!{shell}"]
     lines.extend(scheduler.directive_lines(directives))
     lines.append("")
+    prologue = scheduler.prologue_lines(directives)
+    if prologue:
+        lines.extend(prologue)
+        lines.append("")
     lines.append(payload.rstrip("\n"))
     lines.append("")
 

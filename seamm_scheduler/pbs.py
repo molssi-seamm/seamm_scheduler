@@ -2,9 +2,15 @@
 
 """PBS (PBS Professional and OpenPBS): ``#PBS`` directives, ``qsub``/``qstat``/``qdel``.
 
-This module proves the :class:`~seamm_scheduler.scheduler.Scheduler` interface
-for a second queueing system. It is tested against recorded and mocked
-``qsub``/``qstat`` output only: there is no PBS site to validate it on yet.
+This module implements the :class:`~seamm_scheduler.scheduler.Scheduler`
+interface for a second queueing system. It was validated on a real OpenPBS
+23.06 site (MolSSI10, 2026-10-03), whose recorded output is replayed by the
+tests, alongside mocked ``qsub``/``qstat`` output.
+
+A PBS job starts in the user's home directory, so ``chdir`` becomes a ``cd`` at
+the top of the script. Dependencies and other job attributes are ``-W``
+options (SLURM's ``dependency`` is accepted). Without ``-V`` only the
+``PBS_O_*`` variables reach the job, as with SLURM's ``export=NONE``.
 
 Resources become one ``select`` statement: ``nodes`` chunks, each with its
 share of the MPI ranks (``mpiprocs``), cores (``ncpus``), threads, memory and
@@ -43,6 +49,18 @@ _FINISHED_STATES = {"F", "X", "C"}
 # job gives 271 (256 + SIGTERM); negative values are PBS's own failures to run
 # the job (e.g. -1 JOB_EXEC_FAIL1, -11 JOB_EXEC_RERUN ...).
 _CANCELLED_EXIT = {271}
+
+# Job attributes qsub takes with -W rather than as resources (-l).
+_W_ATTRIBUTES = (
+    "depend",
+    "group_list",
+    "umask",
+    "sandbox",
+    "block",
+    "stagein",
+    "stageout",
+    "run_count",
+)
 
 # Directive keys -> qsub option. Anything else becomes "-l key=value".
 _DIRECTIVE_FLAGS = {
@@ -106,6 +124,12 @@ class Pbs(Scheduler):
             directives.setdefault("queue", directives.pop("partition"))
         if "time" in directives:
             directives.setdefault("walltime", directives.pop("time"))
+        if "dependency" in directives:
+            directives.setdefault("depend", directives.pop("dependency"))
+        # SLURM's export=NONE is what PBS does without -V; ALL is -V.
+        export = directives.pop("export", None)
+        if export is not None and str(export).strip().upper() == "ALL":
+            directives["export_all"] = True
         # SLURM spellings that are not PBS resources; resources set the select.
         for key in _SLURM_ONLY:
             if key in directives:
@@ -145,13 +169,21 @@ class Pbs(Scheduler):
 
     def directive_lines(self, directives):
         lines = []
-        seen = set()
+        # chdir becomes a cd in the prologue: PBS has no working-directory option.
+        seen = {"chdir", "export_all"}
+        if directives.get("export_all"):
+            lines.append("#PBS -V")
         for key, flag in _DIRECTIVE_FLAGS.items():
             seen.add(key)
             value = directives.get(key)
             if value in (None, ""):
                 continue
             lines.append(f"#PBS {flag} {value}")
+        for key in _W_ATTRIBUTES:
+            seen.add(key)
+            value = directives.get(key)
+            if value not in (None, ""):
+                lines.append(f"#PBS -W {key}={value}")
         for key in ("select", "walltime"):
             seen.add(key)
             value = directives.get(key)
@@ -162,6 +194,13 @@ class Pbs(Scheduler):
                 continue
             lines.append(f"#PBS -l {key}={value}")
         return lines
+
+    def prologue_lines(self, directives):
+        # A PBS job starts in the user's home directory.
+        chdir = directives.get("chdir")
+        if chdir:
+            return [f"cd {_sh_quote(str(chdir))}"]
+        return []
 
     # ------------------------------------------------------------------
     # Commands
@@ -211,7 +250,9 @@ class Pbs(Scheduler):
         return {"join": "oe", "output": f"{directory}/pbs.out"}
 
     def find_cmd(self, job_name):
-        return ["sh", "-c", f'qselect -u "$USER" -N {_sh_quote(job_name)}']
+        # -x includes finished jobs (job history), so a bundle that finished while
+        # the evaluator was away is still found.
+        return ["sh", "-c", f'qselect -x -u "$USER" -N {_sh_quote(job_name)}']
 
     def count_cmd(self):
         # qselect lists the user's jobs that have not finished, one per line
@@ -325,10 +366,8 @@ _SLURM_ONLY = (
     "mem",
     "mem_per_cpu",
     "gpus",
-    "export",
     "constraint",
     "qos",
-    "chdir",
 )
 
 

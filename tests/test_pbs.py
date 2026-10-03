@@ -200,3 +200,33 @@ def test_slurm_spellings_are_dropped_and_find_count():
     assert d["select"] == "1:ncpus=2:mpiprocs=2"
     assert Pbs().count_cmd()[0] == "sh"
     assert "-N seamm-x" in Pbs().find_cmd("seamm-x")[2]
+
+
+def test_dependency_is_a_W_attribute():
+    """qsub takes a dependency with -W, not as a resource (real OpenPBS refuses
+    -l depend). SLURM's spelling 'dependency' is accepted."""
+    pbs = Pbs()
+    lines = pbs.directive_lines(pbs.directives({}, {"dependency": "afterany:11.x"}))
+    assert "#PBS -W depend=afterany:11.x" in lines
+    assert not any("-l depend" in line for line in lines)
+
+
+def test_chdir_becomes_a_cd():
+    """A PBS job starts in the home directory: chdir becomes a cd."""
+    pbs = Pbs()
+    directives = pbs.directives({}, {"chdir": "/data/job 7"})
+    assert not any("chdir" in line for line in pbs.directive_lines(directives))
+    script = build_script(directives, "run_flowchart", scheduler=pbs)
+    lines = script.splitlines()
+    assert "cd '/data/job 7'" in lines
+    assert lines.index("cd '/data/job 7'") < lines.index("run_flowchart")
+
+
+def test_export():
+    pbs = Pbs()
+    assert "#PBS -V" in pbs.directive_lines(pbs.directives({}, {"export": "ALL"}))
+    assert "#PBS -V" not in pbs.directive_lines(pbs.directives({}, {"export": "NONE"}))
+
+
+def test_find_includes_finished_jobs():
+    assert "qselect -x" in Pbs().find_cmd("bundle-1")[-1]

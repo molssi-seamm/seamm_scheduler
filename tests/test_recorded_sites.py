@@ -68,8 +68,10 @@ def test_poll_while_running(path):
     ids = data["ids"]
     result = backend.poll_many(list(ids.values()))
     assert result[ids["held"]].category == "pending"
-    for name in ("ok", "fail", "long"):
+    for name in ("ok", "fail"):
         assert result[ids[name]].category == "running"
+    # The long job may still be waiting for a free core.
+    assert result[ids["long"]].category in ("running", "pending")
 
 
 @pytest.mark.parametrize("path", fixtures, ids=[p.parent.name for p in fixtures])
