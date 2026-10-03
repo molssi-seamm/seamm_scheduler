@@ -2,6 +2,23 @@
 History
 =======
 
+2026.10.3 -- PBS validated on a real site; flowcharts as batch jobs on any scheduler
+    * PBS was validated on a real OpenPBS 23.06 site: dependencies are passed as
+      ``-W depend``, the job starts with a ``cd`` into its directory (PBS starts
+      jobs in the home directory), ``export = ALL`` becomes ``-V``, finished jobs
+      are found again after a restart (``qselect -x``), and a garbled ``qstat``
+      reply is a failed poll rather than "no jobs".
+    * The resources of a job or bundle are merged into the section's ``select``
+      chunk, so the section's memory is kept; SLURM spellings in a PBS section
+      (``ntasks``, ``mem``, ``time`` ...) are translated rather than dropped.
+    * A section can run the flowchart itself as a batch job on any scheduler:
+      ``type = queue`` with ``scheduler = pbs`` or ``slurm``. ``type = slurm``
+      still works.
+    * The host where a flowchart runs as a batch job needs this version too:
+      older versions do not know ``type = queue``.
+    * Output recorded from real SLURM 20.11 and OpenPBS 23.06 sites is replayed
+      by the tests.
+
 2026.10.2 -- Initial release: queueing systems for SEAMM
     * Generalizes ``seamm_slurm`` into one module per queueing system behind a
       shared ``Scheduler`` interface: SLURM (``slurm.py``) and PBS
