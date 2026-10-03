@@ -253,6 +253,39 @@ Draft HISTORY lines (for the release PRs):
   ones sync their files on demand. Requires seamm-scheduler >= the new
   version."
 
+Review (2026-10-03)
+-------------------
+
+The design session's review (a subagent read the eight commits and checked the
+findings with scripts and molssi10's ``qstat`` history) found four must-fixes,
+all fixed (seamm_scheduler 19d11c0, seamm_jobserver 0606455, seamm_webui
+6be2499 and b177c6b):
+
+1. ``Pbs.directives()`` replaced the section's ``select`` when the resources set
+   ``ntasks`` (every bundle does), losing the site's memory: the live bundles of
+   job 4007 ran without ``mem``. The resources are now merged into the chunk.
+2. The JobServer's PBS path dropped SLURM-spelled keys (``ntasks``, ``mem``) from
+   the section and from a job's overrides; they now become the ``select``. The
+   flowchart job's output went to ``$HOME`` (where ``qsub`` ran) and was never
+   staged back; it is now ``pbs.out`` in the job directory.
+3. A garbled ``qstat -F json`` reply looked like "no jobs" (the JobServer would
+   finalize or resubmit everything); it is now a failed poll.
+4. The pins named the released seamm_scheduler, which lacks ``type = queue``;
+   now ``>= 2026.10.3``. A remote venv needs the new seamm_scheduler too
+   (documented); ``~/SEAMM_PBS`` was updated.
+
+Also fixed: SLURM-form times (``1-00:00:00``) and ``walltime`` limits; "Unknown
+Job Id" on the text path means gone; ``cd ... || exit 1``; ``-W block`` dropped;
+``type`` lower-cased; ``qstat -f`` continuation lines; replay tests check exit
+codes and ``poll_failed``; the web UI uses ``section.is_batch``; user docs for
+``type = queue``/PBS in seamm_scheduler and the JobServer.
+
+**Re-validated live (job 4008):** the bundles ran with
+``select=1:ncpus=1:mem=4gb:mpiprocs=1``, the flowchart job's ``pbs.out`` came
+back in the job directory, same table, all exit 0. (The output files of jobs
+4006/4007, ``~/seamm-4006.o17`` and ``~/seamm-4007.o18`` on molssi10, are from
+before the fix.)
+
 Still to do: release seamm_scheduler, seamm_jobserver and seamm_webui (pins:
 jobserver and webui on the new seamm_scheduler); MolSSI10's own ``~/SEAMM``
 (old, pre-phase 2, services stopped) rewritten for PBS if it is to run jobs
