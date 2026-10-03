@@ -334,9 +334,15 @@
 
 <span class="sd">"""PBS (PBS Professional and OpenPBS): ``#PBS`` directives, ``qsub``/``qstat``/``qdel``.</span>
 
-<span class="sd">This module proves the :class:`~seamm_scheduler.scheduler.Scheduler` interface</span>
-<span class="sd">for a second queueing system. It is tested against recorded and mocked</span>
-<span class="sd">``qsub``/``qstat`` output only: there is no PBS site to validate it on yet.</span>
+<span class="sd">This module implements the :class:`~seamm_scheduler.scheduler.Scheduler`</span>
+<span class="sd">interface for a second queueing system. It was validated on a real OpenPBS</span>
+<span class="sd">23.06 site (MolSSI10, 2026-10-03), whose recorded output is replayed by the</span>
+<span class="sd">tests, alongside mocked ``qsub``/``qstat`` output.</span>
+
+<span class="sd">A PBS job starts in the user's home directory, so ``chdir`` becomes a ``cd`` at</span>
+<span class="sd">the top of the script. Dependencies and other job attributes are ``-W``</span>
+<span class="sd">options (SLURM's ``dependency`` is accepted). Without ``-V`` only the</span>
+<span class="sd">``PBS_O_*`` variables reach the job, as with SLURM's ``export=NONE``.</span>
 
 <span class="sd">Resources become one ``select`` statement: ``nodes`` chunks, each with its</span>
 <span class="sd">share of the MPI ranks (``mpiprocs``), cores (``ncpus``), threads, memory and</span>
@@ -375,6 +381,17 @@
 <span class="c1"># job gives 271 (256 + SIGTERM); negative values are PBS's own failures to run</span>
 <span class="c1"># the job (e.g. -1 JOB_EXEC_FAIL1, -11 JOB_EXEC_RERUN ...).</span>
 <span class="n">_CANCELLED_EXIT</span> <span class="o">=</span> <span class="p">{</span><span class="mi">271</span><span class="p">}</span>
+
+<span class="c1"># Job attributes qsub takes with -W rather than as resources (-l).</span>
+<span class="n">_W_ATTRIBUTES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"depend"</span><span class="p">,</span>
+    <span class="s2">"group_list"</span><span class="p">,</span>
+    <span class="s2">"umask"</span><span class="p">,</span>
+    <span class="s2">"sandbox"</span><span class="p">,</span>
+    <span class="s2">"stagein"</span><span class="p">,</span>
+    <span class="s2">"stageout"</span><span class="p">,</span>
+    <span class="s2">"run_count"</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="c1"># Directive keys -&gt; qsub option. Anything else becomes "-l key=value".</span>
 <span class="n">_DIRECTIVE_FLAGS</span> <span class="o">=</span> <span class="p">{</span>
@@ -439,17 +456,52 @@
 <div class="viewcode-block" id="Pbs.directives">
 <a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.pbs.Pbs.directives">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">directives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resources</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""PBS directives from resources and a section's/job's directives.</span>
+
+<span class="sd">        ``extra`` may use PBS names (``queue``, ``walltime``, ``select``, ...) or</span>
+<span class="sd">        the portable/SLURM spellings a target section uses (``partition``,</span>
+<span class="sd">        ``time``, ``ntasks``, ``mem``, ...). The resources become one ``select``</span>
+<span class="sd">        chunk, merged into any ``select`` the section gives: the section's</span>
+<span class="sd">        settings (e.g. its ``mem``) are kept unless the resources set them.</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">_parse_size</span><span class="p">,</span> <span class="n">_parse_time</span>
+
         <span class="n">directives</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">extra</span> <span class="ow">or</span> <span class="p">{})</span>
         <span class="c1"># Portable spellings a target section may use</span>
         <span class="k">if</span> <span class="s2">"partition"</span> <span class="ow">in</span> <span class="n">directives</span><span class="p">:</span>
             <span class="n">directives</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"queue"</span><span class="p">,</span> <span class="n">directives</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"partition"</span><span class="p">))</span>
-        <span class="k">if</span> <span class="s2">"time"</span> <span class="ow">in</span> <span class="n">directives</span><span class="p">:</span>
-            <span class="n">directives</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"walltime"</span><span class="p">,</span> <span class="n">directives</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"time"</span><span class="p">))</span>
-        <span class="c1"># SLURM spellings that are not PBS resources; resources set the select.</span>
+        <span class="k">if</span> <span class="s2">"dependency"</span> <span class="ow">in</span> <span class="n">directives</span><span class="p">:</span>
+            <span class="n">directives</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"depend"</span><span class="p">,</span> <span class="n">directives</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"dependency"</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"time"</span><span class="p">,</span> <span class="s2">"walltime"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">directives</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">directives</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">""</span><span class="p">):</span>
+                    <span class="c1"># SLURM forms such as 1-00:00:00 -&gt; HH:MM:SS</span>
+                    <span class="n">directives</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+                        <span class="s2">"walltime"</span><span class="p">,</span> <span class="n">format_walltime</span><span class="p">(</span><span class="n">_parse_time</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+                    <span class="p">)</span>
+        <span class="c1"># SLURM's export=NONE is what PBS does without -V; ALL is -V.</span>
+        <span class="n">export</span> <span class="o">=</span> <span class="n">directives</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"export"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">export</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">export</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"ALL"</span><span class="p">:</span>
+            <span class="n">directives</span><span class="p">[</span><span class="s2">"export_all"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># SLURM's resource spellings become resources, which the explicit</span>
+        <span class="c1"># resources override.</span>
+        <span class="n">given</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_SLURM_RESOURCES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">directives</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">directives</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">""</span><span class="p">):</span>
+                    <span class="n">given</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_SLURM_ONLY</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">directives</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"PBS ignores the SLURM directive '</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
                 <span class="n">directives</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">resource</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">given</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">value</span>
 
         <span class="n">partition</span> <span class="o">=</span> <span class="n">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="s2">"partition"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">partition</span><span class="p">:</span>
@@ -461,25 +513,39 @@
         <span class="k">if</span> <span class="n">walltime</span><span class="p">:</span>
             <span class="n">directives</span><span class="p">[</span><span class="s2">"walltime"</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_walltime</span><span class="p">(</span><span class="n">walltime</span><span class="p">)</span>
 
-        <span class="n">ntasks</span> <span class="o">=</span> <span class="n">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="s2">"ntasks"</span><span class="p">)</span>
-        <span class="n">cpus_per_task</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="s2">"cpus_per_task"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">count</span><span class="p">,</span> <span class="n">chunk</span> <span class="o">=</span> <span class="n">_parse_select</span><span class="p">(</span><span class="n">directives</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"select"</span><span class="p">))</span>
+        <span class="n">ntasks</span> <span class="o">=</span> <span class="n">resource</span><span class="p">(</span><span class="s2">"ntasks"</span><span class="p">)</span>
+        <span class="n">cpus_per_task</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">resource</span><span class="p">(</span><span class="s2">"cpus_per_task"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">resource</span><span class="p">(</span><span class="s2">"nodes"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ntasks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">nodes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="s2">"nodes"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">ranks</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">ntasks</span><span class="p">)</span> <span class="o">//</span> <span class="n">nodes</span><span class="p">)</span>  <span class="c1"># per chunk, rounded up</span>
-            <span class="n">chunk</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="sa">f</span><span class="s2">"ncpus=</span><span class="si">{</span><span class="n">ranks</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">cpus_per_task</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">"mpiprocs=</span><span class="si">{</span><span class="n">ranks</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-            <span class="p">]</span>
+            <span class="n">ranks</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">ntasks</span><span class="p">)</span> <span class="o">//</span> <span class="n">count</span><span class="p">)</span>  <span class="c1"># per chunk, rounded up</span>
+            <span class="n">chunk</span><span class="p">[</span><span class="s2">"ncpus"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ranks</span> <span class="o">*</span> <span class="n">cpus_per_task</span><span class="p">)</span>
+            <span class="n">chunk</span><span class="p">[</span><span class="s2">"mpiprocs"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ranks</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">cpus_per_task</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">chunk</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ompthreads=</span><span class="si">{</span><span class="n">cpus_per_task</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">chunk</span><span class="p">[</span><span class="s2">"ompthreads"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cpus_per_task</span><span class="p">)</span>
             <span class="n">mem_per_cpu</span> <span class="o">=</span> <span class="n">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="s2">"mem_per_cpu"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">mem_per_cpu</span><span class="p">:</span>
                 <span class="n">mb</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">mem_per_cpu</span><span class="p">)</span> <span class="o">*</span> <span class="n">ranks</span> <span class="o">*</span> <span class="n">cpus_per_task</span> <span class="o">//</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">))</span>
-                <span class="n">chunk</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"mem=</span><span class="si">{</span><span class="n">mb</span><span class="si">}</span><span class="s2">mb"</span><span class="p">)</span>
-            <span class="n">ngpus</span> <span class="o">=</span> <span class="n">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="s2">"ngpus"</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">ngpus</span><span class="p">:</span>
-                <span class="n">chunk</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ngpus=</span><span class="si">{</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">ngpus</span><span class="p">)</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="n">nodes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="n">directives</span><span class="p">[</span><span class="s2">"select"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nodes</span><span class="si">}</span><span class="s2">:"</span> <span class="o">+</span> <span class="s2">":"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+                <span class="n">chunk</span><span class="p">[</span><span class="s2">"mem"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">mb</span><span class="si">}</span><span class="s2">mb"</span>
+        <span class="k">elif</span> <span class="n">cpus_per_task</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="s2">"ncpus"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chunk</span><span class="p">:</span>
+            <span class="n">chunk</span><span class="p">[</span><span class="s2">"ncpus"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cpus_per_task</span><span class="p">)</span>
+        <span class="c1"># Memory in SLURM's spellings: --mem per node, --mem-per-cpu per core</span>
+        <span class="k">if</span> <span class="s2">"mem_per_cpu"</span> <span class="ow">in</span> <span class="n">given</span> <span class="ow">and</span> <span class="n">_get</span><span class="p">(</span><span class="n">resources</span><span class="p">,</span> <span class="s2">"mem_per_cpu"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ncpus</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ncpus"</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">chunk</span><span class="p">[</span><span class="s2">"mem"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">_parse_size</span><span class="p">(</span><span class="n">given</span><span class="p">[</span><span class="s1">'mem_per_cpu'</span><span class="p">])</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ncpus</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="si">}</span><span class="s2">mb"</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"mem"</span> <span class="ow">in</span> <span class="n">given</span><span class="p">:</span>
+            <span class="n">chunk</span><span class="p">[</span><span class="s2">"mem"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">_parse_size</span><span class="p">(</span><span class="n">given</span><span class="p">[</span><span class="s1">'mem'</span><span class="p">])</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="si">}</span><span class="s2">mb"</span>
+        <span class="n">ngpus</span> <span class="o">=</span> <span class="n">resource</span><span class="p">(</span><span class="s2">"ngpus"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">resource</span><span class="p">(</span><span class="s2">"gpus"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ngpus</span><span class="p">:</span>
+            <span class="n">chunk</span><span class="p">[</span><span class="s2">"ngpus"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">ngpus</span><span class="p">)</span> <span class="o">//</span> <span class="n">count</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">chunk</span> <span class="ow">or</span> <span class="n">nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">directives</span><span class="p">[</span><span class="s2">"select"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">:"</span> <span class="o">+</span> <span class="s2">":"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">chunk</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="n">directives</span></div>
 
 
@@ -487,13 +553,21 @@
 <a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.pbs.Pbs.directive_lines">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">directive_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directives</span><span class="p">):</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="c1"># chdir becomes a cd in the prologue: PBS has no working-directory option.</span>
+        <span class="n">seen</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"chdir"</span><span class="p">,</span> <span class="s2">"export_all"</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">directives</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"export_all"</span><span class="p">):</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"#PBS -V"</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">flag</span> <span class="ow">in</span> <span class="n">_DIRECTIVE_FLAGS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">directives</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">""</span><span class="p">):</span>
                 <span class="k">continue</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"#PBS </span><span class="si">{</span><span class="n">flag</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_W_ATTRIBUTES</span><span class="p">:</span>
+            <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">directives</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">""</span><span class="p">):</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"#PBS -W </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"select"</span><span class="p">,</span> <span class="s2">"walltime"</span><span class="p">):</span>
             <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">directives</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -504,6 +578,16 @@
                 <span class="k">continue</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"#PBS -l </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">lines</span></div>
+
+
+<div class="viewcode-block" id="Pbs.prologue_lines">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.pbs.Pbs.prologue_lines">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prologue_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directives</span><span class="p">):</span>
+        <span class="c1"># A PBS job starts in the user's home directory.</span>
+        <span class="n">chdir</span> <span class="o">=</span> <span class="n">directives</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"chdir"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">chdir</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"cd </span><span class="si">{</span><span class="n">_sh_quote</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chdir</span><span class="p">))</span><span class="si">}</span><span class="s2"> || exit 1"</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
 
 
     <span class="c1"># ------------------------------------------------------------------</span>
@@ -571,7 +655,9 @@
 <div class="viewcode-block" id="Pbs.find_cmd">
 <a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.pbs.Pbs.find_cmd">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_name</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">"sh"</span><span class="p">,</span> <span class="s2">"-c"</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'qselect -u "$USER" -N </span><span class="si">{</span><span class="n">_sh_quote</span><span class="p">(</span><span class="n">job_name</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span></div>
+        <span class="c1"># -x includes finished jobs (job history), so a bundle that finished while</span>
+        <span class="c1"># the evaluator was away is still found.</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">"sh"</span><span class="p">,</span> <span class="s2">"-c"</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'qselect -x -u "$USER" -N </span><span class="si">{</span><span class="n">_sh_quote</span><span class="p">(</span><span class="n">job_name</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Pbs.count_cmd">
@@ -611,8 +697,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_qstat_json</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_qstat_json</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
-                <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="c1"># A garbled or truncated reply says nothing about the jobs:</span>
+                    <span class="c1"># report a failed poll, never "every job is gone".</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not parse qstat -F json output: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">poll_failed</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="k">return</span> <span class="p">{}</span>
             <span class="k">if</span> <span class="n">_is_unsupported</span><span class="p">(</span><span class="n">err</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_qstat_json</span> <span class="o">=</span> <span class="kc">False</span>
@@ -622,6 +711,9 @@
 
         <span class="n">rc</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status_cmd</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">rc</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">out</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">_is_unknown_job</span><span class="p">(</span><span class="n">err</span><span class="p">):</span>
+                <span class="c1"># Every id is unknown to the server: the jobs are gone.</span>
+                <span class="k">return</span> <span class="p">{}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">poll_failed</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="p">{}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_status</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
@@ -642,8 +734,13 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_qstat_json</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Jobs"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">jobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">jobs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">jobs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'Jobs' is a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, not a mapping"</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Jobs"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">state</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"job_state"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
             <span class="n">exit_status</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Exit_status"</span><span class="p">)</span>
             <span class="n">key</span> <span class="o">=</span> <span class="n">_match_id</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
@@ -684,6 +781,9 @@
                 <span class="n">finish</span><span class="p">()</span>
                 <span class="n">job_id</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">fields</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">:</span>
+                <span class="c1"># a continuation of the previous value (e.g. Variable_List)</span>
+                <span class="k">continue</span>
             <span class="k">elif</span> <span class="s2">"="</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">job_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"="</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="n">fields</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -692,18 +792,39 @@
 
 
 
-<span class="n">_SLURM_ONLY</span> <span class="o">=</span> <span class="p">(</span>
+<span class="c1"># SLURM spellings of resources, which become the select chunk.</span>
+<span class="n">_SLURM_RESOURCES</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">"ntasks"</span><span class="p">,</span>
     <span class="s2">"cpus_per_task"</span><span class="p">,</span>
     <span class="s2">"nodes"</span><span class="p">,</span>
     <span class="s2">"mem"</span><span class="p">,</span>
     <span class="s2">"mem_per_cpu"</span><span class="p">,</span>
     <span class="s2">"gpus"</span><span class="p">,</span>
-    <span class="s2">"export"</span><span class="p">,</span>
+    <span class="s2">"ngpus"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># SLURM directives with no PBS equivalent.</span>
+<span class="n">_SLURM_ONLY</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">"constraint"</span><span class="p">,</span>
     <span class="s2">"qos"</span><span class="p">,</span>
-    <span class="s2">"chdir"</span><span class="p">,</span>
 <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_select</span><span class="p">(</span><span class="n">select</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""``"2:ncpus=4:mem=4gb"`` -&gt; (2, {"ncpus": "4", "mem": "4gb"}); (1, {}) if</span>
+<span class="sd">    there is none."""</span>
+    <span class="k">if</span> <span class="n">select</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">""</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="p">{}</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">select</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">parts</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">chunk</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"="</span> <span class="ow">in</span> <span class="n">part</span><span class="p">:</span>
+            <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"="</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">chunk</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">count</span><span class="p">,</span> <span class="n">chunk</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_sh_quote</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
@@ -732,6 +853,11 @@
         <span class="ow">or</span> <span class="s2">"unrecognized option"</span> <span class="ow">in</span> <span class="n">stderr</span>
         <span class="ow">or</span> <span class="s2">"usage"</span> <span class="ow">in</span> <span class="n">stderr</span>
     <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_unknown_job</span><span class="p">(</span><span class="n">stderr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Whether qstat's error says the job ids are unknown (purged jobs)."""</span>
+    <span class="k">return</span> <span class="s2">"unknown job id"</span> <span class="ow">in</span> <span class="p">(</span><span class="n">stderr</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 </pre></div>
 
                 </article>

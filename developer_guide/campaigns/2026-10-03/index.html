@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2026-10-03 – MolSSI10: from SLURM to OpenPBS &#8212; SEAMM Scheduler  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'developer_guide/campaigns/2026-10-03/index';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="prev" title="Developer Documentation" href="../../index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SEAMM Scheduler  documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    Developer Documentation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    Developer Documentation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">2026-10-03 – MolSSI10: from SLURM to OpenPBS</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Developer Documentation</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">2026-10-03 – MolSSI10: from SLURM to OpenPBS</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="molssi10-from-slurm-to-openpbs">
+<h1>2026-10-03 – MolSSI10: from SLURM to OpenPBS<a class="headerlink" href="#molssi10-from-slurm-to-openpbs" title="Link to this heading">#</a></h1>
+<p>Status: <strong>design note for Paul and the design session; nothing on MolSSI10 has
+been changed.</strong> Phase 7 of the parallel-execution campaign (seamm_exec
+<code class="docutils literal notranslate"><span class="pre">docs/developer_guide/campaigns/2026-10-02/</span></code>) includes “PBS validated on a
+real PBS site”. <code class="docutils literal notranslate"><span class="pre">seamm_scheduler</span></code>’s PBS back end has only been tested against
+mocked <code class="docutils literal notranslate"><span class="pre">qsub</span></code>/<code class="docutils literal notranslate"><span class="pre">qstat</span></code> output. The plan is to make MolSSI10 that site by
+replacing its SLURM with a permanent single-node OpenPBS. SLURM stays covered by
+ChemAI (local) and TinkerCliffs (ssh).</p>
+<section id="molssi10-today-checked-read-only-2026-10-03">
+<h2>MolSSI10 today (checked read-only, 2026-10-03)<a class="headerlink" href="#molssi10-today-checked-read-only-2026-10-03" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Debian 11.11, kernel 5.10, 6 cores, 125 GB, 689 GB free on <code class="docutils literal notranslate"><span class="pre">/</span></code>.
+Passwordless sudo for <code class="docutils literal notranslate"><span class="pre">psaxe</span></code>.</p></li>
+<li><p>SLURM 20.11.4 (Debian <code class="docutils literal notranslate"><span class="pre">slurm-wlm</span></code>, <code class="docutils literal notranslate"><span class="pre">slurmctld</span></code>, <code class="docutils literal notranslate"><span class="pre">slurmd</span></code>, <code class="docutils literal notranslate"><span class="pre">slurmdbd</span></code>)
+with munge. One node and one partition, <code class="docutils literal notranslate"><span class="pre">batch</span></code>; <code class="docutils literal notranslate"><span class="pre">select/cons_tres</span></code> with
+<code class="docutils literal notranslate"><span class="pre">CR_Core_Memory</span></code>. Accounting goes through <code class="docutils literal notranslate"><span class="pre">slurmdbd</span></code> into MariaDB 10.5,
+whose only database besides the system ones is <code class="docutils literal notranslate"><span class="pre">slurm_acct_db</span></code>.</p></li>
+<li><p>PostgreSQL 13 runs a <code class="docutils literal notranslate"><span class="pre">pubchemqc</span></code> cluster on port 5437 (<code class="docutils literal notranslate"><span class="pre">/mnt/ssd1</span></code>). It
+is unrelated to SEAMM and must not be touched.</p></li>
+<li><p>SEAMM runs as <code class="docutils literal notranslate"><span class="pre">psaxe</span></code>: <code class="docutils literal notranslate"><span class="pre">seamm-jobserver</span></code> and <code class="docutils literal notranslate"><span class="pre">seamm-webui</span></code> from
+<code class="docutils literal notranslate"><span class="pre">~/SEAMM</span></code> (<code class="docutils literal notranslate"><span class="pre">venv</span></code> → <code class="docutils literal notranslate"><span class="pre">/mnt/hdd2/psaxe/SEAMM/venv</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">~/SEAMM/molssi10.ini</span></code> has two queues: <code class="docutils literal notranslate"><span class="pre">[molssi10]</span></code> (this host’s SLURM,
+<code class="docutils literal notranslate"><span class="pre">transport</span> <span class="pre">=</span> <span class="pre">local</span></code>) and <code class="docutils literal notranslate"><span class="pre">[tinkercliffs]</span></code> (ssh). <strong>The default queue is
+``molssi10``.</strong> So every production job submitted without a queue is an
+sbatch on this host’s SLURM: 37 jobs since 2026-09-19.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">~/SEAMM_DEV/PaulVT.local.ini</span></code> on the Mac also has a <code class="docutils literal notranslate"><span class="pre">[molssi10]</span></code> queue
+(ssh to this host’s SLURM). Its <code class="docutils literal notranslate"><span class="pre">remote_run_from_jobserver</span></code> still points to
+the old conda env <code class="docutils literal notranslate"><span class="pre">/home/psaxe/miniconda3/envs/seamm</span></code>.</p></li>
+</ul>
+</section>
+<section id="what-shapes-the-plan">
+<h2>What shapes the plan<a class="headerlink" href="#what-shapes-the-plan" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>The JobServer cannot run a flowchart as a PBS job.</strong> A target section’s
+<code class="docutils literal notranslate"><span class="pre">type</span></code> is <code class="docutils literal notranslate"><span class="pre">slurm</span></code> (the whole flowchart is one batch job) or <code class="docutils literal notranslate"><span class="pre">local</span></code>
+(a subprocess). PBS is accepted only for a flowchart’s <em>tasks</em>
+(<code class="docutils literal notranslate"><span class="pre">tasks</span> <span class="pre">=</span> <span class="pre">queue</span></code>, <code class="docutils literal notranslate"><span class="pre">scheduler</span> <span class="pre">=</span> <span class="pre">pbs</span></code>). The comment in
+<code class="docutils literal notranslate"><span class="pre">seamm_scheduler/config.py</span></code> says so: a PBS evaluator needs a new type
+<em>and</em> a JobServer change. Because MolSSI10’s default queue is its local
+SLURM, removing SLURM without that change breaks production submissions
+that don’t name a queue. See decision A.</p></li>
+<li><p><strong>OpenPBS has no Debian packages, and its last release is v23.06.06
+(June 2023).</strong> We would build it from source: autotools, with hwloc (2.4.1
+is installed), libical, libedit, Tcl/Tk, swig, expat, OpenSSL and the
+PostgreSQL development files. Its data service runs its <em>own</em> PostgreSQL
+instance (by default on port 15007, data under <code class="docutils literal notranslate"><span class="pre">PBS_HOME/datastore</span></code>) using
+the system’s PostgreSQL server binaries, so it sits beside the <code class="docutils literal notranslate"><span class="pre">pubchemqc</span></code>
+cluster without touching it. If the build turns out to need much patching
+on Debian 11, the fallback is a container (decision C).</p></li>
+<li><p><strong>Gaps in the PBS back end</strong> that only a real site can settle:</p>
+<ul class="simple">
+<li><p>A PBS job starts in <code class="docutils literal notranslate"><span class="pre">$HOME</span></code>, not the submit directory as with SLURM. The
+batch script must <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">&quot;$PBS_O_WORKDIR&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">-d</span></code>/<code class="docutils literal notranslate"><span class="pre">-w</span></code> the directory.
+<code class="docutils literal notranslate"><span class="pre">build_script</span></code> adds nothing today.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">qstat</span> <span class="pre">-x</span></code> needs the server attribute <code class="docutils literal notranslate"><span class="pre">job_history_enable</span> <span class="pre">=</span> <span class="pre">True</span></code>
+(and a <code class="docutils literal notranslate"><span class="pre">job_history_duration</span></code>), or finished jobs vanish and adoption
+after a restart cannot tell completed from lost.</p></li>
+<li><p>The environment: <code class="docutils literal notranslate"><span class="pre">qsub</span></code> without <code class="docutils literal notranslate"><span class="pre">-V</span></code> passes only <code class="docutils literal notranslate"><span class="pre">PBS_O_*</span></code>. That is
+the behaviour we want (SLURM’s <code class="docutils literal notranslate"><span class="pre">export=NONE</span></code> lesson: ORCA’s clobbered
+<code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code>), but the payload must then set up its own
+environment, as the bundle worker already does for SLURM.</p></li>
+<li><p>The real <code class="docutils literal notranslate"><span class="pre">qstat</span> <span class="pre">-f</span> <span class="pre">-F</span> <span class="pre">json</span></code> and <code class="docutils literal notranslate"><span class="pre">qsub</span></code> output (ids like
+<code class="docutils literal notranslate"><span class="pre">12.molssi10</span></code>), the <code class="docutils literal notranslate"><span class="pre">Exit_status</span></code> of a <code class="docutils literal notranslate"><span class="pre">qdel</span></code>-ed or killed job, and
+<code class="docutils literal notranslate"><span class="pre">qselect</span></code>, to replace the mocks with recorded fixtures.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mem</span></code> in a <code class="docutils literal notranslate"><span class="pre">select</span></code> chunk and the <code class="docutils literal notranslate"><span class="pre">mpiprocs</span></code>/<code class="docutils literal notranslate"><span class="pre">ncpus</span></code> accounting
+under <code class="docutils literal notranslate"><span class="pre">cgroups</span></code> (or none) on one node.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="plan">
+<h2>Plan<a class="headerlink" href="#plan" title="Link to this heading">#</a></h2>
+<p>Each step that changes the host is done only with Paul’s OK, in a window with
+no SEAMM jobs running there.</p>
+<ol class="arabic simple" start="0">
+<li><p><strong>Decisions</strong> (below).</p></li>
+<li><p><strong>Freeze SLURM 20.11</strong> (read-only, no host change). Record real <code class="docutils literal notranslate"><span class="pre">sinfo</span></code>,
+<code class="docutils literal notranslate"><span class="pre">squeue</span></code>, <code class="docutils literal notranslate"><span class="pre">sacct</span></code> (text, since 20.11 has no JSON) and
+<code class="docutils literal notranslate"><span class="pre">scontrol</span> <span class="pre">show</span> <span class="pre">job</span></code> output for running, finished, failed and cancelled
+test jobs, as <code class="docutils literal notranslate"><span class="pre">seamm_scheduler</span></code> fixtures, so the old-SLURM text path stays
+tested without a host. Snapshot <code class="docutils literal notranslate"><span class="pre">/etc/slurm</span></code>, the munge key, both
+<code class="docutils literal notranslate"><span class="pre">[molssi10]</span></code> ini sections and <code class="docutils literal notranslate"><span class="pre">mysqldump</span> <span class="pre">slurm_acct_db</span></code>.</p></li>
+<li><p><strong>Build OpenPBS</strong> in a scratch directory on MolSSI10 (<code class="docutils literal notranslate"><span class="pre">apt</span> <span class="pre">install</span></code> of the
+build dependencies only, nothing started). This proves the build before
+SLURM is touched. Install prefix <code class="docutils literal notranslate"><span class="pre">/opt/pbs</span></code>, <code class="docutils literal notranslate"><span class="pre">PBS_HOME</span></code>
+<code class="docutils literal notranslate"><span class="pre">/var/spool/pbs</span></code>.</p></li>
+<li><p><strong>Swap</strong> (the window): set the JobServer’s default queue so new jobs don’t
+go to SLURM (decision A). Wait for running jobs to finish. Stop and disable
+<code class="docutils literal notranslate"><span class="pre">slurmctld</span></code>, <code class="docutils literal notranslate"><span class="pre">slurmd</span></code>, <code class="docutils literal notranslate"><span class="pre">slurmdbd</span></code> and <code class="docutils literal notranslate"><span class="pre">munge</span></code>, then
+<code class="docutils literal notranslate"><span class="pre">apt</span> <span class="pre">remove</span></code> the SLURM and munge packages (configuration kept with
+<code class="docutils literal notranslate"><span class="pre">remove</span></code>, not <code class="docutils literal notranslate"><span class="pre">purge</span></code>). Install OpenPBS, with the server, scheduler,
+communication daemon and MoM on this host, through its systemd unit. Set up
+one queue <code class="docutils literal notranslate"><span class="pre">workq</span></code> with 6 CPUs and the node’s memory as resources,
+<code class="docutils literal notranslate"><span class="pre">job_history_enable</span> <span class="pre">=</span> <span class="pre">True</span></code> (7 days), and no <code class="docutils literal notranslate"><span class="pre">sudo</span></code> needed for
+submission.</p></li>
+<li><p><strong>Make the back end real</strong> (<code class="docutils literal notranslate"><span class="pre">seamm_scheduler</span></code>): the working directory,
+the environment, recorded fixtures for qsub/qstat/qdel/qselect and
+job-history states, adoption of queued bundles after an evaluator restart,
+and a <code class="docutils literal notranslate"><span class="pre">pbs</span></code> variant in seamm-manager’s ini templates if needed. Keep the
+mocks for unit tests.</p></li>
+<li><p><strong>Validate:</strong></p>
+<ol class="loweralpha simple">
+<li><p>the scheduler suite from the Mac over ssh;</p></li>
+<li><p>a table-writing MOPAC flowchart from MolSSI10’s own JobServer with its
+tasks on the local PBS queue;</p></li>
+<li><p>with decision A, the same flowchart as a PBS job;</p></li>
+<li><p>a MolSSI10 → TinkerCliffs job, proving the production ssh path still
+works;</p></li>
+<li><p>the Mac’s SEAMM_DEV <code class="docutils literal notranslate"><span class="pre">[molssi10]</span></code> queue as PBS over ssh.</p></li>
+</ol>
+</li>
+<li><p><strong>Record</strong> in these notes, the design doc’s phase 7 and memory.</p></li>
+</ol>
+<p>Rollback: stop and disable PBS, then <code class="docutils literal notranslate"><span class="pre">apt</span> <span class="pre">install</span></code> the same SLURM and munge
+packages. The configuration is kept by <code class="docutils literal notranslate"><span class="pre">remove</span></code>, and the snapshot covers
+<code class="docutils literal notranslate"><span class="pre">/etc/slurm</span></code> and the munge key; restore <code class="docutils literal notranslate"><span class="pre">slurm_acct_db</span></code> from the dump.
+Then restore the ini sections and restart the JobServer.</p>
+<p>Budget: about a day for the build and swap, and a day for the back-end work and
+validation.</p>
+</section>
+<section id="decisions-for-paul">
+<h2>Decisions for Paul<a class="headerlink" href="#decisions-for-paul" title="Link to this heading">#</a></h2>
+<ol class="upperalpha">
+<li><p><strong>PBS evaluators in the JobServer.</strong> Today MolSSI10’s default queue runs each
+flowchart as a SLURM job. Either:</p>
+<ol class="arabic simple">
+<li><p>extend the JobServer in this campaign so a section can run the
+evaluator as a PBS job: a scheduler-neutral <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">queue</span></code> with
+<code class="docutils literal notranslate"><span class="pre">scheduler</span> <span class="pre">=</span> <span class="pre">pbs</span></code>. This is the honest production test, but it is a
+JobServer change. <strong>Recommended.</strong></p></li>
+<li><p>make MolSSI10’s default queue <code class="docutils literal notranslate"><span class="pre">local</span></code> (flowcharts run as
+subprocesses, as on the Mac) with <code class="docutils literal notranslate"><span class="pre">tasks</span> <span class="pre">=</span> <span class="pre">queue</span></code>,
+<code class="docutils literal notranslate"><span class="pre">scheduler</span> <span class="pre">=</span> <span class="pre">pbs</span></code>, so only tasks go through PBS, and leave (1) for
+later.</p></li>
+</ol>
+<p>Either way, <code class="docutils literal notranslate"><span class="pre">[molssi10]</span></code>’s default changes during the window.</p>
+</li>
+<li><p><strong>MariaDB</strong> is used only for SLURM’s accounting. Remove it with SLURM
+(after the dump), or leave it installed and stopped?</p></li>
+<li><p><strong>On the host or in a container?</strong> OpenPBS in a container on MolSSI10
+(images exist for development) would leave the host untouched, but a
+container’s PBS submitting the JobServer’s jobs on the host is not the
+“would it work in production” check we want. <strong>Recommended: on the host</strong>,
+with the container only if the build fails.</p></li>
+<li><p><strong>The window:</strong> when MolSSI10 can have no jobs running (its production
+JobServer submits to TinkerCliffs as well as locally).</p></li>
+</ol>
+</section>
+<section id="paul-s-decisions-2026-10-03">
+<h2>Paul’s decisions (2026-10-03)<a class="headerlink" href="#paul-s-decisions-2026-10-03" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>MolSSI10 is no longer production; it is used only for testing this work.
+Remove SLURM and change its queues freely.</p></li>
+<li><p>Remove MariaDB (after the dump). Install OpenPBS on the host.</p></li>
+<li><p>Debian 11 is end of life (2026-08-31): point apt at the archives.</p></li>
+<li><p>A (implied by the test-only role): the JobServer gets a scheduler-neutral
+<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">queue</span></code> with <code class="docutils literal notranslate"><span class="pre">scheduler</span> <span class="pre">=</span> <span class="pre">pbs|slurm</span></code>.</p></li>
+</ul>
+</section>
+<section id="done-2026-10-03">
+<h2>Done (2026-10-03)<a class="headerlink" href="#done-2026-10-03" title="Link to this heading">#</a></h2>
+<ol class="arabic">
+<li><p><strong>SLURM 20.11 frozen:</strong> <code class="docutils literal notranslate"><span class="pre">devtools/capture_fixtures.py</span></code> drives the back end
+over ssh against a real site and records every command;
+<code class="docutils literal notranslate"><span class="pre">tests/fixtures/slurm-20.11/lifecycle.json</span></code> (completed, failed 3:0,
+cancelled, pending on a dependency, unknown id) plus <code class="docutils literal notranslate"><span class="pre">sinfo</span></code>/<code class="docutils literal notranslate"><span class="pre">scontrol</span></code>
+text, replayed by <code class="docutils literal notranslate"><span class="pre">tests/test_recorded_sites.py</span></code>. Snapshot on MolSSI10 in
+<code class="docutils literal notranslate"><span class="pre">~/slurm_snapshot_2026-10-03</span></code> (<code class="docutils literal notranslate"><span class="pre">/etc/slurm</span></code>, munge key, the
+<code class="docutils literal notranslate"><span class="pre">slurm_acct_db</span></code> dump, <code class="docutils literal notranslate"><span class="pre">sacct</span></code> history, the ini); a copy without the munge
+key in <code class="docutils literal notranslate"><span class="pre">~/Work/SEAMM/molssi10_slurm_snapshot_2026-10-03</span></code>.</p></li>
+<li><p><strong>apt:</strong> <code class="docutils literal notranslate"><span class="pre">/etc/apt</span></code> backed up to <code class="docutils literal notranslate"><span class="pre">~/apt_backup_2026-10-03</span></code>; Debian
+sources now <code class="docutils literal notranslate"><span class="pre">archive.debian.org</span></code> (bullseye, -updates, -security), pgdg
+<code class="docutils literal notranslate"><span class="pre">apt-archive.postgresql.org</span></code>, pgadmin4 commented out,
+<code class="docutils literal notranslate"><span class="pre">Acquire::Check-Valid-Until</span> <span class="pre">&quot;false&quot;</span></code>.</p></li>
+<li><p><strong>Removed:</strong> slurmctld, slurmd, slurmdbd, slurm-client, slurm-wlm,
+munge and MariaDB (<code class="docutils literal notranslate"><span class="pre">remove</span></code>, configuration kept; <code class="docutils literal notranslate"><span class="pre">libmunge2</span></code> remains).</p></li>
+<li><p><strong>OpenPBS 23.06.06</strong> built from source in <code class="docutils literal notranslate"><span class="pre">~/build</span></code> (build dependencies
+from Debian; <code class="docutils literal notranslate"><span class="pre">libpq-dev</span></code> 17 already installed), installed in <code class="docutils literal notranslate"><span class="pre">/opt/pbs</span></code>,
+<code class="docutils literal notranslate"><span class="pre">PBS_HOME</span></code> <code class="docutils literal notranslate"><span class="pre">/var/spool/pbs</span></code>, systemd unit <code class="docutils literal notranslate"><span class="pre">pbs</span></code> enabled; commands
+linked into <code class="docutils literal notranslate"><span class="pre">/usr/local/bin</span></code> for non-interactive ssh. Its data service
+runs on port 15007 with the PostgreSQL 15 binaries, beside the pubchemqc
+cluster on 5437. Two gotchas:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/etc/hosts</span></code> mapped the hostname to 127.0.1.1 (Debian’s default), and
+PBS insists on an interface address: now <code class="docutils literal notranslate"><span class="pre">198.82.19.68</span></code>
+(<code class="docutils literal notranslate"><span class="pre">hosts.orig</span></code> in the apt backup). If the address changes, PBS stops.</p></li>
+<li><p>A first start needs <code class="docutils literal notranslate"><span class="pre">pbs_server</span> <span class="pre">-t</span> <span class="pre">create</span></code>; without it the server exits
+silently after connecting to its database.</p></li>
+</ul>
+<p>Configured with qmgr: node <code class="docutils literal notranslate"><span class="pre">molssi10</span></code> (6 CPUs, 125 GB), queue <code class="docutils literal notranslate"><span class="pre">workq</span></code>
+(default, enabled, started), <code class="docutils literal notranslate"><span class="pre">job_history_enable</span> <span class="pre">=</span> <span class="pre">True</span></code> (7 days).</p>
+</li>
+<li><p><strong>Back end made real</strong> (seamm_scheduler d3d16c0): dependencies are
+<code class="docutils literal notranslate"><span class="pre">-W</span> <span class="pre">depend=</span></code> (real qsub refuses <code class="docutils literal notranslate"><span class="pre">-l</span> <span class="pre">depend</span></code>); <code class="docutils literal notranslate"><span class="pre">chdir</span></code> becomes a <code class="docutils literal notranslate"><span class="pre">cd</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Scheduler.prologue_lines</span></code>); <code class="docutils literal notranslate"><span class="pre">export=ALL</span></code> becomes <code class="docutils literal notranslate"><span class="pre">-V</span></code>; <code class="docutils literal notranslate"><span class="pre">find</span></code> uses
+<code class="docutils literal notranslate"><span class="pre">qselect</span> <span class="pre">-x</span></code> so finished jobs are found after a restart. Recorded OpenPBS
+fixtures (<code class="docutils literal notranslate"><span class="pre">tests/fixtures/openpbs-23.06</span></code>): running, queued, held,
+completed, failed (3), cancelled (271), unknown id.</p></li>
+<li><p><strong>JobServer</strong> (seamm_scheduler 542ca51, seamm_jobserver 67073be):
+<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">queue</span></code> + <code class="docutils literal notranslate"><span class="pre">scheduler</span></code>; <code class="docutils literal notranslate"><span class="pre">is_batch</span></code>/<code class="docutils literal notranslate"><span class="pre">batch_scheduler</span></code>; a PBS
+evaluator job gets <code class="docutils literal notranslate"><span class="pre">-V</span></code> (like SLURM’s default) unless <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">=</span> <span class="pre">NONE</span></code>.
+<strong>Web UI</strong> (seamm_webui dc587ee): imports from seamm_scheduler instead of the
+seamm_slurm shim (an old seamm_slurm refused <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">queue</span></code>), and treats
+<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">queue</span></code> as a batch queue.</p></li>
+<li><p><strong>Validated</strong> from the Mac’s SEAMM_DEV (ini <code class="docutils literal notranslate"><span class="pre">[molssi10]</span></code> and
+<code class="docutils literal notranslate"><span class="pre">[molssi10-tasks]</span></code>; the SLURM version saved as
+<code class="docutils literal notranslate"><span class="pre">PaulVT.local.ini.slurm-2026-10-03</span></code>) to MolSSI10’s PBS over ssh, with a test
+environment <code class="docutils literal notranslate"><span class="pre">~/SEAMM_PBS</span></code> there (released phase 4 + the two checkouts):</p>
+<ul class="simple">
+<li><p>job 4006: the flowchart as a PBS job; results and the <code class="docutils literal notranslate"><span class="pre">seamm.db</span></code> table
+staged back, values identical to local runs;</p></li>
+<li><p>job 4007: the same, with each MOPAC calculation a PBS job submitted from
+inside the evaluator job (tasks = queue, bundle 1, nothing inline); three
+bundle jobs, exit 0, identical table.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="follow-ups-from-the-design-session-2026-10-03">
+<h2>Follow-ups from the design session (2026-10-03)<a class="headerlink" href="#follow-ups-from-the-design-session-2026-10-03" title="Link to this heading">#</a></h2>
+<p><strong>Remaining checks against “slurm”</strong> (workspace grep):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">seamm_webui</span></code> <code class="docutils literal notranslate"><span class="pre">routers/jobs.py</span></code>: on-demand sync of a remote job’s files
+tested <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">!=</span> <span class="pre">&quot;slurm&quot;</span></code>, so it skipped PBS-over-ssh jobs. Fixed
+(seamm_webui 6be2499, with a test).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seamm_exec</span></code> <code class="docutils literal notranslate"><span class="pre">computational_environment.py</span></code>: <code class="docutils literal notranslate"><span class="pre">scheduler</span> <span class="pre">==</span> <span class="pre">&quot;slurm&quot;</span></code> /
+<code class="docutils literal notranslate"><span class="pre">&quot;pbs&quot;</span></code> picks how to read the allocation (<code class="docutils literal notranslate"><span class="pre">_slurm()</span></code>/<code class="docutils literal notranslate"><span class="pre">_pbs()</span></code>); correct
+as is.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seamm_jobserver</span></code>: <code class="docutils literal notranslate"><span class="pre">mode</span> <span class="pre">==</span> <span class="pre">&quot;slurm&quot;</span></code> is the internal name of a job running
+as a batch job on any scheduler (in <code class="docutils literal notranslate"><span class="pre">job_data</span></code>-like state and the reattach
+path); harmless, left as is to keep the state format.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seamm_scheduler</span></code> <code class="docutils literal notranslate"><span class="pre">config.py</span></code>: the <code class="docutils literal notranslate"><span class="pre">&quot;slurm&quot;</span></code> alias and the historical
+<code class="docutils literal notranslate"><span class="pre">LocalSlurm</span></code>/<code class="docutils literal notranslate"><span class="pre">SshSlurm</span></code> classes; intended.</p></li>
+<li><p>seamm-manager’s ini templates and seamm_dashboard_client have none.</p></li>
+</ul>
+<p><strong>SLURM 20.11 coverage:</strong> the replayed calls are exactly those the back end
+makes: <code class="docutils literal notranslate"><span class="pre">sbatch</span> <span class="pre">--parsable</span></code>, <code class="docutils literal notranslate"><span class="pre">squeue</span> <span class="pre">--json</span></code> (refused by 20.11) and the text
+<code class="docutils literal notranslate"><span class="pre">squeue</span> <span class="pre">--format=%i|%T|%R</span></code>, <code class="docutils literal notranslate"><span class="pre">sacct</span> <span class="pre">--json</span></code> (refused) and the text
+<code class="docutils literal notranslate"><span class="pre">sacct</span> <span class="pre">--parsable2</span></code>, the <code class="docutils literal notranslate"><span class="pre">sacct</span> <span class="pre">--allocations</span></code> and <code class="docutils literal notranslate"><span class="pre">squeue</span> <span class="pre">--me</span></code> finds,
+<code class="docutils literal notranslate"><span class="pre">squeue</span> <span class="pre">-r</span></code> count, and <code class="docutils literal notranslate"><span class="pre">scancel</span></code>. The back end does not call <code class="docutils literal notranslate"><span class="pre">sinfo</span></code> or
+<code class="docutils literal notranslate"><span class="pre">scontrol</span></code>; their recorded output (<code class="docutils literal notranslate"><span class="pre">sinfo.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">sinfo-Nl.txt</span></code>,
+<code class="docutils literal notranslate"><span class="pre">scontrol-show-node.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">scontrol-show-partition.txt</span></code>) is kept beside the
+fixture as reference, not replayed.</p>
+<p>Draft HISTORY lines (for the release PRs):</p>
+<ul class="simple">
+<li><p><strong>seamm_scheduler:</strong> “PBS validated on a real OpenPBS 23.06 site: dependencies
+as <code class="docutils literal notranslate"><span class="pre">-W</span> <span class="pre">depend</span></code>, the job starts with a <code class="docutils literal notranslate"><span class="pre">cd</span></code> into its directory, <code class="docutils literal notranslate"><span class="pre">export=ALL</span></code>
+becomes <code class="docutils literal notranslate"><span class="pre">-V</span></code>, and finished jobs are found again (<code class="docutils literal notranslate"><span class="pre">qselect</span> <span class="pre">-x</span></code>). A section
+can run the flowchart itself as a batch job on any scheduler: <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">queue</span></code>
+with <code class="docutils literal notranslate"><span class="pre">scheduler</span> <span class="pre">=</span> <span class="pre">pbs</span></code> or <code class="docutils literal notranslate"><span class="pre">slurm</span></code> (<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">slurm</span></code> still works). Recorded
+output from real SLURM 20.11 and OpenPBS 23.06 sites is replayed by the tests.”</p></li>
+<li><p><strong>seamm_jobserver:</strong> “Flowcharts can run as PBS jobs: a queue with
+<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">queue</span></code> and <code class="docutils literal notranslate"><span class="pre">scheduler</span> <span class="pre">=</span> <span class="pre">pbs</span></code>. Like SLURM’s default, the job gets the
+JobServer’s environment unless the queue sets <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">=</span> <span class="pre">NONE</span></code>. Requires
+seamm-scheduler &gt;= the new version.”</p></li>
+<li><p><strong>seamm_webui:</strong> “Queues are read with seamm_scheduler (no longer the
+seamm_slurm shim); <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">queue</span></code> queues, such as PBS, are listed, and remote
+ones sync their files on demand. Requires seamm-scheduler &gt;= the new
+version.”</p></li>
+</ul>
+</section>
+<section id="review-2026-10-03">
+<h2>Review (2026-10-03)<a class="headerlink" href="#review-2026-10-03" title="Link to this heading">#</a></h2>
+<p>The design session’s review (a subagent read the eight commits and checked the
+findings with scripts and molssi10’s <code class="docutils literal notranslate"><span class="pre">qstat</span></code> history) found four must-fixes,
+all fixed (seamm_scheduler 19d11c0, seamm_jobserver 0606455, seamm_webui
+6be2499 and b177c6b):</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Pbs.directives()</span></code> replaced the section’s <code class="docutils literal notranslate"><span class="pre">select</span></code> when the resources set
+<code class="docutils literal notranslate"><span class="pre">ntasks</span></code> (every bundle does), losing the site’s memory: the live bundles of
+job 4007 ran without <code class="docutils literal notranslate"><span class="pre">mem</span></code>. The resources are now merged into the chunk.</p></li>
+<li><p>The JobServer’s PBS path dropped SLURM-spelled keys (<code class="docutils literal notranslate"><span class="pre">ntasks</span></code>, <code class="docutils literal notranslate"><span class="pre">mem</span></code>) from
+the section and from a job’s overrides; they now become the <code class="docutils literal notranslate"><span class="pre">select</span></code>. The
+flowchart job’s output went to <code class="docutils literal notranslate"><span class="pre">$HOME</span></code> (where <code class="docutils literal notranslate"><span class="pre">qsub</span></code> ran) and was never
+staged back; it is now <code class="docutils literal notranslate"><span class="pre">pbs.out</span></code> in the job directory.</p></li>
+<li><p>A garbled <code class="docutils literal notranslate"><span class="pre">qstat</span> <span class="pre">-F</span> <span class="pre">json</span></code> reply looked like “no jobs” (the JobServer would
+finalize or resubmit everything); it is now a failed poll.</p></li>
+<li><p>The pins named the released seamm_scheduler, which lacks <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">queue</span></code>;
+now <code class="docutils literal notranslate"><span class="pre">&gt;=</span> <span class="pre">2026.10.3</span></code>. A remote venv needs the new seamm_scheduler too
+(documented); <code class="docutils literal notranslate"><span class="pre">~/SEAMM_PBS</span></code> was updated.</p></li>
+</ol>
+<p>Also fixed: SLURM-form times (<code class="docutils literal notranslate"><span class="pre">1-00:00:00</span></code>) and <code class="docutils literal notranslate"><span class="pre">walltime</span></code> limits; “Unknown
+Job Id” on the text path means gone; <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">...</span> <span class="pre">||</span> <span class="pre">exit</span> <span class="pre">1</span></code>; <code class="docutils literal notranslate"><span class="pre">-W</span> <span class="pre">block</span></code> dropped;
+<code class="docutils literal notranslate"><span class="pre">type</span></code> lower-cased; <code class="docutils literal notranslate"><span class="pre">qstat</span> <span class="pre">-f</span></code> continuation lines; replay tests check exit
+codes and <code class="docutils literal notranslate"><span class="pre">poll_failed</span></code>; the web UI uses <code class="docutils literal notranslate"><span class="pre">section.is_batch</span></code>; user docs for
+<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">queue</span></code>/PBS in seamm_scheduler and the JobServer.</p>
+<p><strong>Re-validated live (job 4008):</strong> the bundles ran with
+<code class="docutils literal notranslate"><span class="pre">select=1:ncpus=1:mem=4gb:mpiprocs=1</span></code>, the flowchart job’s <code class="docutils literal notranslate"><span class="pre">pbs.out</span></code> came
+back in the job directory, same table, all exit 0. (The output files of jobs
+4006/4007, <code class="docutils literal notranslate"><span class="pre">~/seamm-4006.o17</span></code> and <code class="docutils literal notranslate"><span class="pre">~/seamm-4007.o18</span></code> on molssi10, are from
+before the fix.)</p>
+<p>Still to do: release seamm_scheduler, seamm_jobserver and seamm_webui (pins:
+jobserver and webui on the new seamm_scheduler); MolSSI10’s own <code class="docutils literal notranslate"><span class="pre">~/SEAMM</span></code>
+(old, pre-phase 2, services stopped) rewritten for PBS if it is to run jobs
+again; the design doc’s phase 7 entry.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Developer Documentation</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#molssi10-today-checked-read-only-2026-10-03">MolSSI10 today (checked read-only, 2026-10-03)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-shapes-the-plan">What shapes the plan</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plan">Plan</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decisions-for-paul">Decisions for Paul</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#paul-s-decisions-2026-10-03">Paul’s decisions (2026-10-03)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#done-2026-10-03">Done (2026-10-03)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#follow-ups-from-the-design-session-2026-10-03">Follow-ups from the design session (2026-10-03)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#review-2026-10-03">Review (2026-10-03)</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/developer_guide/campaigns/2026-10-03/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Paul Saxe. Project structure based on the Computational Molecular Science Python Cookiecutter version 1.1.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -374,6 +374,10 @@
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"#!</span><span class="si">{</span><span class="n">shell</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span>
     <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">scheduler</span><span class="o">.</span><span class="n">directive_lines</span><span class="p">(</span><span class="n">directives</span><span class="p">))</span>
     <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+    <span class="n">prologue</span> <span class="o">=</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">prologue_lines</span><span class="p">(</span><span class="n">directives</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">prologue</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">prologue</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
     <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">))</span>
     <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
 

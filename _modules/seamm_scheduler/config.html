@@ -402,10 +402,10 @@
 
 <span class="c1"># Recognized values for a section's "type" key: where the *evaluator* runs.</span>
 <span class="c1"># "local" means "no scheduler -- the JobServer's local-subprocess path";</span>
-<span class="c1"># "slurm" means the JobServer submits the whole flowchart as a SLURM job. A</span>
-<span class="c1"># PBS evaluator would be a new value here *and* a JobServer change, so it is</span>
-<span class="c1"># not accepted yet; tasks may already use PBS through `scheduler = pbs`.</span>
-<span class="n">_VALID_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"slurm"</span><span class="p">,</span> <span class="s2">"local"</span><span class="p">}</span>
+<span class="c1"># "queue" means the JobServer submits the whole flowchart as a batch job to the</span>
+<span class="c1"># queueing system named by `scheduler` (slurm, the default, or pbs); "slurm" is</span>
+<span class="c1"># the original spelling of "queue" with SLURM.</span>
+<span class="n">_VALID_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"slurm"</span><span class="p">,</span> <span class="s2">"queue"</span><span class="p">,</span> <span class="s2">"local"</span><span class="p">}</span>
 
 <span class="c1"># Recognized values for "tasks": where the evaluator's tasks run.</span>
 <span class="n">_VALID_TASKS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pool"</span><span class="p">,</span> <span class="s2">"taskserver"</span><span class="p">,</span> <span class="s2">"queue"</span><span class="p">}</span>
@@ -495,17 +495,29 @@
     <span class="c1"># ------------------------------------------------------------------</span>
     <span class="c1"># The evaluator's back end (the JobServer's whole-flowchart submission)</span>
     <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Whether the JobServer runs this section's evaluators as batch jobs."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"slurm"</span><span class="p">,</span> <span class="s2">"queue"</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">batch_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The queueing system the evaluator jobs are submitted to."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">"slurm"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"slurm"</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="ow">or</span> <span class="s2">"slurm"</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
 <div class="viewcode-block" id="TargetSection.build_backend">
 <a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.config.TargetSection.build_backend">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">build_backend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct the backend that submits this section's evaluator jobs."""</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">"local"</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_batch</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has type=local; it has no SLURM "</span>
-                <span class="s2">"backend to build -- route jobs for it through the "</span>
+                <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has type=local; it has no queueing "</span>
+                <span class="s2">"back end to build -- route jobs for it through the "</span>
                 <span class="s2">"JobServer's existing local-subprocess path instead"</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_scheduler</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TargetSection.build_stager">
@@ -530,11 +542,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">task_transport</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""How the evaluator reaches the queue for its tasks.</span>
 
-<span class="sd">        An evaluator that is itself a batch job (type=slurm) runs inside the</span>
-<span class="sd">        cluster and submits its tasks there with local commands, whatever</span>
+<span class="sd">        An evaluator that is itself a batch job (type=slurm or queue) runs inside</span>
+<span class="sd">        the cluster and submits its tasks there with local commands, whatever</span>
 <span class="sd">        transport the JobServer uses to reach the cluster.</span>
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">"slurm"</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_batch</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">"local"</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span>
 
@@ -624,12 +636,12 @@
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">transport</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"local"</span><span class="p">,</span> <span class="s2">"ssh"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"SLURM section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has unknown transport "</span>
+                <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has unknown transport "</span>
                 <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">transport</span><span class="si">}</span><span class="s2">' (expected 'local' or 'ssh')"</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">transport</span> <span class="o">==</span> <span class="s2">"ssh"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">host</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"SLURM section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has transport=ssh but no host set"</span>
+                <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has transport=ssh but no host set"</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">scheduler</span> <span class="o">==</span> <span class="s2">"slurm"</span><span class="p">:</span>
             <span class="c1"># The historical classes, so isinstance() checks keep working.</span>
@@ -648,12 +660,12 @@
         <span class="k">elif</span> <span class="n">transport</span> <span class="o">==</span> <span class="s2">"ssh"</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">host</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"SLURM section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has transport=ssh but no host set"</span>
+                    <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has transport=ssh but no host set"</span>
                 <span class="p">)</span>
             <span class="k">return</span> <span class="n">RsyncStager</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">ssh_options</span><span class="o">=</span><span class="n">ssh_options</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"SLURM section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has unknown transport "</span>
+                <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has unknown transport "</span>
                 <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">transport</span><span class="si">}</span><span class="s2">' (expected 'local' or 'ssh')"</span>
             <span class="p">)</span>
 
@@ -681,7 +693,7 @@
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_root</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"SLURM section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has transport=ssh but "</span>
+                <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' has transport=ssh but "</span>
                 <span class="s2">"no remote_root is set -- can't determine where to stage "</span>
                 <span class="sa">f</span><span class="s2">"jobs on </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
@@ -842,7 +854,7 @@
 <span class="sd">    companion) of an already-loaded config file into a ``TargetSection``."""</span>
     <span class="n">items</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">section</span><span class="p">))</span>
 
-    <span class="n">section_type</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="s2">"slurm"</span><span class="p">)</span>
+    <span class="n">section_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"slurm"</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">section_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_VALID_TYPES</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">' has unknown type '</span><span class="si">{</span><span class="n">section_type</span><span class="si">}</span><span class="s2">' "</span>
@@ -1026,7 +1038,7 @@
 <span class="w">    </span><span class="sd">"""Parse a directive value into a comparable float."""</span>
     <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="s2">"mem"</span> <span class="ow">or</span> <span class="n">field_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"mem_per_"</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_parse_size</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="s2">"time"</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"time"</span><span class="p">,</span> <span class="s2">"walltime"</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_parse_time</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </pre></div>
