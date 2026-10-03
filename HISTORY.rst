@@ -2,7 +2,7 @@
 History
 =======
 
-(unreleased) -- Initial release: queueing systems for SEAMM
+2026.10.2 -- Initial release: queueing systems for SEAMM
     * Generalizes ``seamm_slurm`` into one module per queueing system behind a
       shared ``Scheduler`` interface: SLURM (``slurm.py``) and PBS
       (``pbs.py``, tested against recorded output only).
