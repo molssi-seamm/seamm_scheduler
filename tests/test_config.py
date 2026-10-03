@@ -634,3 +634,35 @@ def test_merge_overrides_end_to_end_from_ini(tmp_path):
 
     with pytest.raises(ValueError):
         section.merge_overrides({"ntasks": 10})
+
+
+def test_queue_type_with_pbs(tmp_path):
+    """type=queue runs the evaluator as a batch job on the named scheduler."""
+    (tmp_path / "molssi10.ini").write_text(
+        "[molssi10]\ntype = queue\nscheduler = pbs\ntransport = local\n"
+        "queue = workq\nwalltime = 01:00:00\n"
+    )
+    section = load_slurm_config(tmp_path, "molssi10")
+    assert section.is_batch
+    assert section.batch_scheduler == "pbs"
+    assert section.task_transport == "local"
+    backend = section.build_backend()
+    assert backend.scheduler.name == "pbs"
+    assert section.directives == {"queue": "workq", "walltime": "01:00:00"}
+
+
+def test_slurm_type_is_queue_with_slurm(tmp_path):
+    (tmp_path / "molssi10.ini").write_text("[molssi10]\ntransport = local\n")
+    section = load_slurm_config(tmp_path, "molssi10")
+    assert section.is_batch
+    assert section.batch_scheduler == "slurm"
+    (tmp_path / "molssi10.ini").write_text("[molssi10]\ntype = queue\n")
+    assert load_slurm_config(tmp_path, "molssi10").batch_scheduler == "slurm"
+
+
+def test_local_type_is_not_batch(tmp_path):
+    (tmp_path / "molssi10.ini").write_text("[molssi10]\ntype = local\n")
+    section = load_slurm_config(tmp_path, "molssi10")
+    assert not section.is_batch
+    with pytest.raises(RuntimeError, match="type=local"):
+        section.build_backend()
