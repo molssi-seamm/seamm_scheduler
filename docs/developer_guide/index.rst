@@ -9,6 +9,11 @@ whose design and notes live in ``seamm_exec``'s
 ``seamm_slurm`` (the JobServer SLURM campaign, ``seamm_jobserver``'s
 ``docs/developer_guide/campaigns/2026-08-05/``).
 
+.. toctree::
+   :maxdepth: 1
+
+   campaigns/2026-10-03/index
+
 Indices and tables
 ------------------
 
