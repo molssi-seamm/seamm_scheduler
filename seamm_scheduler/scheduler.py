@@ -67,6 +67,22 @@ class JobStatus:
         return self.category in _TERMINAL_CATEGORIES
 
     @property
+    def timed_out(self):
+        """Whether the queue stopped the job for running past its time limit.
+
+        SLURM says TIMEOUT; PBS gives exit status -29 (JOB_EXEC_KILL_WALLTIME)
+        or a comment such as "job killed: walltime 610 exceeded limit 600".
+        """
+        if (self.state or "").strip().upper() == "TIMEOUT":
+            return True
+        if self.exit_code is not None and str(self.exit_code).strip() == "-29":
+            return True
+        comment = ""
+        if isinstance(self.raw, dict):
+            comment = str(self.raw.get("comment", "") or "").lower()
+        return "walltime" in comment and "exceeded" in comment
+
+    @property
     def task_state(self):
         """The state in the task layer's vocabulary (see :data:`TASK_STATES`)."""
         return TASK_STATES.get(self.category, "running")

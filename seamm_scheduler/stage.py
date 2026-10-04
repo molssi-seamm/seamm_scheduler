@@ -81,6 +81,23 @@ class LocalStager(JobStager):
         pass
 
 
+# A second pass that makes SQLite's side files (the write-ahead log, its index and
+# the rollback journal) match the other side exactly, deleting those it no longer
+# has. Copying never deletes, and a stale log left beside a newer database (the
+# job finished and folded its log in after an earlier copy brought the log here)
+# is replayed over that database when it is opened: the job database then looks
+# as it was at the earlier copy. Only these files are touched by the deletion.
+SQLITE_SIDE_FILES = [
+    "--delete",
+    "--filter=P */",  # never delete a directory, even an empty one
+    "--include=*/",
+    "--include=*-wal",
+    "--include=*-shm",
+    "--include=*-journal",
+    "--exclude=*",
+]
+
+
 class RsyncStager(JobStager):
     """Pushes/pulls a job's working directory to/from a remote host with no
     shared filesystem, over ``rsync -e ssh``. Assumes the same
@@ -121,10 +138,16 @@ class RsyncStager(JobStager):
     def stage_in(self, local_wdir, remote_wdir):
         self._run_ssh(["mkdir", "-p", str(remote_wdir)])
         self._rsync(f"{local_wdir}/", f"{self.host}:{remote_wdir}/")
+        self._rsync(
+            f"{local_wdir}/", f"{self.host}:{remote_wdir}/", extra=SQLITE_SIDE_FILES
+        )
         return remote_wdir
 
     def stage_out(self, remote_wdir, local_wdir):
         self._rsync(f"{self.host}:{remote_wdir}/", f"{local_wdir}/")
+        self._rsync(
+            f"{self.host}:{remote_wdir}/", f"{local_wdir}/", extra=SQLITE_SIDE_FILES
+        )
 
     def push(self, local_base, remote_base, paths, *, delete=False):
         """One ``rsync --files-from`` for many paths: a bundle's task
