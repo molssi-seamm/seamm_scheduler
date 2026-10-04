@@ -89,6 +89,7 @@ class LocalStager(JobStager):
 # as it was at the earlier copy. Only these files are touched by the deletion.
 SQLITE_SIDE_FILES = [
     "--delete",
+    "--filter=P */",  # never delete a directory, even an empty one
     "--include=*/",
     "--include=*-wal",
     "--include=*-shm",

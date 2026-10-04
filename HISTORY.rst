@@ -6,8 +6,9 @@ History
     * Copying a job's directory back from a cluster could leave an old SQLite log
       (``seamm.db-wal``) from an earlier copy beside the job's newer database, and
       SQLite replayed it over the database, so the job looked as it was earlier
-      (e.g. with fewer table rows). The log files are now made to match the
-      cluster's copy, in both directions; nothing else is deleted.
+      (e.g. with fewer table rows). The log files (``-wal``, ``-shm``,
+      ``-journal``) are now made to match the other copy, in both directions; no
+      other file or directory is deleted.
     * ``JobStatus.timed_out`` says whether the queue stopped a job for running past
       its time limit (SLURM ``TIMEOUT``; PBS exit status -29 or a "walltime ...
       exceeded" comment).

@@ -209,6 +209,7 @@ def test_stage_out_removes_a_stale_sqlite_log(tmp_path):
     (remote / "sub" / "other.db-wal").write_text("a nested log")
     (remote / "job.out").write_text("output")
     (local / ".stage.lock").write_text("")  # only here: must survive
+    (local / "only_here").mkdir()  # an empty directory only here: must survive
 
     stager = RsyncStager("remotehost", ssh_command=str(fake_ssh))
     stager.stage_out(str(remote), str(local))
@@ -225,4 +226,5 @@ def test_stage_out_removes_a_stale_sqlite_log(tmp_path):
     assert not (local / "seamm.db-shm").exists()
     assert (local / "sub" / "other.db-wal").exists()  # still there remotely
     assert (local / ".stage.lock").exists()
+    assert (local / "only_here").is_dir()
     assert (local / "job.out").exists()
