@@ -440,6 +440,23 @@
 
 
 
+<span class="c1"># A second pass that makes SQLite's side files (the write-ahead log, its index and</span>
+<span class="c1"># the rollback journal) match the other side exactly, deleting those it no longer</span>
+<span class="c1"># has. Copying never deletes, and a stale log left beside a newer database (the</span>
+<span class="c1"># job finished and folded its log in after an earlier copy brought the log here)</span>
+<span class="c1"># is replayed over that database when it is opened: the job database then looks</span>
+<span class="c1"># as it was at the earlier copy. Only these files are touched by the deletion.</span>
+<span class="n">SQLITE_SIDE_FILES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"--delete"</span><span class="p">,</span>
+    <span class="s2">"--filter=P */"</span><span class="p">,</span>  <span class="c1"># never delete a directory, even an empty one</span>
+    <span class="s2">"--include=*/"</span><span class="p">,</span>
+    <span class="s2">"--include=*-wal"</span><span class="p">,</span>
+    <span class="s2">"--include=*-shm"</span><span class="p">,</span>
+    <span class="s2">"--include=*-journal"</span><span class="p">,</span>
+    <span class="s2">"--exclude=*"</span><span class="p">,</span>
+<span class="p">]</span>
+
+
 <div class="viewcode-block" id="RsyncStager">
 <a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.stage.RsyncStager">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RsyncStager</span><span class="p">(</span><span class="n">JobStager</span><span class="p">):</span>
@@ -484,13 +501,19 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">stage_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_wdir</span><span class="p">,</span> <span class="n">remote_wdir</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_ssh</span><span class="p">([</span><span class="s2">"mkdir"</span><span class="p">,</span> <span class="s2">"-p"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">remote_wdir</span><span class="p">)])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rsync</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">remote_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rsync</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">remote_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">SQLITE_SIDE_FILES</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">remote_wdir</span></div>
 
 
 <div class="viewcode-block" id="RsyncStager.stage_out">
 <a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.stage.RsyncStager.stage_out">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">stage_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_wdir</span><span class="p">,</span> <span class="n">local_wdir</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rsync</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">remote_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rsync</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">remote_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rsync</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">remote_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">SQLITE_SIDE_FILES</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RsyncStager.push">

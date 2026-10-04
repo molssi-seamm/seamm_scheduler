@@ -1055,6 +1055,14 @@ longer pending or running.</p>
 <dd><p>The state in the task layer’s vocabulary (see <a class="reference internal" href="#seamm_scheduler.scheduler.TASK_STATES" title="seamm_scheduler.scheduler.TASK_STATES"><code class="xref py py-data docutils literal notranslate"><span class="pre">TASK_STATES</span></code></a>).</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="seamm_scheduler.scheduler.JobStatus.timed_out">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">timed_out</span></span><a class="headerlink" href="#seamm_scheduler.scheduler.JobStatus.timed_out" title="Link to this definition">#</a></dt>
+<dd><p>Whether the queue stopped the job for running past its time limit.</p>
+<p>SLURM says TIMEOUT; PBS gives exit status -29 (JOB_EXEC_KILL_WALLTIME)
+or a comment such as “job killed: walltime 610 exceeded limit 600”.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py data">
@@ -1876,6 +1884,7 @@ transports.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.scheduler.JobStatus.reason"><code class="docutils literal notranslate"><span class="pre">JobStatus.reason</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.scheduler.JobStatus.state"><code class="docutils literal notranslate"><span class="pre">JobStatus.state</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.scheduler.JobStatus.task_state"><code class="docutils literal notranslate"><span class="pre">JobStatus.task_state</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.scheduler.JobStatus.timed_out"><code class="docutils literal notranslate"><span class="pre">JobStatus.timed_out</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.scheduler.SCHEDULERS"><code class="docutils literal notranslate"><span class="pre">SCHEDULERS</span></code></a></li>

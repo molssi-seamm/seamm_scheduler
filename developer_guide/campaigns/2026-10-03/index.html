@@ -645,10 +645,46 @@ codes and <code class="docutils literal notranslate"><span class="pre">poll_fail
 back in the job directory, same table, all exit 0. (The output files of jobs
 4006/4007, <code class="docutils literal notranslate"><span class="pre">~/seamm-4006.o17</span></code> and <code class="docutils literal notranslate"><span class="pre">~/seamm-4007.o18</span></code> on molssi10, are from
 before the fix.)</p>
-<p>Still to do: release seamm_scheduler, seamm_jobserver and seamm_webui (pins:
-jobserver and webui on the new seamm_scheduler); MolSSI10’s own <code class="docutils literal notranslate"><span class="pre">~/SEAMM</span></code>
-(old, pre-phase 2, services stopped) rewritten for PBS if it is to run jobs
-again; the design doc’s phase 7 entry.</p>
+</section>
+<section id="released-and-molssi10-rebuilt-2026-10-03">
+<h2>Released and MolSSI10 rebuilt (2026-10-03)<a class="headerlink" href="#released-and-molssi10-rebuilt-2026-10-03" title="Link to this heading">#</a></h2>
+<p>Released (Paul merged; Releases created after checking each <code class="docutils literal notranslate"><span class="pre">main</span></code> head):
+seamm_scheduler 2026.10.3 (#2), seamm_jobserver 2026.10.3 (#25), seamm_webui
+2026.10.3 (#11). The downstream CI first failed with “only seamm-scheduler
+2026.10.2 is available”: PyPI’s CDN served <code class="docutils literal notranslate"><span class="pre">uv</span></code> a stale index for a few
+minutes after the upload, although the JSON API and a plain <code class="docutils literal notranslate"><span class="pre">curl</span></code> already
+listed 2026.10.3. Rerun once <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">pip</span> <span class="pre">compile</span> <span class="pre">--no-cache</span></code> resolves it locally.</p>
+<p><strong>MolSSI10’s own ~/SEAMM rebuilt</strong> (Paul’s decision): seamm-manager upgraded to
+2026.10.2.3; <code class="docutils literal notranslate"><span class="pre">environment</span> <span class="pre">migrate</span></code> (old environment kept as
+<code class="docutils literal notranslate"><span class="pre">venvs/2026-10-03T17-48-17</span></code>); <code class="docutils literal notranslate"><span class="pre">environment</span> <span class="pre">recreate</span></code> (it installs the nightly
+list, so yesterday’s versions); <code class="docutils literal notranslate"><span class="pre">update</span> <span class="pre">--latest</span> <span class="pre">--all</span></code> (venv →
+<code class="docutils literal notranslate"><span class="pre">venvs/2026-10-03T17-50-02</span></code>: seamm, molsystem, table_step, loop_step,
+seamm_scheduler, seamm_jobserver 2026.10.3, seamm_exec 2026.10.3.1, mopac_step
+2026.10.3.2; web UI 2026.10.3). <code class="docutils literal notranslate"><span class="pre">molssi10.ini</span></code>: <code class="docutils literal notranslate"><span class="pre">[molssi10]</span></code> is
+<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">queue</span></code>, <code class="docutils literal notranslate"><span class="pre">scheduler</span> <span class="pre">=</span> <span class="pre">pbs</span></code>, <code class="docutils literal notranslate"><span class="pre">transport</span> <span class="pre">=</span> <span class="pre">local</span></code>, <code class="docutils literal notranslate"><span class="pre">workq</span></code>,
+<code class="docutils literal notranslate"><span class="pre">select</span> <span class="pre">=</span> <span class="pre">1:ncpus=1:mem=20gb</span></code>, limits ntasks ≤ 6, mem ≤ 100G, time ≤ 24 h;
+still the default; <code class="docutils literal notranslate"><span class="pre">[tinkercliffs]</span></code> unchanged (SLURM version saved as
+<code class="docutils literal notranslate"><span class="pre">molssi10.ini.slurm-2026-10-03</span></code>). JobServer and web UI (port 55060) running;
+the legacy dashboard left stopped, as before.</p>
+<p>Found while doing it (seamm-manager): <code class="docutils literal notranslate"><span class="pre">environment</span> <span class="pre">migrate</span></code> restarted a
+JobServer that had been deliberately stopped (stopped again at once; it
+dispatched nothing), and <code class="docutils literal notranslate"><span class="pre">environment</span> <span class="pre">recreate</span></code> has no <code class="docutils literal notranslate"><span class="pre">--latest</span></code>, so it
+cannot pick up a release made the same day. The JobServer’s start-up log still
+says “SLURM via transport” for every batch queue.</p>
+<p><strong>Validated with released packages on both ends:</strong></p>
+<ul class="simple">
+<li><p>MolSSI10 job 684: default queue, the flowchart as a PBS job on MolSSI10
+(PBS job 26), <code class="docutils literal notranslate"><span class="pre">pbs.out</span></code> in the job directory;</p></li>
+<li><p>MolSSI10 job 685: <code class="docutils literal notranslate"><span class="pre">tinkercliffs</span></code> queue, the ssh path to TinkerCliffs’
+SLURM unchanged;</p></li>
+<li><p>SEAMM_DEV job 4009: the Mac’s SEAMM_DEV (released packages, no editable
+checkouts of these) to MolSSI10’s PBS, run in MolSSI10’s <code class="docutils literal notranslate"><span class="pre">~/SEAMM</span></code>
+environment.</p></li>
+</ul>
+<p>All three gave the same table as every earlier run, with no caught exceptions.
+SEAMM_DEV’s <code class="docutils literal notranslate"><span class="pre">[molssi10]</span></code> and <code class="docutils literal notranslate"><span class="pre">[molssi10-tasks]</span></code> now use
+<code class="docutils literal notranslate"><span class="pre">/home/psaxe/SEAMM/venv/bin/run_from_jobserver</span></code>. The <code class="docutils literal notranslate"><span class="pre">~/SEAMM_PBS</span></code> test
+environment and <code class="docutils literal notranslate"><span class="pre">~/pbs_dev</span></code> checkouts on MolSSI10 are no longer used.</p>
 </section>
 </section>
 
@@ -698,6 +734,7 @@ again; the design doc’s phase 7 entry.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#done-2026-10-03">Done (2026-10-03)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#follow-ups-from-the-design-session-2026-10-03">Follow-ups from the design session (2026-10-03)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#review-2026-10-03">Review (2026-10-03)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#released-and-molssi10-rebuilt-2026-10-03">Released and MolSSI10 rebuilt (2026-10-03)</a></li>
 </ul>
   </nav></div>
 

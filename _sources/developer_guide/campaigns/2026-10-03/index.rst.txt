@@ -286,7 +286,47 @@ back in the job directory, same table, all exit 0. (The output files of jobs
 4006/4007, ``~/seamm-4006.o17`` and ``~/seamm-4007.o18`` on molssi10, are from
 before the fix.)
 
-Still to do: release seamm_scheduler, seamm_jobserver and seamm_webui (pins:
-jobserver and webui on the new seamm_scheduler); MolSSI10's own ``~/SEAMM``
-(old, pre-phase 2, services stopped) rewritten for PBS if it is to run jobs
-again; the design doc's phase 7 entry.
+Released and MolSSI10 rebuilt (2026-10-03)
+-------------------------------------------
+
+Released (Paul merged; Releases created after checking each ``main`` head):
+seamm_scheduler 2026.10.3 (#2), seamm_jobserver 2026.10.3 (#25), seamm_webui
+2026.10.3 (#11). The downstream CI first failed with "only seamm-scheduler
+2026.10.2 is available": PyPI's CDN served ``uv`` a stale index for a few
+minutes after the upload, although the JSON API and a plain ``curl`` already
+listed 2026.10.3. Rerun once ``uv pip compile --no-cache`` resolves it locally.
+
+**MolSSI10's own ~/SEAMM rebuilt** (Paul's decision): seamm-manager upgraded to
+2026.10.2.3; ``environment migrate`` (old environment kept as
+``venvs/2026-10-03T17-48-17``); ``environment recreate`` (it installs the nightly
+list, so yesterday's versions); ``update --latest --all`` (venv →
+``venvs/2026-10-03T17-50-02``: seamm, molsystem, table_step, loop_step,
+seamm_scheduler, seamm_jobserver 2026.10.3, seamm_exec 2026.10.3.1, mopac_step
+2026.10.3.2; web UI 2026.10.3). ``molssi10.ini``: ``[molssi10]`` is
+``type = queue``, ``scheduler = pbs``, ``transport = local``, ``workq``,
+``select = 1:ncpus=1:mem=20gb``, limits ntasks ≤ 6, mem ≤ 100G, time ≤ 24 h;
+still the default; ``[tinkercliffs]`` unchanged (SLURM version saved as
+``molssi10.ini.slurm-2026-10-03``). JobServer and web UI (port 55060) running;
+the legacy dashboard left stopped, as before.
+
+Found while doing it (seamm-manager): ``environment migrate`` restarted a
+JobServer that had been deliberately stopped (stopped again at once; it
+dispatched nothing), and ``environment recreate`` has no ``--latest``, so it
+cannot pick up a release made the same day. The JobServer's start-up log still
+says "SLURM via transport" for every batch queue.
+
+**Validated with released packages on both ends:**
+
+- MolSSI10 job 684: default queue, the flowchart as a PBS job on MolSSI10
+  (PBS job 26), ``pbs.out`` in the job directory;
+- MolSSI10 job 685: ``tinkercliffs`` queue, the ssh path to TinkerCliffs'
+  SLURM unchanged;
+- SEAMM_DEV job 4009: the Mac's SEAMM_DEV (released packages, no editable
+  checkouts of these) to MolSSI10's PBS, run in MolSSI10's ``~/SEAMM``
+  environment.
+
+All three gave the same table as every earlier run, with no caught exceptions.
+SEAMM_DEV's ``[molssi10]`` and ``[molssi10-tasks]`` now use
+``/home/psaxe/SEAMM/venv/bin/run_from_jobserver``. The ``~/SEAMM_PBS`` test
+environment and ``~/pbs_dev`` checkouts on MolSSI10 are no longer used.
+
