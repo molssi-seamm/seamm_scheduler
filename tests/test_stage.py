@@ -39,8 +39,9 @@ def test_rsync_stager_stage_in_makes_remote_dir_then_pushes():
         result = stager.stage_in("/local/Job_1", "/remote/Job_1")
 
     assert result == "/remote/Job_1"
-    assert run.call_count == 2
-    mkdir_call, rsync_call = run.call_args_list
+    assert run.call_count == 3
+    mkdir_call, rsync_call, side_files_call = run.call_args_list
+    assert "--delete" in side_files_call.args[0]
 
     assert mkdir_call.args[0] == ["ssh", "molssi10", "mkdir -p /remote/Job_1"]
 
@@ -58,8 +59,9 @@ def test_rsync_stager_stage_out_pulls_in_reverse():
         stager = RsyncStager("molssi10")
         stager.stage_out("/remote/Job_1", "/local/Job_1")
 
-    assert run.call_count == 1
-    rsync_argv = run.call_args.args[0]
+    assert run.call_count == 2
+    rsync_argv = run.call_args_list[0].args[0]
+    assert "--delete" not in rsync_argv
     assert rsync_argv[-2] == "molssi10:/remote/Job_1/"
     assert rsync_argv[-1] == "/local/Job_1/"
 
@@ -97,7 +99,7 @@ def test_rsync_stager_custom_commands():
         )
         stager.stage_in("/local/Job_1", "/remote/Job_1")
 
-    mkdir_call, rsync_call = run.call_args_list
+    mkdir_call, rsync_call, _ = run.call_args_list
     assert mkdir_call.args[0][0] == "/usr/bin/ssh"
     assert rsync_call.args[0][0] == "/usr/bin/rsync"
     assert rsync_call.args[0][2] == "/usr/bin/ssh"
@@ -181,3 +183,46 @@ def test_rsync_with_ssh_options_and_timeout():
     ):
         with pytest.raises(StageError, match="^ssh: rsync .* timed out"):
             RsyncStager("tc", timeout=9).pull("/r", "/l", ["a"])
+
+
+def test_stage_out_removes_a_stale_sqlite_log(tmp_path):
+    """A job database pulled twice: the first pull brought a write-ahead log,
+    the job then folded it into the database and deleted it. The second pull
+    must remove the local log too, or SQLite replays it over the newer database.
+    Uses rsync for real, with an 'ssh' that runs the remote side locally."""
+    import shutil
+    import stat
+
+    if shutil.which("rsync") is None:
+        pytest.skip("rsync is not available")
+    fake_ssh = tmp_path / "fake_ssh"
+    fake_ssh.write_text('#!/bin/sh\nshift\nexec sh -c "$*"\n')
+    fake_ssh.chmod(fake_ssh.stat().st_mode | stat.S_IEXEC)
+
+    remote = tmp_path / "remote"
+    local = tmp_path / "local"
+    (remote / "sub").mkdir(parents=True)
+    local.mkdir()
+    (remote / "seamm.db").write_text("database, first state")
+    (remote / "seamm.db-wal").write_text("log")
+    (remote / "seamm.db-shm").write_text("index")
+    (remote / "sub" / "other.db-wal").write_text("a nested log")
+    (remote / "job.out").write_text("output")
+    (local / ".stage.lock").write_text("")  # only here: must survive
+
+    stager = RsyncStager("remotehost", ssh_command=str(fake_ssh))
+    stager.stage_out(str(remote), str(local))
+    assert (local / "seamm.db-wal").exists()
+
+    # The job finishes: its log is folded into the database and removed.
+    (remote / "seamm.db").write_text("database, final state")
+    (remote / "seamm.db-wal").unlink()
+    (remote / "seamm.db-shm").unlink()
+    stager.stage_out(str(remote), str(local))
+
+    assert (local / "seamm.db").read_text() == "database, final state"
+    assert not (local / "seamm.db-wal").exists()
+    assert not (local / "seamm.db-shm").exists()
+    assert (local / "sub" / "other.db-wal").exists()  # still there remotely
+    assert (local / ".stage.lock").exists()
+    assert (local / "job.out").exists()
