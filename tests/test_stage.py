@@ -215,12 +215,12 @@ def test_stage_out_removes_a_stale_sqlite_log(tmp_path):
     assert (local / "seamm.db-wal").exists()
 
     # The job finishes: its log is folded into the database and removed.
-    (remote / "seamm.db").write_text("database, final state")
+    (remote / "seamm.db").write_text("database, the final state")
     (remote / "seamm.db-wal").unlink()
     (remote / "seamm.db-shm").unlink()
     stager.stage_out(str(remote), str(local))
 
-    assert (local / "seamm.db").read_text() == "database, final state"
+    assert (local / "seamm.db").read_text() == "database, the final state"
     assert not (local / "seamm.db-wal").exists()
     assert not (local / "seamm.db-shm").exists()
     assert (local / "sub" / "other.db-wal").exists()  # still there remotely
