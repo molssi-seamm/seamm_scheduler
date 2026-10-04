@@ -2,6 +2,16 @@
 History
 =======
 
+2026.10.4 -- Bugfix: stale database logs after copying a job back; timeouts
+    * Copying a job's directory back from a cluster could leave an old SQLite log
+      (``seamm.db-wal``) from an earlier copy beside the job's newer database, and
+      SQLite replayed it over the database, so the job looked as it was earlier
+      (e.g. with fewer table rows). The log files are now made to match the
+      cluster's copy, in both directions; nothing else is deleted.
+    * ``JobStatus.timed_out`` says whether the queue stopped a job for running past
+      its time limit (SLURM ``TIMEOUT``; PBS exit status -29 or a "walltime ...
+      exceeded" comment).
+
 2026.10.3 -- PBS validated on a real site; flowcharts as batch jobs on any scheduler
     * PBS was validated on a real OpenPBS 23.06 site: dependencies are passed as
       ``-W depend``, the job starts with a ``cd`` into its directory (PBS starts
