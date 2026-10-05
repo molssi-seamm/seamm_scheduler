@@ -71,6 +71,7 @@ Each section is a target:
     export = NONE
     bundle_tasks = 8
     max_queued_tasks = 800
+    max_walltime = 3-00:00:00    ; retries never ask for more time than this
 
 .. code-block:: python
 
@@ -90,7 +91,8 @@ Where the flowchart itself runs is the section's ``type``:
     as a subprocess on the JobServer's host;
 ``queue``
     as a batch job on the queueing system named by ``scheduler`` (``slurm``,
-    the default, or ``pbs``), through the section's ``transport``;
+    the default, ``pbs``, or ``seamm`` for a machine's own TaskServer -- see
+    :doc:`taskserver`), through the section's ``transport``;
 ``slurm``
     the original spelling of ``queue`` with ``scheduler = slurm``; still
     accepted.
