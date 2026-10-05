@@ -10,6 +10,7 @@ Welcome to SEAMM Scheduler's documentation!
    :caption: Contents:
 
    getting_started
+   taskserver
    api
    developer_guide/index
 
