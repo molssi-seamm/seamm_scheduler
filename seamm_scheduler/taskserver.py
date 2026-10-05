@@ -62,8 +62,8 @@ import time
 
 logger = logging.getLogger("seamm-taskserver")
 
-#: The version of the queue's database layout
-SCHEMA_VERSION = 1
+#: The version of the queue's database layout (2: the job's own pid)
+SCHEMA_VERSION = 2
 
 #: Job states. ``starting``: claimed, its runner not yet running the script.
 QUEUED = "queued"
@@ -255,6 +255,14 @@ class Queue:
                     )""")
                 db.execute("CREATE INDEX IF NOT EXISTS jobs_state ON jobs (state)")
                 db.execute("CREATE INDEX IF NOT EXISTS jobs_name ON jobs (name)")
+            if version < 2:
+                # The job's own process (the runner's child), so a job whose
+                # runner vanished can be stopped, not left running
+                columns = {r[1] for r in db.execute("PRAGMA table_info(jobs)")}
+                if "job_pid" not in columns:
+                    db.execute("ALTER TABLE jobs ADD COLUMN job_pid INTEGER")
+                if "job_start" not in columns:
+                    db.execute("ALTER TABLE jobs ADD COLUMN job_start REAL")
             db.execute(
                 "INSERT OR REPLACE INTO meta (key, value) VALUES ('schema', ?)",
                 (str(SCHEMA_VERSION),),
@@ -376,9 +384,14 @@ class Queue:
         if row["state"] in ACTIVE and row["pid"]:
             # The runner stops the job; if the runner has gone, stop it here.
             if not _alive(row["pid"], row["pid_start"]):
-                _kill_session(row["pid"])
+                self._stop_orphan(row)
                 self.finish(row["id"], CANCELLED, reason="cancelled")
         return True
+
+    def _stop_orphan(self, row):
+        """Stop a job whose runner has gone, if it still runs."""
+        if row["job_pid"] and _alive(row["job_pid"], row["job_start"]):
+            _kill_session(row["job_pid"])
 
     # -- checking and scheduling ---------------------------------------------
     def check(self):
@@ -392,6 +405,9 @@ class Queue:
                     self.finish(row["id"], LOST, reason="its runner never started")
                 continue
             if row["pid"] is not None and not _alive(row["pid"], row["pid_start"]):
+                # Its job runs in a session of its own: stop it, or a rerun of
+                # the task would run beside it.
+                self._stop_orphan(row)
                 self.finish(row["id"], LOST, reason="its runner is no longer running")
         # Forget long-finished jobs
         self.db.execute(
@@ -540,6 +556,14 @@ def run_job(root, job_id, poll=2.0):
         queue.finish(job_id, FAILED, reason=f"could not start the script: {e}")
         queue.schedule()
         return
+    try:
+        job_start = psutil.Process(job.pid).create_time()
+    except psutil.Error:
+        job_start = None
+    queue.db.execute(
+        "UPDATE jobs SET job_pid = ?, job_start = ? WHERE id = ?",
+        (job.pid, job_start, job_id),
+    )
     t0 = time.monotonic()  # stops while the machine sleeps
     over_since = None
     limits = settings(queue.root)

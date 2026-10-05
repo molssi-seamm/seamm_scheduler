@@ -215,11 +215,47 @@ def test_a_vanished_runner_is_lost(tmp_path):
             break
         time.sleep(0.3)
     assert pid is not None
+    q = ts.Queue(root)
+    job_pid = q.get(job)["job_pid"]
+    q.close()
+    assert job_pid
     os.kill(pid, signal.SIGKILL)  # the runner, not the job
     record = wait_for(root, [job], timeout=30)[str(job)]
     assert record["state"] == "lost"
-    # its job is still running, in its own session: tidy it away
-    subprocess.run(["pkill", "-f", f"taskserver/jobs/{job}/script.sh"])
+    # Its job, in a session of its own, was stopped too: a rerun of the task
+    # must not run beside it
+    deadline = time.time() + 10
+    while time.time() < deadline and ts._alive(job_pid, None):
+        time.sleep(0.2)
+    assert not ts._alive(job_pid, None)
+
+
+def test_a_version_1_queue_is_migrated(tmp_path):
+    root = setup_root(tmp_path)
+    directory = root / "taskserver"
+    directory.mkdir()
+    db = sqlite3.connect(str(directory / "queue.db"))
+    db.execute("CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT)")
+    db.execute("INSERT INTO meta VALUES ('schema', '1')")
+    db.execute(
+        "CREATE TABLE jobs (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT,"
+        " kind TEXT NOT NULL DEFAULT 'task', script TEXT NOT NULL, chdir TEXT,"
+        " output TEXT, cores INTEGER NOT NULL, memory INTEGER NOT NULL,"
+        " time_limit REAL, state TEXT NOT NULL, submitted REAL NOT NULL,"
+        " started REAL, ended REAL, pid INTEGER, pid_start REAL, exit_code INTEGER,"
+        " reason TEXT, cancel INTEGER NOT NULL DEFAULT 0)"
+    )
+    db.execute(
+        "INSERT INTO jobs (name, script, cores, memory, state, submitted)"
+        " VALUES ('old', 'exit 0', 1, 1, 'completed', 0)"
+    )
+    db.commit()
+    db.close()
+    q = ts.Queue(root)
+    assert q.get(1)["name"] == "old" and q.get(1)["job_pid"] is None
+    version = q.db.execute("SELECT value FROM meta WHERE key = 'schema'").fetchone()
+    assert int(version[0]) == ts.SCHEMA_VERSION
+    q.close()
 
 
 def test_concurrent_passes_start_each_job_once(tmp_path):
