@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 # https://packaging.python.org/en/latest/specifications/declaring-project-metadata/
 [project]
 name = "seamm_scheduler"
-description = "Queueing systems (SLURM, PBS) for SEAMM: directives, submit/poll/cancel, local and ssh transports, staging"
+description = "Queueing systems (SLURM, PBS and the TaskServer) for SEAMM: directives, submit/poll/cancel, local and ssh transports, staging"
 dynamic = ["version"]
 readme = "README.md"
 authors = [
@@ -22,8 +22,13 @@ requires-python = ">=3.9"
 # No SEAMM-core/molsystem dependency by design -- this wraps the SLURM CLI
 # only, so it is usable standalone (e.g. from seamm_exec later) without
 # pulling in the rest of the SEAMM stack.
+# psutil only for the TaskServer's runner (process and memory checks).
 dependencies = [
+    "psutil",
 ]
+
+[project.scripts]
+seamm-taskserver = "seamm_scheduler.taskserver:main"
 
 [project.urls]
 "Source" = "https://github.com/molssi-seamm/seamm_scheduler/"

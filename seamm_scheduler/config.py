@@ -297,7 +297,14 @@ class TargetSection:
             t = LocalTransport(drop_env_prefixes=drop_env_prefixes)
         else:
             t = SshTransport(host, ssh_options=ssh_options, timeout=timeout)
-        return QueueBackend(get_scheduler(scheduler), t)
+        queue = get_scheduler(scheduler)
+        if scheduler == "seamm":
+            # The TaskServer runs with the target machine's own Python; one
+            # queue per machine, under ~/SEAMM unless the section says otherwise.
+            if transport == "ssh":
+                queue.python = self.remote_python or "python3"
+            queue.root = self.remote_seamm_root or None
+        return QueueBackend(queue, t)
 
     def _stager(self, transport, host, ssh_options=(), timeout=None):
         if transport == "local":
