@@ -60,6 +60,7 @@ _NON_DIRECTIVE_KEYS = {
     "shared_filesystem",
     "bundle_tasks",
     "bundle_walltime",
+    "max_walltime",
     "max_queued_tasks",
     "inline_below",
     "url",
@@ -139,6 +140,9 @@ class TargetSection:
     # may add up to from its tasks' estimates.
     bundle_tasks: Optional[int] = None
     bundle_walltime: Optional[float] = None
+    # The queue's longest walltime (seconds): a timed-out task's retry asks for
+    # more time, but never more than this.
+    max_walltime: Optional[float] = None
     # Most queued + running jobs of this user at once (TinkerCliffs: 1,000,
     # every array element counting).
     max_queued_tasks: Optional[int] = None
@@ -535,6 +539,7 @@ def _build_section(config, section):
         shared_filesystem=_bool(section, items, "shared_filesystem"),
         bundle_tasks=_int(section, items, "bundle_tasks"),
         bundle_walltime=_seconds(section, items, "bundle_walltime"),
+        max_walltime=_seconds(section, items, "max_walltime"),
         max_queued_tasks=_int(section, items, "max_queued_tasks"),
         inline_below=_float(section, items, "inline_below"),
         url=items.get("url") or None,
