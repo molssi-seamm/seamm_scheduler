@@ -810,14 +810,16 @@ def main(argv=None):
             print(
                 f"Capacity: {limits['cores']} cores, {format_memory(limits['memory'])}"
             )
+            # What each job takes from the machine (an evaluator: no cores)
             print(f"{'id':>6} {'state':9} {'kind':9} {'cores':>5} {'memory':>8}  name")
             for r in queue.db.execute(
                 "SELECT * FROM jobs WHERE state IN (?, ?, ?) ORDER BY id",
                 (QUEUED, STARTING, RUNNING),
             ):
+                cores, memory = queue.charge(r)
                 print(
-                    f"{r['id']:>6} {r['state']:9} {r['kind']:9} {r['cores']:>5} "
-                    f"{format_memory(r['memory']):>8}  {r['name'] or ''}"
+                    f"{r['id']:>6} {r['state']:9} {r['kind']:9} {cores:>5} "
+                    f"{format_memory(memory):>8}  {r['name'] or ''}"
                 )
         elif options.command == "config":
             limits = capacity(root)
