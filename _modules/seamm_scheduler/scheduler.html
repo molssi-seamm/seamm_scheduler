@@ -135,6 +135,13 @@
 
 
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../taskserver.html">
+    The TaskServer
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../api.html">
     API Documentation
   </a>
@@ -228,6 +235,13 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../getting_started.html">
     Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../taskserver.html">
+    The TaskServer
   </a>
 </li>
 
@@ -640,7 +654,7 @@
 <div class="viewcode-block" id="get_scheduler">
 <a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.scheduler.get_scheduler">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_scheduler</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""The scheduler called ``name`` ("slurm", "pbs")."""</span>
+<span class="w">    </span><span class="sd">"""The scheduler called ``name`` ("slurm", "pbs", "seamm")."""</span>
     <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SCHEDULERS</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -657,6 +671,7 @@
 <span class="n">SCHEDULERS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">"slurm"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"seamm_scheduler.slurm"</span><span class="p">,</span> <span class="s2">"Slurm"</span><span class="p">),</span>
     <span class="s2">"pbs"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"seamm_scheduler.pbs"</span><span class="p">,</span> <span class="s2">"Pbs"</span><span class="p">),</span>
+    <span class="s2">"seamm"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"seamm_scheduler.seamm"</span><span class="p">,</span> <span class="s2">"Seamm"</span><span class="p">),</span>
 <span class="p">}</span>
 </pre></div>
 

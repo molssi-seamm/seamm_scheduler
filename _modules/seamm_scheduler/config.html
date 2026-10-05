@@ -135,6 +135,13 @@
 
 
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../taskserver.html">
+    The TaskServer
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../api.html">
     API Documentation
   </a>
@@ -228,6 +235,13 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../getting_started.html">
     Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../taskserver.html">
+    The TaskServer
   </a>
 </li>
 
@@ -392,6 +406,7 @@
     <span class="s2">"shared_filesystem"</span><span class="p">,</span>
     <span class="s2">"bundle_tasks"</span><span class="p">,</span>
     <span class="s2">"bundle_walltime"</span><span class="p">,</span>
+    <span class="s2">"max_walltime"</span><span class="p">,</span>
     <span class="s2">"max_queued_tasks"</span><span class="p">,</span>
     <span class="s2">"inline_below"</span><span class="p">,</span>
     <span class="s2">"url"</span><span class="p">,</span>
@@ -476,6 +491,9 @@
     <span class="c1"># may add up to from its tasks' estimates.</span>
     <span class="n">bundle_tasks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">bundle_walltime</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># The queue's longest walltime (seconds): a timed-out task's retry asks for</span>
+    <span class="c1"># more time, but never more than this.</span>
+    <span class="n">max_walltime</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="c1"># Most queued + running jobs of this user at once (TinkerCliffs: 1,000,</span>
     <span class="c1"># every array element counting).</span>
     <span class="n">max_queued_tasks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -577,7 +595,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">task_scheduler</span><span class="p">,</span>
             <span class="n">ssh_options</span><span class="o">=</span><span class="n">TASK_SSH_OPTIONS</span><span class="p">,</span>
             <span class="n">timeout</span><span class="o">=</span><span class="n">_TASK_COMMAND_TIMEOUT</span><span class="p">,</span>
-            <span class="n">drop_env_prefixes</span><span class="o">=</span><span class="p">(</span><span class="s2">"SLURM_"</span><span class="p">,</span> <span class="s2">"PBS_"</span><span class="p">),</span>
+            <span class="n">drop_env_prefixes</span><span class="o">=</span><span class="p">(</span><span class="s2">"SLURM_"</span><span class="p">,</span> <span class="s2">"PBS_"</span><span class="p">,</span> <span class="s2">"SEAMM_TASKSERVER_"</span><span class="p">,</span> <span class="s2">"SEAMM_CE"</span><span class="p">),</span>
         <span class="p">)</span></div>
 
 
@@ -652,7 +670,22 @@
             <span class="n">t</span> <span class="o">=</span> <span class="n">LocalTransport</span><span class="p">(</span><span class="n">drop_env_prefixes</span><span class="o">=</span><span class="n">drop_env_prefixes</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">t</span> <span class="o">=</span> <span class="n">SshTransport</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">ssh_options</span><span class="o">=</span><span class="n">ssh_options</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">QueueBackend</span><span class="p">(</span><span class="n">get_scheduler</span><span class="p">(</span><span class="n">scheduler</span><span class="p">),</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">queue</span> <span class="o">=</span> <span class="n">get_scheduler</span><span class="p">(</span><span class="n">scheduler</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scheduler</span> <span class="o">==</span> <span class="s2">"seamm"</span><span class="p">:</span>
+            <span class="c1"># The TaskServer runs with the target machine's own Python, never one</span>
+            <span class="c1"># found on the PATH. There is one queue per machine, shared by its</span>
+            <span class="c1"># installations so that they share its cores and memory: under the</span>
+            <span class="c1"># default installation's root ($SEAMM_ROOT, else ~/SEAMM) unless the</span>
+            <span class="c1"># section names another (remote_seamm_root).</span>
+            <span class="k">if</span> <span class="n">transport</span> <span class="o">==</span> <span class="s2">"ssh"</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_python</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' uses the TaskServer on </span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2"> over "</span>
+                        <span class="s2">"ssh, so it needs remote_python: the Python of SEAMM there."</span>
+                    <span class="p">)</span>
+                <span class="n">queue</span><span class="o">.</span><span class="n">python</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_python</span>
+            <span class="n">queue</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_seamm_root</span> <span class="ow">or</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">QueueBackend</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_stager</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transport</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">ssh_options</span><span class="o">=</span><span class="p">(),</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">transport</span> <span class="o">==</span> <span class="s2">"local"</span><span class="p">:</span>
@@ -896,6 +929,7 @@
         <span class="n">shared_filesystem</span><span class="o">=</span><span class="n">_bool</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"shared_filesystem"</span><span class="p">),</span>
         <span class="n">bundle_tasks</span><span class="o">=</span><span class="n">_int</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"bundle_tasks"</span><span class="p">),</span>
         <span class="n">bundle_walltime</span><span class="o">=</span><span class="n">_seconds</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"bundle_walltime"</span><span class="p">),</span>
+        <span class="n">max_walltime</span><span class="o">=</span><span class="n">_seconds</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"max_walltime"</span><span class="p">),</span>
         <span class="n">max_queued_tasks</span><span class="o">=</span><span class="n">_int</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"max_queued_tasks"</span><span class="p">),</span>
         <span class="n">inline_below</span><span class="o">=</span><span class="n">_float</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"inline_below"</span><span class="p">),</span>
         <span class="n">url</span><span class="o">=</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"url"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>

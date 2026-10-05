@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>seamm_scheduler.taskserver &#8212; SEAMM Scheduler  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/seamm_scheduler/taskserver';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SEAMM Scheduler  documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../taskserver.html">
+    The TaskServer
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+    Developer Documentation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../taskserver.html">
+    The TaskServer
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+    Developer Documentation
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">seamm_scheduler.taskserver</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for seamm_scheduler.taskserver</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">"""The TaskServer: a small queueing system for a machine that has none.</span>
+
+<span class="sd">It shares one machine's cores and memory among the jobs of everything on it --</span>
+<span class="sd">the tasks of several flowcharts' evaluators, and the evaluators themselves when</span>
+<span class="sd">the JobServer submits them here -- so that two jobs on a laptop no longer</span>
+<span class="sd">oversubscribe it. It is driven like SLURM or PBS, by commands, locally or over</span>
+<span class="sd">ssh, through the ``seamm`` scheduler (:mod:`seamm_scheduler.seamm`)::</span>
+
+<span class="sd">    python -m seamm_scheduler.taskserver [--root R] submit [--name N] [SCRIPT]</span>
+<span class="sd">    python -m seamm_scheduler.taskserver [--root R] status [--json] [ID ...]</span>
+<span class="sd">    python -m seamm_scheduler.taskserver [--root R] cancel ID ...</span>
+<span class="sd">    python -m seamm_scheduler.taskserver [--root R] find NAME</span>
+<span class="sd">    python -m seamm_scheduler.taskserver [--root R] count</span>
+<span class="sd">    python -m seamm_scheduler.taskserver [--root R] queue</span>
+<span class="sd">    python -m seamm_scheduler.taskserver [--root R] config</span>
+
+<span class="sd">A script carries its request in ``#SEAMM`` lines, as a SLURM script does in</span>
+<span class="sd">``#SBATCH`` lines: ``--cores``, ``--memory`` (bytes, or with a unit), ``--time``</span>
+<span class="sd">(seconds, or ``HH:MM:SS``), ``--chdir``, ``--output``, ``--name`` and ``--kind``</span>
+<span class="sd">(``task`` or ``evaluator``). An evaluator -- a flowchart's own process, light and</span>
+<span class="sd">mostly waiting on its tasks -- is charged no cores and 1 GB, and tasks are</span>
+<span class="sd">admitted against the tasks running alone, so evaluators can never hold the</span>
+<span class="sd">cores or memory their tasks wait for; an evaluator itself starts only when</span>
+<span class="sd">everything still fits. A job named ``seamm-&lt;number&gt;`` (the</span>
+<span class="sd">JobServer's name for an evaluator) is an evaluator unless it says otherwise.</span>
+
+<span class="sd">There is no daemon. The queue is one SQLite file, ``&lt;root&gt;/taskserver/queue.db``;</span>
+<span class="sd">every ``submit`` and ``status`` call, and every job's runner when its job ends,</span>
+<span class="sd">makes a scheduling pass that starts the queued jobs that fit, in order. A queued</span>
+<span class="sd">job is claimed by one guarded ``UPDATE`` in a ``BEGIN IMMEDIATE`` transaction,</span>
+<span class="sd">so concurrent passes never start a job twice. Each job runs under its own runner</span>
+<span class="sd">(``run-job``) in a session of its own, so nothing that restarts or is upgraded</span>
+<span class="sd">touches it. The runner enforces the job's time limit -- measured with</span>
+<span class="sd">``time.monotonic``, which stops while the machine sleeps -- and its memory: the</span>
+<span class="sd">job is stopped when its processes use more than 125 % of its request for 30 s,</span>
+<span class="sd">and the newest job is stopped when the machine itself runs low on memory.</span>
+
+<span class="sd">The machine's capacity is in ``&lt;root&gt;/taskserver.ini``::</span>
+
+<span class="sd">    [taskserver]</span>
+<span class="sd">    cores = 8</span>
+<span class="sd">    memory = 8 GB</span>
+
+<span class="sd">by default its physical cores and half its memory (the rest is for the desktop,</span>
+<span class="sd">the evaluators and everything else).</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">configparser</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">signal</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"seamm-taskserver"</span><span class="p">)</span>
+
+<span class="c1">#: The version of the queue's database layout (2: the job's own pid)</span>
+<span class="n">SCHEMA_VERSION</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">#: Job states. ``starting``: claimed, its runner not yet running the script.</span>
+<span class="n">QUEUED</span> <span class="o">=</span> <span class="s2">"queued"</span>
+<span class="n">STARTING</span> <span class="o">=</span> <span class="s2">"starting"</span>
+<span class="n">RUNNING</span> <span class="o">=</span> <span class="s2">"running"</span>
+<span class="n">COMPLETED</span> <span class="o">=</span> <span class="s2">"completed"</span>
+<span class="n">FAILED</span> <span class="o">=</span> <span class="s2">"failed"</span>
+<span class="n">CANCELLED</span> <span class="o">=</span> <span class="s2">"cancelled"</span>
+<span class="n">TIMEOUT</span> <span class="o">=</span> <span class="s2">"timeout"</span>
+<span class="n">MEMORY</span> <span class="o">=</span> <span class="s2">"memory"</span>
+<span class="n">LOST</span> <span class="o">=</span> <span class="s2">"lost"</span>
+<span class="n">ACTIVE</span> <span class="o">=</span> <span class="p">(</span><span class="n">STARTING</span><span class="p">,</span> <span class="n">RUNNING</span><span class="p">)</span>
+<span class="n">TERMINAL</span> <span class="o">=</span> <span class="p">(</span><span class="n">COMPLETED</span><span class="p">,</span> <span class="n">FAILED</span><span class="p">,</span> <span class="n">CANCELLED</span><span class="p">,</span> <span class="n">TIMEOUT</span><span class="p">,</span> <span class="n">MEMORY</span><span class="p">,</span> <span class="n">LOST</span><span class="p">)</span>
+
+<span class="c1">#: Charged to a job that asks for no memory, per core</span>
+<span class="n">DEFAULT_MEMORY_PER_CORE</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span>
+<span class="c1">#: Charged to an evaluator</span>
+<span class="n">EVALUATOR_MEMORY</span> <span class="o">=</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span>
+<span class="c1">#: The oldest queued job reserves room after waiting this long (seconds)</span>
+<span class="n">RESERVE_AFTER</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="mi">60</span>
+<span class="c1">#: A job using more than this fraction of its memory request ...</span>
+<span class="n">MEMORY_LIMIT_FACTOR</span> <span class="o">=</span> <span class="mf">1.25</span>
+<span class="c1">#: ... for this long (seconds) is stopped</span>
+<span class="n">MEMORY_GRACE</span> <span class="o">=</span> <span class="mf">30.0</span>
+<span class="c1">#: Below this fraction of the machine's memory available, the newest job stops</span>
+<span class="n">MACHINE_MEMORY_FLOOR</span> <span class="o">=</span> <span class="mf">0.10</span>
+<span class="c1">#: Seconds between SIGTERM and SIGKILL</span>
+<span class="n">KILL_GRACE</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="c1">#: A claimed job whose runner has not started after this long is lost</span>
+<span class="n">START_TIMEOUT</span> <span class="o">=</span> <span class="mf">120.0</span>
+<span class="c1">#: Terminal jobs older than this are removed from the queue (seconds)</span>
+<span class="n">KEEP_FINISHED</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">3600</span>
+
+<span class="n">EVALUATOR_NAME</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^seamm-\d+$"</span><span class="p">)</span>
+
+<span class="c1">#: The variables a job's script starts with (and LC_*); the script sets up the</span>
+<span class="c1">#: rest itself, as a batch job does.</span>
+<span class="n">KEEP_ENVIRONMENT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"PATH"</span><span class="p">,</span>
+    <span class="s2">"HOME"</span><span class="p">,</span>
+    <span class="s2">"USER"</span><span class="p">,</span>
+    <span class="s2">"LOGNAME"</span><span class="p">,</span>
+    <span class="s2">"SHELL"</span><span class="p">,</span>
+    <span class="s2">"LANG"</span><span class="p">,</span>
+    <span class="s2">"TMPDIR"</span><span class="p">,</span>
+    <span class="s2">"TZ"</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1"># Sizes and times</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="parse_memory">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.parse_memory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_memory</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Bytes from ``"8 GB"``, ``"512M"``, ``"2gb"``, or a plain number of bytes."""</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">"([0-9.]+)([KMGT]?)(I?B?)"</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot read the memory '</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+    <span class="n">number</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="p">{</span><span class="s2">""</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"K"</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span> <span class="s2">"M"</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"G"</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="s2">"T"</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">4</span><span class="p">}[</span><span class="n">unit</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="o">*</span> <span class="n">factor</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_time">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.parse_time">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_time</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Seconds from ``3600``, ``"1:00:00"``, ``"1-00:00:00"`` or ``"90s"``."""</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"s"</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">days</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="s2">"-"</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">days</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)]</span>
+    <span class="n">seconds</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+        <span class="n">seconds</span> <span class="o">=</span> <span class="n">seconds</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">p</span>
+    <span class="k">return</span> <span class="n">days</span> <span class="o">*</span> <span class="mi">86400</span> <span class="o">+</span> <span class="n">seconds</span></div>
+
+
+
+<div class="viewcode-block" id="format_memory">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.format_memory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_memory</span><span class="p">(</span><span class="n">nbytes</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">nbytes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"-"</span>
+    <span class="k">for</span> <span class="n">unit</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">"T"</span><span class="p">,</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="s2">"G"</span><span class="p">,</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="s2">"M"</span><span class="p">,</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">nbytes</span> <span class="o">&gt;=</span> <span class="n">size</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nbytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">size</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}{</span><span class="n">unit</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nbytes</span><span class="si">}</span><span class="s2">B"</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1"># The queue</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="default_root">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.default_root">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">default_root</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"SEAMM_ROOT"</span><span class="p">,</span> <span class="s2">"~/SEAMM"</span><span class="p">))</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="settings">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.settings">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">settings</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The runner's limits from ``&lt;root&gt;/taskserver.ini``, with the defaults."""</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"memory_factor"</span><span class="p">:</span> <span class="n">MEMORY_LIMIT_FACTOR</span><span class="p">,</span>
+        <span class="s2">"memory_grace"</span><span class="p">:</span> <span class="n">MEMORY_GRACE</span><span class="p">,</span>
+        <span class="s2">"memory_floor"</span><span class="p">:</span> <span class="n">MACHINE_MEMORY_FLOOR</span><span class="p">,</span>
+        <span class="s2">"kill_grace"</span><span class="p">:</span> <span class="n">KILL_GRACE</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"taskserver.ini"</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"taskserver"</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">"taskserver"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                    <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">"taskserver"</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">values</span></div>
+
+
+
+<div class="viewcode-block" id="capacity">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.capacity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">capacity</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The machine's ``{"cores": int, "memory": bytes}`` for the queue."""</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+
+    <span class="n">cores</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(</span><span class="n">logical</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="ow">or</span> <span class="mi">1</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">total</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"taskserver.ini"</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"taskserver"</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="n">section</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">"taskserver"</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">section</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"cores"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="n">cores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">section</span><span class="p">[</span><span class="s2">"cores"</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">section</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="n">memory</span> <span class="o">=</span> <span class="n">parse_memory</span><span class="p">(</span><span class="n">section</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"cores"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">cores</span><span class="p">),</span> <span class="s2">"memory"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">memory</span><span class="p">)}</span></div>
+
+
+
+<div class="viewcode-block" id="Queue">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.Queue">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Queue</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""The queue in ``&lt;root&gt;/taskserver/queue.db``."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span> <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">default_root</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">/</span> <span class="s2">"taskserver"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">"queue.db"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">isolation_level</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Row</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"PRAGMA journal_mode=WAL"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"PRAGMA busy_timeout=60000"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_migrate</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Queue.close">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.Queue.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+    <span class="c1"># -- schema -------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_migrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"BEGIN IMMEDIATE"</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s2">"CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT)"</span>
+            <span class="p">)</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT value FROM meta WHERE key = 'schema'"</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+            <span class="n">version</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">row</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">version</span> <span class="o">&gt;</span> <span class="n">SCHEMA_VERSION</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"The queue </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2"> has layout </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">, newer than this "</span>
+                    <span class="sa">f</span><span class="s2">"version of seamm_scheduler understands (</span><span class="si">{</span><span class="n">SCHEMA_VERSION</span><span class="si">}</span><span class="s2">)."</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">version</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"""CREATE TABLE IF NOT EXISTS jobs (</span>
+<span class="s2">                        id INTEGER PRIMARY KEY AUTOINCREMENT,</span>
+<span class="s2">                        name TEXT,</span>
+<span class="s2">                        kind TEXT NOT NULL DEFAULT 'task',</span>
+<span class="s2">                        script TEXT NOT NULL,</span>
+<span class="s2">                        chdir TEXT,</span>
+<span class="s2">                        output TEXT,</span>
+<span class="s2">                        cores INTEGER NOT NULL,</span>
+<span class="s2">                        memory INTEGER NOT NULL,</span>
+<span class="s2">                        time_limit REAL,</span>
+<span class="s2">                        state TEXT NOT NULL,</span>
+<span class="s2">                        submitted REAL NOT NULL,</span>
+<span class="s2">                        started REAL,</span>
+<span class="s2">                        ended REAL,</span>
+<span class="s2">                        pid INTEGER,</span>
+<span class="s2">                        pid_start REAL,</span>
+<span class="s2">                        exit_code INTEGER,</span>
+<span class="s2">                        reason TEXT,</span>
+<span class="s2">                        cancel INTEGER NOT NULL DEFAULT 0</span>
+<span class="s2">                    )"""</span><span class="p">)</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"CREATE INDEX IF NOT EXISTS jobs_state ON jobs (state)"</span><span class="p">)</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"CREATE INDEX IF NOT EXISTS jobs_name ON jobs (name)"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">version</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># The job's own process (the runner's child), so a job whose</span>
+                <span class="c1"># runner vanished can be stopped, not left running</span>
+                <span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"PRAGMA table_info(jobs)"</span><span class="p">)}</span>
+                <span class="k">if</span> <span class="s2">"job_pid"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+                    <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"ALTER TABLE jobs ADD COLUMN job_pid INTEGER"</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">"job_start"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+                    <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"ALTER TABLE jobs ADD COLUMN job_start REAL"</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s2">"INSERT OR REPLACE INTO meta (key, value) VALUES ('schema', ?)"</span><span class="p">,</span>
+                <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">SCHEMA_VERSION</span><span class="p">),),</span>
+            <span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"COMMIT"</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"ROLLBACK"</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+    <span class="c1"># -- jobs ---------------------------------------------------------------</span>
+<div class="viewcode-block" id="Queue.charge">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.Queue.charge">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">charge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""What a job takes from the machine while it runs: (cores, memory).</span>
+
+<span class="sd">        An evaluator: no cores, and 1 GB (a quarter of the memory of a queue with</span>
+<span class="sd">        less than 4 GB, so evaluators can still run there).</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"kind"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"evaluator"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">EVALUATOR_MEMORY</span><span class="p">,</span> <span class="n">capacity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)[</span><span class="s2">"memory"</span><span class="p">]</span> <span class="o">//</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="s2">"cores"</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Queue.submit">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.Queue.submit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">script</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">cores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">memory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">time_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">chdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">kind</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Add a job; return its id. The request is checked against the machine."""</span>
+        <span class="n">request</span> <span class="o">=</span> <span class="n">parse_directives</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span>
+        <span class="n">cores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cores</span> <span class="ow">or</span> <span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"cores"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">memory</span> <span class="o">=</span> <span class="n">parse_memory</span><span class="p">(</span><span class="n">memory</span> <span class="ow">or</span> <span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">))</span>
+        <span class="n">time_limit</span> <span class="o">=</span> <span class="n">parse_time</span><span class="p">(</span><span class="n">time_limit</span> <span class="ow">or</span> <span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"time"</span><span class="p">))</span>
+        <span class="n">chdir</span> <span class="o">=</span> <span class="n">chdir</span> <span class="ow">or</span> <span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"chdir"</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="ow">or</span> <span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"output"</span><span class="p">)</span>
+        <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span> <span class="ow">or</span> <span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"kind"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kind</span> <span class="o">=</span> <span class="s2">"evaluator"</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">and</span> <span class="n">EVALUATOR_NAME</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"task"</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="s2">"evaluator"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown kind of job '</span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s2">' (task or evaluator)"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">memory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">memory</span> <span class="o">=</span> <span class="n">DEFAULT_MEMORY_PER_CORE</span> <span class="o">*</span> <span class="n">cores</span>
+        <span class="n">limits</span> <span class="o">=</span> <span class="n">capacity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"task"</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cores</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"cores"</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"The job asks for </span><span class="si">{</span><span class="n">cores</span><span class="si">}</span><span class="s2"> cores; this machine's queue has "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">limits</span><span class="p">[</span><span class="s1">'cores'</span><span class="p">]</span><span class="si">}</span><span class="s2"> (see </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="s1">'taskserver.ini'</span><span class="si">}</span><span class="s2">)."</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">memory</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"The job asks for </span><span class="si">{</span><span class="n">format_memory</span><span class="p">(</span><span class="n">memory</span><span class="p">)</span><span class="si">}</span><span class="s2"> of memory; this "</span>
+                    <span class="sa">f</span><span class="s2">"machine's queue has </span><span class="si">{</span><span class="n">format_memory</span><span class="p">(</span><span class="n">limits</span><span class="p">[</span><span class="s1">'memory'</span><span class="p">])</span><span class="si">}</span><span class="s2"> (see "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="s1">'taskserver.ini'</span><span class="si">}</span><span class="s2">)."</span>
+                <span class="p">)</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"INSERT INTO jobs (name, kind, script, chdir, output, cores, memory,"</span>
+            <span class="s2">" time_limit, state, submitted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="n">name</span><span class="p">,</span>
+                <span class="n">kind</span><span class="p">,</span>
+                <span class="n">script</span><span class="p">,</span>
+                <span class="n">chdir</span><span class="p">,</span>
+                <span class="n">output</span><span class="p">,</span>
+                <span class="n">cores</span><span class="p">,</span>
+                <span class="n">memory</span><span class="p">,</span>
+                <span class="n">time_limit</span><span class="p">,</span>
+                <span class="n">QUEUED</span><span class="p">,</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">cursor</span><span class="o">.</span><span class="n">lastrowid</span></div>
+
+
+<div class="viewcode-block" id="Queue.get">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.Queue.get">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"SELECT * FROM jobs WHERE id = ?"</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">job_id</span><span class="p">),)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Queue.jobs">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.Queue.jobs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ids</span><span class="p">:</span>
+            <span class="n">marks</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"?"</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"SELECT * FROM jobs WHERE id IN (</span><span class="si">{</span><span class="n">marks</span><span class="si">}</span><span class="s2">) ORDER BY id"</span><span class="p">,</span>
+                <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">],</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM jobs ORDER BY id"</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Queue.finish">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.Queue.finish">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">exit_code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Record a job's end, unless it has already ended."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"UPDATE jobs SET state = ?, exit_code = ?, reason = ?, ended = ?"</span>
+            <span class="sa">f</span><span class="s2">" WHERE id = ? AND state NOT IN (</span><span class="si">{</span><span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">'?'</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">TERMINAL</span><span class="p">))</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">exit_code</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span> <span class="nb">int</span><span class="p">(</span><span class="n">job_id</span><span class="p">),</span> <span class="o">*</span><span class="n">TERMINAL</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Queue.cancel">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.Queue.cancel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Cancel a job: a queued one at once, a running one through its runner."""</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"BEGIN IMMEDIATE"</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s2">"SELECT * FROM jobs WHERE id = ?"</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">job_id</span><span class="p">),)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"COMMIT"</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"state"</span><span class="p">]</span> <span class="o">==</span> <span class="n">QUEUED</span><span class="p">:</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="s2">"UPDATE jobs SET state = ?, ended = ?, reason = 'cancelled'"</span>
+                    <span class="s2">" WHERE id = ? AND state = ?"</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">CANCELLED</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span> <span class="n">row</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="n">QUEUED</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">row</span><span class="p">[</span><span class="s2">"state"</span><span class="p">]</span> <span class="ow">in</span> <span class="n">ACTIVE</span><span class="p">:</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"UPDATE jobs SET cancel = 1 WHERE id = ?"</span><span class="p">,</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],))</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"COMMIT"</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"ROLLBACK"</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"state"</span><span class="p">]</span> <span class="ow">in</span> <span class="n">ACTIVE</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">"pid"</span><span class="p">]:</span>
+            <span class="c1"># The runner stops the job; if the runner has gone, stop it here.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_alive</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"pid"</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">"pid_start"</span><span class="p">]):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_stop_orphan</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="n">CANCELLED</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">"cancelled"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_stop_orphan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Stop a job whose runner has gone, if it still runs."""</span>
+        <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"job_pid"</span><span class="p">]</span> <span class="ow">and</span> <span class="n">_alive</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"job_pid"</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">"job_start"</span><span class="p">]):</span>
+            <span class="n">_kill_session</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"job_pid"</span><span class="p">])</span>
+
+    <span class="c1"># -- checking and scheduling ---------------------------------------------</span>
+<div class="viewcode-block" id="Queue.check">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.Queue.check">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Mark jobs whose runner has vanished as lost (a sleeping one is not)."""</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"SELECT * FROM jobs WHERE state IN (</span><span class="si">{</span><span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">'?'</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">ACTIVE</span><span class="p">))</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span> <span class="n">ACTIVE</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"state"</span><span class="p">]</span> <span class="o">==</span> <span class="n">STARTING</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">"pid"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">now</span> <span class="o">-</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"started"</span><span class="p">]</span> <span class="ow">or</span> <span class="n">now</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">START_TIMEOUT</span><span class="p">:</span>
+                    <span class="c1"># Only if its runner has still not claimed it: a slow runner</span>
+                    <span class="c1"># may be starting the script right now.</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                        <span class="s2">"UPDATE jobs SET state = ?, ended = ?, reason = ?"</span>
+                        <span class="s2">" WHERE id = ? AND state = ? AND pid IS NULL"</span><span class="p">,</span>
+                        <span class="p">(</span><span class="n">LOST</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="s2">"its runner never started"</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="n">STARTING</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"pid"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_alive</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"pid"</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">"pid_start"</span><span class="p">]):</span>
+                <span class="c1"># Its job runs in a session of its own: stop it, or a rerun of</span>
+                <span class="c1"># the task would run beside it.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_stop_orphan</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="n">LOST</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">"its runner is no longer running"</span><span class="p">)</span>
+        <span class="c1"># Forget long-finished jobs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"DELETE FROM jobs WHERE state IN (</span><span class="si">{</span><span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">'?'</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">TERMINAL</span><span class="p">))</span><span class="si">}</span><span class="s2">)"</span>
+            <span class="s2">" AND ended &lt; ?"</span><span class="p">,</span>
+            <span class="p">(</span><span class="o">*</span><span class="n">TERMINAL</span><span class="p">,</span> <span class="n">now</span> <span class="o">-</span> <span class="n">KEEP_FINISHED</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Queue.schedule">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.Queue.schedule">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Claim the queued jobs that fit, in order, and start their runners.</span>
+
+<span class="sd">        Returns the ids started.</span>
+<span class="sd">        """</span>
+        <span class="n">limits</span> <span class="o">=</span> <span class="n">capacity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span>
+        <span class="n">claimed</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"BEGIN IMMEDIATE"</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Tasks are admitted against the tasks running; evaluators only when</span>
+            <span class="c1"># everything still fits. So evaluators never hold what their tasks</span>
+            <span class="c1"># wait for, and cannot pile up beyond the machine either.</span>
+            <span class="n">task_cores</span> <span class="o">=</span> <span class="n">task_memory</span> <span class="o">=</span> <span class="n">evaluator_memory</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"SELECT * FROM jobs WHERE state IN (</span><span class="si">{</span><span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">'?'</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">ACTIVE</span><span class="p">))</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
+                <span class="n">ACTIVE</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+                <span class="n">c</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">charge</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"kind"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"evaluator"</span><span class="p">:</span>
+                    <span class="n">evaluator_memory</span> <span class="o">+=</span> <span class="n">m</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">task_cores</span> <span class="o">+=</span> <span class="n">c</span>
+                    <span class="n">task_memory</span> <span class="o">+=</span> <span class="n">m</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">queued</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s2">"SELECT * FROM jobs WHERE state = ? ORDER BY id"</span><span class="p">,</span> <span class="p">(</span><span class="n">QUEUED</span><span class="p">,)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+            <span class="c1"># The oldest task that has waited long enough reserves the task pool:</span>
+            <span class="c1"># no later task jumps it. Evaluators never reserve -- one waiting for</span>
+            <span class="c1"># memory the running evaluators' tasks will free would otherwise stop</span>
+            <span class="c1"># those tasks, and itself, for good.</span>
+            <span class="n">reserved</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">queued</span><span class="p">:</span>
+                <span class="n">c</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">charge</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"kind"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"task"</span> <span class="ow">and</span> <span class="p">(</span>
+                    <span class="n">c</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"cores"</span><span class="p">]</span> <span class="ow">or</span> <span class="n">m</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">]</span>
+                <span class="p">):</span>
+                    <span class="c1"># Larger than the machine's queue now (its capacity lowered)</span>
+                    <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                        <span class="s2">"UPDATE jobs SET state = ?, ended = ?, reason = ?"</span>
+                        <span class="s2">" WHERE id = ? AND state = ?"</span><span class="p">,</span>
+                        <span class="p">(</span>
+                            <span class="n">FAILED</span><span class="p">,</span>
+                            <span class="n">now</span><span class="p">,</span>
+                            <span class="s2">"larger than this machine's queue: "</span>
+                            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">limits</span><span class="p">[</span><span class="s1">'cores'</span><span class="p">]</span><span class="si">}</span><span class="s2"> cores, "</span>
+                            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">format_memory</span><span class="p">(</span><span class="n">limits</span><span class="p">[</span><span class="s1">'memory'</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                            <span class="n">row</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
+                            <span class="n">QUEUED</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"kind"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"evaluator"</span><span class="p">:</span>
+                    <span class="n">fits</span> <span class="o">=</span> <span class="n">task_memory</span> <span class="o">+</span> <span class="n">evaluator_memory</span> <span class="o">+</span> <span class="n">m</span> <span class="o">&lt;=</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">reserved</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">fits</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">task_cores</span> <span class="o">+</span> <span class="n">c</span> <span class="o">&lt;=</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"cores"</span><span class="p">]</span>
+                        <span class="ow">and</span> <span class="n">task_memory</span> <span class="o">+</span> <span class="n">m</span> <span class="o">&lt;=</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">]</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">fits</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"kind"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"task"</span> <span class="ow">and</span> <span class="n">now</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="s2">"submitted"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">RESERVE_AFTER</span><span class="p">:</span>
+                        <span class="n">reserved</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">continue</span>
+                <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="s2">"UPDATE jobs SET state = ?, started = ? WHERE id = ? AND state = ?"</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">STARTING</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="n">QUEUED</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">cursor</span><span class="o">.</span><span class="n">rowcount</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">claimed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"kind"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"evaluator"</span><span class="p">:</span>
+                        <span class="n">evaluator_memory</span> <span class="o">+=</span> <span class="n">m</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">task_cores</span> <span class="o">+=</span> <span class="n">c</span>
+                        <span class="n">task_memory</span> <span class="o">+=</span> <span class="n">m</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"COMMIT"</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"ROLLBACK"</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">if</span> <span class="n">start</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">claimed</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_start_runner</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">claimed</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_start_runner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
+        <span class="n">directory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">"jobs"</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+        <span class="n">directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">log</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">"runner.log"</span><span class="p">,</span> <span class="s2">"ab"</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+                    <span class="s2">"-m"</span><span class="p">,</span>
+                    <span class="s2">"seamm_scheduler.taskserver"</span><span class="p">,</span>
+                    <span class="s2">"--root"</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">),</span>
+                    <span class="s2">"run-job"</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">job_id</span><span class="p">),</span>
+                <span class="p">],</span>
+                <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span>
+                <span class="n">stdout</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
+                <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span>
+                <span class="n">start_new_session</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">close_fds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">FAILED</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">"could not start its runner: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1"># The runner of one job</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="run_job">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.run_job">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_job</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">poll</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Run job ``job_id`` to its end: time and memory limits, cancellation."""</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+
+    <span class="n">queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="n">job_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+    <span class="n">me</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">()</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="s2">"UPDATE jobs SET state = ?, pid = ?, pid_start = ? WHERE id = ? AND state = ?"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">RUNNING</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">me</span><span class="o">.</span><span class="n">create_time</span><span class="p">(),</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">STARTING</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">cursor</span><span class="o">.</span><span class="n">rowcount</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span>  <span class="c1"># cancelled or claimed twice: not ours to run</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+    <span class="n">directory</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">"jobs"</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+    <span class="n">directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">script</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="s2">"script.sh"</span>
+    <span class="n">script</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"script"</span><span class="p">])</span>
+    <span class="n">script</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="mo">0o700</span><span class="p">)</span>
+    <span class="n">chdir</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">"chdir"</span><span class="p">]</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">())</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">"output"</span><span class="p">]</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">"output.txt"</span><span class="p">)</span>
+    <span class="c1"># A minimal environment, as SLURM's export=NONE: the runner was started by</span>
+    <span class="c1"># whoever made the scheduling pass (any evaluator), whose own variables</span>
+    <span class="c1"># (another job's share, thread counts, ids) must not leak into this job.</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">KEEP_ENVIRONMENT</span> <span class="ow">or</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"LC_"</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">"SEAMM_TASKSERVER_JOB_ID"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">job_id</span><span class="p">),</span>
+            <span class="s2">"SEAMM_TASKSERVER_NTASKS"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"cores"</span><span class="p">]),</span>
+            <span class="s2">"SEAMM_TASKSERVER_MEMORY"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">]),</span>
+            <span class="s2">"SEAMM_TASKSERVER_ROOT"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">queue</span><span class="o">.</span><span class="n">root</span><span class="p">),</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">state</span><span class="p">,</span> <span class="n">exit_code</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="n">FAILED</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"ab"</span><span class="p">)</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+                <span class="p">[</span><span class="s2">"/bin/bash"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">script</span><span class="p">)],</span>
+                <span class="n">cwd</span><span class="o">=</span><span class="n">chdir</span><span class="p">,</span>
+                <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span>
+                <span class="n">stdout</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
+                <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span>
+                <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                <span class="n">start_new_session</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">queue</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">FAILED</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">"could not start the script: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">queue</span><span class="o">.</span><span class="n">schedule</span><span class="p">()</span>
+        <span class="k">return</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">job_start</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span><span class="o">.</span><span class="n">create_time</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Error</span><span class="p">:</span>
+        <span class="n">job_start</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">queue</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="s2">"UPDATE jobs SET job_pid = ?, job_start = ? WHERE id = ?"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">job_start</span><span class="p">,</span> <span class="n">job_id</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>  <span class="c1"># stops while the machine sleeps</span>
+    <span class="n">over_since</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">limits</span> <span class="o">=</span> <span class="n">settings</span><span class="p">(</span><span class="n">queue</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">]</span> <span class="o">*</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"memory_factor"</span><span class="p">]</span>
+    <span class="n">last_memory_check</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">exit_code</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">poll</span><span class="p">)</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">COMPLETED</span> <span class="k">if</span> <span class="n">exit_code</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">FAILED</span>
+                <span class="k">if</span> <span class="n">exit_code</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">reason</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"exit code </span><span class="si">{</span><span class="n">exit_code</span><span class="si">}</span><span class="s2">"</span>
+                <span class="k">break</span>
+            <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">current</span><span class="p">[</span><span class="s2">"cancel"</span><span class="p">]:</span>
+                <span class="n">_stop</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"kill_grace"</span><span class="p">])</span>
+                <span class="n">state</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="n">CANCELLED</span><span class="p">,</span> <span class="s2">"cancelled"</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"time_limit"</span><span class="p">]</span> <span class="ow">and</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span> <span class="o">&gt;</span> <span class="n">row</span><span class="p">[</span><span class="s2">"time_limit"</span><span class="p">]:</span>
+                <span class="n">_stop</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"kill_grace"</span><span class="p">])</span>
+                <span class="n">state</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="n">TIMEOUT</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"time limit of </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">'time_limit'</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> s"</span>
+                <span class="k">break</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+            <span class="n">interval</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"memory_grace"</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">now</span> <span class="o">-</span> <span class="n">last_memory_check</span> <span class="o">&lt;</span> <span class="n">interval</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">last_memory_check</span> <span class="o">=</span> <span class="n">now</span>
+            <span class="n">used</span> <span class="o">=</span> <span class="n">_job_memory</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">"kind"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"task"</span> <span class="ow">and</span> <span class="n">used</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
+                <span class="n">over_since</span> <span class="o">=</span> <span class="n">over_since</span> <span class="k">if</span> <span class="n">over_since</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">now</span>
+                <span class="k">if</span> <span class="n">now</span> <span class="o">-</span> <span class="n">over_since</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"memory_grace"</span><span class="p">]:</span>
+                    <span class="n">_stop</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"kill_grace"</span><span class="p">])</span>
+                    <span class="n">state</span> <span class="o">=</span> <span class="n">MEMORY</span>
+                    <span class="n">reason</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"used </span><span class="si">{</span><span class="n">format_memory</span><span class="p">(</span><span class="n">used</span><span class="p">)</span><span class="si">}</span><span class="s2">, more than its request of "</span>
+                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">format_memory</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">'memory'</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="p">)</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">over_since</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">_machine_low</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">limits</span><span class="p">):</span>
+                <span class="n">_stop</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"kill_grace"</span><span class="p">])</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">MEMORY</span>
+                <span class="n">reason</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">"the machine was low on memory for "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">limits</span><span class="p">[</span><span class="s1">'memory_grace'</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> s; job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">, the newest, "</span>
+                    <span class="s2">"was stopped"</span>
+                <span class="p">)</span>
+                <span class="k">break</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Never leave the job running with its row 'running' (a database busy</span>
+        <span class="c1"># past its timeout, say): stop it and record why.</span>
+        <span class="n">_stop</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"kill_grace"</span><span class="p">])</span>
+        <span class="n">state</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="n">FAILED</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"its runner failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">exit_code</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">exit_code</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">returncode</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">queue</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">exit_code</span><span class="o">=</span><span class="n">exit_code</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">)</span>
+            <span class="n">queue</span><span class="o">.</span><span class="n">schedule</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not record the end of job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_machine_low</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">limits</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Whether this job should go because the machine is low on memory.</span>
+
+<span class="sd">    The machine must have been below the floor for the grace period, this must</span>
+<span class="sd">    be the newest task, and only one job is stopped in a low-memory episode (it</span>
+<span class="sd">    ends when the machine has memory again), so a passing dip or a process</span>
+<span class="sd">    outside the queue does not walk through the queue stopping task after task.</span>
+<span class="sd">    """</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+
+    <span class="n">vm</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span>
+    <span class="n">low</span> <span class="o">=</span> <span class="n">vm</span><span class="o">.</span><span class="n">available</span> <span class="o">&lt;</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"memory_floor"</span><span class="p">]</span> <span class="o">*</span> <span class="n">vm</span><span class="o">.</span><span class="n">total</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">db</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">low</span><span class="p">:</span>
+        <span class="c1"># The common case, read-only unless an episode has just ended</span>
+        <span class="n">episode</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="s2">"SELECT count(*) FROM meta WHERE key IN ('low_since', 'low_killed')"</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">episode</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"DELETE FROM meta WHERE key IN ('low_since', 'low_killed')"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"BEGIN IMMEDIATE"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s2">"SELECT key, value FROM meta WHERE key IN ('low_since', 'low_killed')"</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"low_since"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"INSERT INTO meta VALUES ('low_since', ?)"</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="p">),))</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"COMMIT"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">stop</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">"low_killed"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">meta</span>
+            <span class="ow">and</span> <span class="n">now</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">"low_since"</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">limits</span><span class="p">[</span><span class="s2">"memory_grace"</span><span class="p">]</span>
+            <span class="ow">and</span> <span class="n">_newest</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">job_id</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">stop</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s2">"INSERT OR REPLACE INTO meta VALUES ('low_killed', ?)"</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">job_id</span><span class="p">),)</span>
+            <span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"COMMIT"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stop</span>
+    <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"ROLLBACK"</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_newest</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="s2">"SELECT id FROM jobs WHERE state = ? AND kind = 'task'"</span>
+        <span class="s2">" ORDER BY started DESC, id DESC LIMIT 1"</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">RUNNING</span><span class="p">,),</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">row</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="n">job_id</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_job_processes</span><span class="p">(</span><span class="n">pid</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The job's processes: its session or group, and every descendant -- also</span>
+<span class="sd">    those that started sessions of their own (a pool's codes)."""</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+
+    <span class="n">found</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+        <span class="n">found</span><span class="p">[</span><span class="n">root</span><span class="o">.</span><span class="n">pid</span><span class="p">]</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">found</span><span class="p">[</span><span class="n">child</span><span class="o">.</span><span class="n">pid</span><span class="p">]</span> <span class="o">=</span> <span class="n">child</span>
+    <span class="k">except</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Error</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getsid</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="n">sid</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">sid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">process</span> <span class="ow">in</span> <span class="n">psutil</span><span class="o">.</span><span class="n">process_iter</span><span class="p">([</span><span class="s2">"pid"</span><span class="p">]):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getsid</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span> <span class="o">==</span> <span class="n">sid</span><span class="p">:</span>
+                    <span class="n">found</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">process</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="n">psutil</span><span class="o">.</span><span class="n">Error</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">):</span>
+                <span class="k">continue</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">found</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_job_memory</span><span class="p">(</span><span class="n">pid</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The memory used by the job's processes, in bytes.</span>
+
+<span class="sd">    The unique set size where psutil offers it (on macOS RSS misses compressed</span>
+<span class="sd">    and swapped pages), else the resident size.</span>
+<span class="sd">    """</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">process</span> <span class="ow">in</span> <span class="n">_job_processes</span><span class="p">(</span><span class="n">pid</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">total</span> <span class="o">+=</span> <span class="n">process</span><span class="o">.</span><span class="n">memory_full_info</span><span class="p">()</span><span class="o">.</span><span class="n">uss</span>
+            <span class="k">except</span> <span class="p">(</span><span class="n">psutil</span><span class="o">.</span><span class="n">AccessDenied</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+                <span class="n">total</span> <span class="o">+=</span> <span class="n">process</span><span class="o">.</span><span class="n">memory_info</span><span class="p">()</span><span class="o">.</span><span class="n">rss</span>
+        <span class="k">except</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Error</span><span class="p">:</span>
+            <span class="k">continue</span>
+    <span class="k">return</span> <span class="n">total</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_signal_all</span><span class="p">(</span><span class="n">processes</span><span class="p">,</span> <span class="n">sig</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">process</span> <span class="ow">in</span> <span class="n">processes</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">process</span><span class="o">.</span><span class="n">send_signal</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_stop</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">grace</span><span class="o">=</span><span class="n">KILL_GRACE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""SIGTERM the job and all its processes, then SIGKILL those still there."""</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+
+    <span class="n">processes</span> <span class="o">=</span> <span class="n">_job_processes</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">killpg</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ProcessLookupError</span><span class="p">,</span> <span class="ne">PermissionError</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="n">_signal_all</span><span class="p">(</span><span class="n">processes</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">grace</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">alive</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">wait_procs</span><span class="p">(</span><span class="n">processes</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">killpg</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGKILL</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ProcessLookupError</span><span class="p">,</span> <span class="ne">PermissionError</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="n">_signal_all</span><span class="p">(</span><span class="n">alive</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGKILL</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">grace</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_kill_session</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">grace</span><span class="o">=</span><span class="n">KILL_GRACE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Stop a job that is not our child (its runner has gone): all its</span>
+<span class="sd">    processes, SIGTERM then SIGKILL."""</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+
+    <span class="n">processes</span> <span class="o">=</span> <span class="n">_job_processes</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+    <span class="n">_signal_all</span><span class="p">(</span><span class="n">processes</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">alive</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">wait_procs</span><span class="p">(</span><span class="n">processes</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">grace</span><span class="p">)</span>
+    <span class="n">_signal_all</span><span class="p">(</span><span class="n">alive</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGKILL</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_alive</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Whether process ``pid`` is the one that started at ``start``."""</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">pid</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">create_time</span><span class="p">()</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">start</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">process</span><span class="o">.</span><span class="n">status</span><span class="p">()</span> <span class="o">!=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">STATUS_ZOMBIE</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">psutil</span><span class="o">.</span><span class="n">NoSuchProcess</span><span class="p">,</span> <span class="n">psutil</span><span class="o">.</span><span class="n">AccessDenied</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1"># Scripts</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+<span class="n">_DIRECTIVE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^#SEAMM\s+--([a-z-]+)(?:[=\s]+(.*?))?\s*$"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="parse_directives">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.parse_directives">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_directives</span><span class="p">(</span><span class="n">script</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The request in a script's ``#SEAMM --key value`` lines."""</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">script</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">_DIRECTIVE</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+            <span class="n">request</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"'</span><span class="se">\"</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">request</span></div>
+
+
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1"># The command line</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_status_record</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]),</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span>
+        <span class="s2">"kind"</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">"kind"</span><span class="p">],</span>
+        <span class="s2">"state"</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">"state"</span><span class="p">],</span>
+        <span class="s2">"exit_code"</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">"exit_code"</span><span class="p">],</span>
+        <span class="s2">"reason"</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">"reason"</span><span class="p">],</span>
+        <span class="s2">"cores"</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">"cores"</span><span class="p">],</span>
+        <span class="s2">"memory"</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">"memory"</span><span class="p">],</span>
+        <span class="s2">"submitted"</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">"submitted"</span><span class="p">],</span>
+        <span class="s2">"started"</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">"started"</span><span class="p">],</span>
+        <span class="s2">"ended"</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">"ended"</span><span class="p">],</span>
+    <span class="p">}</span>
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">"seamm-taskserver"</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"A queue for this machine's cores and memory "</span>
+            <span class="s2">"(see seamm_scheduler.taskserver)."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--root"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"The SEAMM root (default ~/SEAMM)"</span><span class="p">)</span>
+    <span class="n">sub</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">"command"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"submit"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Queue a script (from a file or standard input)"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"script"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"?"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--name"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--cores"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--memory"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--time"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--chdir"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--output"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--kind"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s2">"task"</span><span class="p">,</span> <span class="s2">"evaluator"</span><span class="p">))</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"status"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"The state of jobs"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"ids"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"*"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--json"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">)</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"cancel"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Cancel jobs"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"ids"</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">)</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"find"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"The ids of the jobs with a name"</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span>
+
+    <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"count"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"The ids of the jobs not yet finished"</span><span class="p">)</span>
+    <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"queue"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"What is queued and running"</span><span class="p">)</span>
+    <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"config"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"The machine's capacity for the queue"</span><span class="p">)</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"run-job"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span>
+
+    <span class="n">options</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span> <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">root</span> <span class="k">else</span> <span class="n">default_root</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"run-job"</span><span class="p">:</span>
+        <span class="n">run_job</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="n">queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"submit"</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">script</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">):</span>
+                <span class="n">script</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">script</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">script</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">job_id</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+                    <span class="n">script</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">cores</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">cores</span><span class="p">,</span>
+                    <span class="n">memory</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">memory</span><span class="p">,</span>
+                    <span class="n">time_limit</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+                    <span class="n">chdir</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">chdir</span><span class="p">,</span>
+                    <span class="n">output</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+                    <span class="n">kind</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"seamm-taskserver: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+                <span class="k">return</span> <span class="mi">1</span>
+            <span class="n">queue</span><span class="o">.</span><span class="n">schedule</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"status"</span><span class="p">:</span>
+            <span class="n">queue</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+            <span class="n">queue</span><span class="o">.</span><span class="n">schedule</span><span class="p">()</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">jobs</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">ids</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">json</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="n">_status_record</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'state'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'exit_code'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"cancel"</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">options</span><span class="o">.</span><span class="n">ids</span><span class="p">:</span>
+                <span class="n">queue</span><span class="o">.</span><span class="n">cancel</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+            <span class="n">queue</span><span class="o">.</span><span class="n">schedule</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"find"</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">job_id</span><span class="p">,)</span> <span class="ow">in</span> <span class="n">queue</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s2">"SELECT id FROM jobs WHERE name = ? ORDER BY id"</span><span class="p">,</span> <span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">name</span><span class="p">,)</span>
+            <span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"count"</span><span class="p">:</span>
+            <span class="n">queue</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">job_id</span><span class="p">,)</span> <span class="ow">in</span> <span class="n">queue</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"SELECT id FROM jobs WHERE state IN (</span><span class="si">{</span><span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">'?'</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">) ORDER BY id"</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">QUEUED</span><span class="p">,</span> <span class="n">STARTING</span><span class="p">,</span> <span class="n">RUNNING</span><span class="p">),</span>
+            <span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"queue"</span><span class="p">:</span>
+            <span class="n">queue</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+            <span class="n">limits</span> <span class="o">=</span> <span class="n">capacity</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Capacity: </span><span class="si">{</span><span class="n">limits</span><span class="p">[</span><span class="s1">'cores'</span><span class="p">]</span><span class="si">}</span><span class="s2"> cores, </span><span class="si">{</span><span class="n">format_memory</span><span class="p">(</span><span class="n">limits</span><span class="p">[</span><span class="s1">'memory'</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+            <span class="c1"># What each job takes from the machine (an evaluator: no cores)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'id'</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'state'</span><span class="si">:</span><span class="s2">9</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'kind'</span><span class="si">:</span><span class="s2">9</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'cores'</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'memory'</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}</span><span class="s2">  name"</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">queue</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s2">"SELECT * FROM jobs WHERE state IN (?, ?, ?) ORDER BY id"</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">QUEUED</span><span class="p">,</span> <span class="n">STARTING</span><span class="p">,</span> <span class="n">RUNNING</span><span class="p">),</span>
+            <span class="p">):</span>
+                <span class="n">cores</span><span class="p">,</span> <span class="n">memory</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">charge</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'state'</span><span class="p">]</span><span class="si">:</span><span class="s2">9</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'kind'</span><span class="p">]</span><span class="si">:</span><span class="s2">9</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">cores</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2"> "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">format_memory</span><span class="p">(</span><span class="n">memory</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"config"</span><span class="p">:</span>
+            <span class="n">limits</span> <span class="o">=</span> <span class="n">capacity</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="o">**</span><span class="n">limits</span><span class="p">,</span> <span class="s2">"root"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">root</span><span class="p">)}))</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">queue</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Paul Saxe. Project structure based on the Computational Molecular Science Python Cookiecutter version 1.1.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

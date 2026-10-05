@@ -44,7 +44,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API Documentation" href="api.html" />
+    <link rel="next" title="The TaskServer" href="taskserver.html" />
     <link rel="prev" title="Welcome to SEAMM Scheduler’s documentation!" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -133,6 +133,13 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#" aria-current="page">
     Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="taskserver.html">
+    The TaskServer
   </a>
 </li>
 
@@ -233,6 +240,13 @@
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#" aria-current="page">
     Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="taskserver.html">
+    The TaskServer
   </a>
 </li>
 
@@ -412,6 +426,7 @@ Each section is a target:</p>
 <span class="na">export</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">NONE</span>
 <span class="na">bundle_tasks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8</span>
 <span class="na">max_queued_tasks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">800</span>
+<span class="na">max_walltime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">3-00:00:00</span><span class="w">    </span><span class="c1">; retries never ask for more time than this</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">seamm_scheduler</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_sections</span>
@@ -429,7 +444,8 @@ existed. See <code class="docutils literal notranslate"><span class="pre">seamm_
 <dt><code class="docutils literal notranslate"><span class="pre">local</span></code></dt><dd><p>as a subprocess on the JobServer’s host;</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">queue</span></code></dt><dd><p>as a batch job on the queueing system named by <code class="docutils literal notranslate"><span class="pre">scheduler</span></code> (<code class="docutils literal notranslate"><span class="pre">slurm</span></code>,
-the default, or <code class="docutils literal notranslate"><span class="pre">pbs</span></code>), through the section’s <code class="docutils literal notranslate"><span class="pre">transport</span></code>;</p>
+the default, <code class="docutils literal notranslate"><span class="pre">pbs</span></code>, or <code class="docutils literal notranslate"><span class="pre">seamm</span></code> for a machine’s own TaskServer – see
+<a class="reference internal" href="taskserver.html"><span class="doc">The TaskServer</span></a>), through the section’s <code class="docutils literal notranslate"><span class="pre">transport</span></code>;</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">slurm</span></code></dt><dd><p>the original spelling of <code class="docutils literal notranslate"><span class="pre">queue</span></code> with <code class="docutils literal notranslate"><span class="pre">scheduler</span> <span class="pre">=</span> <span class="pre">slurm</span></code>; still
 accepted.</p>
@@ -488,11 +504,11 @@ to <code class="docutils literal notranslate"><span class="pre">SCHEDULERS</span
       </div>
     </a>
     <a class="right-next"
-       href="api.html"
+       href="taskserver.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">API Documentation</p>
+        <p class="prev-next-title">The TaskServer</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

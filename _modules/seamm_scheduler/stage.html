@@ -135,6 +135,13 @@
 
 
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../taskserver.html">
+    The TaskServer
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../api.html">
     API Documentation
   </a>
@@ -228,6 +235,13 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../getting_started.html">
     Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../taskserver.html">
+    The TaskServer
   </a>
 </li>
 
@@ -352,6 +366,7 @@
 <span class="sd">list of paths relative to a base directory in one ``rsync``.</span>
 <span class="sd">"""</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shlex</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
@@ -440,21 +455,37 @@
 
 
 
-<span class="c1"># A second pass that makes SQLite's side files (the write-ahead log, its index and</span>
-<span class="c1"># the rollback journal) match the other side exactly, deleting those it no longer</span>
-<span class="c1"># has. Copying never deletes, and a stale log left beside a newer database (the</span>
-<span class="c1"># job finished and folded its log in after an earlier copy brought the log here)</span>
-<span class="c1"># is replayed over that database when it is opened: the job database then looks</span>
-<span class="c1"># as it was at the earlier copy. Only these files are touched by the deletion.</span>
-<span class="n">SQLITE_SIDE_FILES</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">"--delete"</span><span class="p">,</span>
-    <span class="s2">"--filter=P */"</span><span class="p">,</span>  <span class="c1"># never delete a directory, even an empty one</span>
-    <span class="s2">"--include=*/"</span><span class="p">,</span>
-    <span class="s2">"--include=*-wal"</span><span class="p">,</span>
-    <span class="s2">"--include=*-shm"</span><span class="p">,</span>
-    <span class="s2">"--include=*-journal"</span><span class="p">,</span>
-    <span class="s2">"--exclude=*"</span><span class="p">,</span>
-<span class="p">]</span>
+<span class="c1"># Files that must match the other side exactly, deleted when it no longer has</span>
+<span class="c1"># them: SQLite's side files (the write-ahead log, its index and the rollback</span>
+<span class="c1"># journal) and a parallel loop's ``loop_entry.db``. Copying never deletes, and a</span>
+<span class="c1"># stale log left beside a newer database (the job finished and folded its log in</span>
+<span class="c1"># after an earlier copy brought the log here) is replayed over that database when</span>
+<span class="c1"># it is opened: the job database then looks as it was at the earlier copy. A</span>
+<span class="c1"># ``loop_entry.db`` staged back while its loop ran would stay for good.</span>
+<span class="c1">#</span>
+<span class="c1"># This is done by listing the files, not with rsync's filters: an rsync filter</span>
+<span class="c1"># that deletes only these files and never a directory ("P */") behaves</span>
+<span class="c1"># differently in openrsync (macOS), which then protects the directories'</span>
+<span class="c1"># contents too, so nested files were not removed.</span>
+<span class="n">MIRRORED_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"*-wal"</span><span class="p">,</span> <span class="s2">"*-shm"</span><span class="p">,</span> <span class="s2">"*-journal"</span><span class="p">,</span> <span class="s2">"loop_entry.db"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mirrored</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">fnmatch</span>
+
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span> <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">MIRRORED_NAMES</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_local_mirrored</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The mirrored files under a local directory, as relative paths."""</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">base</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">base</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">base</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">_mirrored</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="p">)</span>
 
 
 <div class="viewcode-block" id="RsyncStager">
@@ -501,9 +532,23 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">stage_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_wdir</span><span class="p">,</span> <span class="n">remote_wdir</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_ssh</span><span class="p">([</span><span class="s2">"mkdir"</span><span class="p">,</span> <span class="s2">"-p"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">remote_wdir</span><span class="p">)])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rsync</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">remote_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rsync</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">remote_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">SQLITE_SIDE_FILES</span>
+        <span class="c1"># Remove there the mirrored files no longer here</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="s2">" -o "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"-name </span><span class="si">{</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">MIRRORED_NAMES</span><span class="p">)</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ssh_output</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"cd </span><span class="si">{</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">remote_wdir</span><span class="p">))</span><span class="si">}</span><span class="s2"> &amp;&amp; find . -type f </span><span class="se">\\</span><span class="s2">( </span><span class="si">{</span><span class="n">names</span><span class="si">}</span><span class="s2"> </span><span class="se">\\</span><span class="s2">)"</span>
         <span class="p">)</span>
+        <span class="n">local</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">local_wdir</span><span class="p">)</span>
+        <span class="n">stale</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">f</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">found</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">f</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">local</span> <span class="o">/</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">stale</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ssh_output</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"cd </span><span class="si">{</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">remote_wdir</span><span class="p">))</span><span class="si">}</span><span class="s2"> &amp;&amp; "</span>
+                <span class="s1">'while IFS= read -r f; do rm -f -- "$f"; done'</span><span class="p">,</span>
+                <span class="n">input_text</span><span class="o">=</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stale</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="n">remote_wdir</span></div>
 
 
@@ -511,9 +556,19 @@
 <a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.stage.RsyncStager.stage_out">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">stage_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_wdir</span><span class="p">,</span> <span class="n">local_wdir</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rsync</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">remote_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rsync</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">remote_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local_wdir</span><span class="si">}</span><span class="s2">/"</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">SQLITE_SIDE_FILES</span>
-        <span class="p">)</span></div>
+        <span class="c1"># Remove here the mirrored files no longer there</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="n">_local_mirrored</span><span class="p">(</span><span class="n">local_wdir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="n">there</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ssh_output</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"cd </span><span class="si">{</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">remote_wdir</span><span class="p">))</span><span class="si">}</span><span class="s2"> &amp;&amp; "</span>
+                <span class="s1">'while IFS= read -r f; do [ -e "$f" ] &amp;&amp; printf "</span><span class="si">%s</span><span class="se">\\</span><span class="s1">n" "$f"; done; '</span>
+                <span class="s2">"true"</span><span class="p">,</span>
+                <span class="n">input_text</span><span class="o">=</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">present</span> <span class="o">=</span> <span class="p">{</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">there</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()}</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">present</span><span class="p">:</span>
+                    <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">local_wdir</span><span class="p">)</span> <span class="o">/</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">missing_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RsyncStager.push">
@@ -570,6 +625,28 @@
                 <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ssh_command</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">remote_cmd</span><span class="si">!r}</span><span class="s2"> failed "</span>
                 <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">proc</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">proc</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ssh_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_cmd</span><span class="p">,</span> <span class="n">input_text</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Run a shell command on the host; its standard output."""</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{</span><span class="s2">"timeout"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ssh_command</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">ssh_options</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">remote_cmd</span><span class="p">],</span>
+                <span class="nb">input</span><span class="o">=</span><span class="n">input_text</span><span class="p">,</span>
+                <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StageError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"ssh: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">remote_cmd</span><span class="si">!r}</span><span class="s2"> timed out after </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> s"</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">if</span> <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StageError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ssh_command</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">remote_cmd</span><span class="si">!r}</span><span class="s2"> failed "</span>
+                <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">proc</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">proc</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">proc</span><span class="o">.</span><span class="n">stdout</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_rsync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="p">(),</span> <span class="n">input_text</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ssh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssh_command</span>

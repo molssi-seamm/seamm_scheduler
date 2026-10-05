@@ -137,6 +137,13 @@
 </li>
 
 
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../taskserver.html">
+    The TaskServer
+  </a>
+</li>
+
+
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../api.html">
     API Documentation
@@ -233,6 +240,13 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../getting_started.html">
     Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../taskserver.html">
+    The TaskServer
   </a>
 </li>
 
@@ -503,7 +517,7 @@ constraint at all, meaning “any value the scheduler itself accepts.”</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="seamm_scheduler.config.TargetSection">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">seamm_scheduler.config.</span></span><span class="sig-name descname"><span class="pre">TargetSection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'slurm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directives</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_concurrent_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_resubmits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_conda_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_run_from_jobserver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_filesystem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bundle_tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bundle_walltime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_queued_tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inline_below</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_python</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_seamm_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/config.html#TargetSection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.config.TargetSection" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">seamm_scheduler.config.</span></span><span class="sig-name descname"><span class="pre">TargetSection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'slurm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directives</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_concurrent_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_resubmits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_conda_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_run_from_jobserver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_filesystem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bundle_tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bundle_walltime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_walltime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_queued_tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inline_below</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_python</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_seamm_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/config.html#TargetSection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.config.TargetSection" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>One target from a <code class="docutils literal notranslate"><span class="pre">&lt;root&gt;/&lt;jobserver-name&gt;.ini</span></code> file.</p>
 <dl class="py property">
@@ -593,6 +607,11 @@ backend.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="seamm_scheduler.config.TargetSection.max_resubmits">
 <span class="sig-name descname"><span class="pre">max_resubmits</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></span><a class="headerlink" href="#seamm_scheduler.config.TargetSection.max_resubmits" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="seamm_scheduler.config.TargetSection.max_walltime">
+<span class="sig-name descname"><span class="pre">max_walltime</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#seamm_scheduler.config.TargetSection.max_walltime" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1067,7 +1086,7 @@ or a comment such as “job killed: walltime 610 exceeded limit 600”.</p>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="seamm_scheduler.scheduler.SCHEDULERS">
-<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.scheduler.</span></span><span class="sig-name descname"><span class="pre">SCHEDULERS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'pbs':</span> <span class="pre">('seamm_scheduler.pbs',</span> <span class="pre">'Pbs'),</span> <span class="pre">'slurm':</span> <span class="pre">('seamm_scheduler.slurm',</span> <span class="pre">'Slurm')}</span></span><a class="headerlink" href="#seamm_scheduler.scheduler.SCHEDULERS" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.scheduler.</span></span><span class="sig-name descname"><span class="pre">SCHEDULERS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'pbs':</span> <span class="pre">('seamm_scheduler.pbs',</span> <span class="pre">'Pbs'),</span> <span class="pre">'seamm':</span> <span class="pre">('seamm_scheduler.seamm',</span> <span class="pre">'Seamm'),</span> <span class="pre">'slurm':</span> <span class="pre">('seamm_scheduler.slurm',</span> <span class="pre">'Slurm')}</span></span><a class="headerlink" href="#seamm_scheduler.scheduler.SCHEDULERS" title="Link to this definition">#</a></dt>
 <dd><p>name -&gt; (module, class)</p>
 </dd></dl>
 
@@ -1271,7 +1290,7 @@ both accept.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="seamm_scheduler.scheduler.get_scheduler">
 <span class="sig-prename descclassname"><span class="pre">seamm_scheduler.scheduler.</span></span><span class="sig-name descname"><span class="pre">get_scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/scheduler.html#get_scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.scheduler.get_scheduler" title="Link to this definition">#</a></dt>
-<dd><p>The scheduler called <code class="docutils literal notranslate"><span class="pre">name</span></code> (“slurm”, “pbs”).</p>
+<dd><p>The scheduler called <code class="docutils literal notranslate"><span class="pre">name</span></code> (“slurm”, “pbs”, “seamm”).</p>
 </dd></dl>
 
 </section>
@@ -1307,6 +1326,143 @@ directive block.</p></li>
 </dd>
 </dl>
 </dd></dl>
+
+</section>
+<section id="module-seamm_scheduler.seamm">
+<span id="seamm-scheduler-seamm-module"></span><h2>seamm_scheduler.seamm module<a class="headerlink" href="#module-seamm_scheduler.seamm" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">seamm</span></code> scheduler: the TaskServer (<a class="reference internal" href="#module-seamm_scheduler.taskserver" title="seamm_scheduler.taskserver"><code class="xref py py-mod docutils literal notranslate"><span class="pre">seamm_scheduler.taskserver</span></code></a>).</p>
+<p>Driven like SLURM or PBS – locally, or over ssh with rsync staging – by the
+task layer’s <code class="docutils literal notranslate"><span class="pre">SchedulerBackend</span></code> and by the JobServer. Its commands run the
+queue with the target machine’s own Python (<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span>
+<span class="pre">seamm_scheduler.taskserver</span></code>), never a command found on the PATH.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">seamm_scheduler.seamm.</span></span><span class="sig-name descname"><span class="pre">Seamm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">python</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#Seamm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.Seamm" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#seamm_scheduler.scheduler.Scheduler" title="seamm_scheduler.scheduler.Scheduler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scheduler</span></code></a></p>
+<p>The TaskServer on a machine without a queueing system.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.cancel_cmd">
+<span class="sig-name descname"><span class="pre">cancel_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#Seamm.cancel_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.cancel_cmd" title="Link to this definition">#</a></dt>
+<dd><p>The command that cancels <code class="docutils literal notranslate"><span class="pre">ids</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.classify">
+<span class="sig-name descname"><span class="pre">classify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#Seamm.classify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.classify" title="Link to this definition">#</a></dt>
+<dd><p>This scheduler’s state string -&gt; one of the categories above.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.count_cmd">
+<span class="sig-name descname"><span class="pre">count_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#Seamm.count_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.count_cmd" title="Link to this definition">#</a></dt>
+<dd><p>A command listing the user’s own jobs, one per line, or None if the
+scheduler cannot. Used to respect per-user queued-job limits.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.directive_lines">
+<span class="sig-name descname"><span class="pre">directive_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directives</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#Seamm.directive_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.directive_lines" title="Link to this definition">#</a></dt>
+<dd><p>The script’s directive lines, e.g. <code class="docutils literal notranslate"><span class="pre">[&quot;#SBATCH</span> <span class="pre">--ntasks=4&quot;]</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.directive_prefix">
+<span class="sig-name descname"><span class="pre">directive_prefix</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#SEAMM'</span></span><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.directive_prefix" title="Link to this definition">#</a></dt>
+<dd><p>“#SBATCH”, “#PBS”, …</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.directives">
+<span class="sig-name descname"><span class="pre">directives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resources</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#Seamm.directives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.directives" title="Link to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">cores</span></code>, <code class="docutils literal notranslate"><span class="pre">memory</span></code> (bytes), <code class="docutils literal notranslate"><span class="pre">time</span></code> (seconds) and the rest.</p>
+<p><code class="docutils literal notranslate"><span class="pre">extra</span></code> may use the portable spellings of a target section (<code class="docutils literal notranslate"><span class="pre">ntasks</span></code>,
+<code class="docutils literal notranslate"><span class="pre">cpus_per_task</span></code>, <code class="docutils literal notranslate"><span class="pre">mem</span></code>, <code class="docutils literal notranslate"><span class="pre">mem_per_cpu</span></code>, <code class="docutils literal notranslate"><span class="pre">time</span></code>, <code class="docutils literal notranslate"><span class="pre">job_name</span></code>,
+<code class="docutils literal notranslate"><span class="pre">chdir</span></code>, <code class="docutils literal notranslate"><span class="pre">output</span></code>); queue settings the TaskServer does not have
+(<code class="docutils literal notranslate"><span class="pre">partition</span></code>, <code class="docutils literal notranslate"><span class="pre">account</span></code>, <code class="docutils literal notranslate"><span class="pre">qos</span></code>, <code class="docutils literal notranslate"><span class="pre">export</span></code>, …) are dropped.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.env_names">
+<span class="sig-name descname"><span class="pre">env_names</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'job_id':</span> <span class="pre">'SEAMM_TASKSERVER_JOB_ID',</span> <span class="pre">'memory':</span> <span class="pre">'SEAMM_TASKSERVER_MEMORY',</span> <span class="pre">'ntasks':</span> <span class="pre">'SEAMM_TASKSERVER_NTASKS'}</span></span><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.env_names" title="Link to this definition">#</a></dt>
+<dd><p>The scheduler-neutral names -&gt; the environment variables a job sees,
+e.g. <code class="docutils literal notranslate"><span class="pre">{&quot;job_id&quot;:</span> <span class="pre">&quot;SLURM_JOB_ID&quot;,</span> <span class="pre">&quot;ntasks&quot;:</span> <span class="pre">&quot;SLURM_NTASKS&quot;}</span></code>. Used by
+<code class="docutils literal notranslate"><span class="pre">seamm_exec.computational_environment()</span></code> to recognize and read an
+allocation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.env_prefixes">
+<span class="sig-name descname"><span class="pre">env_prefixes</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('SEAMM_TASKSERVER_',)</span></span><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.env_prefixes" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.find_cmd">
+<span class="sig-name descname"><span class="pre">find_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#Seamm.find_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.find_cmd" title="Link to this definition">#</a></dt>
+<dd><p>A command printing the ids of the user’s queued or running jobs
+called <code class="docutils literal notranslate"><span class="pre">job_name</span></code>, one per line, or None if the scheduler cannot.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.log_directives">
+<span class="sig-name descname"><span class="pre">log_directives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#Seamm.log_directives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.log_directives" title="Link to this definition">#</a></dt>
+<dd><p>Directives that put the job’s own output in <code class="docutils literal notranslate"><span class="pre">directory</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'seamm'</span></span><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.name" title="Link to this definition">#</a></dt>
+<dd><p>“slurm”, “pbs”, …</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.parse_status">
+<span class="sig-name descname"><span class="pre">parse_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#Seamm.parse_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.parse_status" title="Link to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">{id:</span> <span class="pre">JobStatus}</span></code> from the status command’s output. An id the
+output does not mention is left out.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.parse_submit">
+<span class="sig-name descname"><span class="pre">parse_submit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#Seamm.parse_submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.parse_submit" title="Link to this definition">#</a></dt>
+<dd><p>The job id from the submit command’s output.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.python">
+<span class="sig-name descname"><span class="pre">python</span></span><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.python" title="Link to this definition">#</a></dt>
+<dd><p>The Python that runs the queue on the target machine</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.root">
+<span class="sig-name descname"><span class="pre">root</span></span><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.root" title="Link to this definition">#</a></dt>
+<dd><p>its default, ~/SEAMM)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The SEAMM root there (None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.status_cmd">
+<span class="sig-name descname"><span class="pre">status_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#Seamm.status_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.status_cmd" title="Link to this definition">#</a></dt>
+<dd><p>The command that reports the state of <code class="docutils literal notranslate"><span class="pre">ids</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.Seamm.submit_cmd">
+<span class="sig-name descname"><span class="pre">submit_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">script_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#Seamm.submit_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.Seamm.submit_cmd" title="Link to this definition">#</a></dt>
+<dd><p>The command that submits a script. With <code class="docutils literal notranslate"><span class="pre">script_path</span></code> None the
+script is fed on the command’s standard input.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="seamm_scheduler.seamm.classify">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.seamm.</span></span><span class="sig-name descname"><span class="pre">classify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/seamm.html#classify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.seamm.classify" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-seamm_scheduler.slurm">
@@ -1721,6 +1877,246 @@ flowchart’s results land in <code class="docutils literal notranslate"><span c
 </dd></dl>
 
 </section>
+<section id="module-seamm_scheduler.taskserver">
+<span id="seamm-scheduler-taskserver-module"></span><h2>seamm_scheduler.taskserver module<a class="headerlink" href="#module-seamm_scheduler.taskserver" title="Link to this heading">#</a></h2>
+<p>The TaskServer: a small queueing system for a machine that has none.</p>
+<p>It shares one machine’s cores and memory among the jobs of everything on it –
+the tasks of several flowcharts’ evaluators, and the evaluators themselves when
+the JobServer submits them here – so that two jobs on a laptop no longer
+oversubscribe it. It is driven like SLURM or PBS, by commands, locally or over
+ssh, through the <code class="docutils literal notranslate"><span class="pre">seamm</span></code> scheduler (<a class="reference internal" href="#module-seamm_scheduler.seamm" title="seamm_scheduler.seamm"><code class="xref py py-mod docutils literal notranslate"><span class="pre">seamm_scheduler.seamm</span></code></a>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">seamm_scheduler</span><span class="o">.</span><span class="n">taskserver</span> <span class="p">[</span><span class="o">--</span><span class="n">root</span> <span class="n">R</span><span class="p">]</span> <span class="n">submit</span> <span class="p">[</span><span class="o">--</span><span class="n">name</span> <span class="n">N</span><span class="p">]</span> <span class="p">[</span><span class="n">SCRIPT</span><span class="p">]</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">seamm_scheduler</span><span class="o">.</span><span class="n">taskserver</span> <span class="p">[</span><span class="o">--</span><span class="n">root</span> <span class="n">R</span><span class="p">]</span> <span class="n">status</span> <span class="p">[</span><span class="o">--</span><span class="n">json</span><span class="p">]</span> <span class="p">[</span><span class="n">ID</span> <span class="o">...</span><span class="p">]</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">seamm_scheduler</span><span class="o">.</span><span class="n">taskserver</span> <span class="p">[</span><span class="o">--</span><span class="n">root</span> <span class="n">R</span><span class="p">]</span> <span class="n">cancel</span> <span class="n">ID</span> <span class="o">...</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">seamm_scheduler</span><span class="o">.</span><span class="n">taskserver</span> <span class="p">[</span><span class="o">--</span><span class="n">root</span> <span class="n">R</span><span class="p">]</span> <span class="n">find</span> <span class="n">NAME</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">seamm_scheduler</span><span class="o">.</span><span class="n">taskserver</span> <span class="p">[</span><span class="o">--</span><span class="n">root</span> <span class="n">R</span><span class="p">]</span> <span class="n">count</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">seamm_scheduler</span><span class="o">.</span><span class="n">taskserver</span> <span class="p">[</span><span class="o">--</span><span class="n">root</span> <span class="n">R</span><span class="p">]</span> <span class="n">queue</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">seamm_scheduler</span><span class="o">.</span><span class="n">taskserver</span> <span class="p">[</span><span class="o">--</span><span class="n">root</span> <span class="n">R</span><span class="p">]</span> <span class="n">config</span>
+</pre></div>
+</div>
+<p>A script carries its request in <code class="docutils literal notranslate"><span class="pre">#SEAMM</span></code> lines, as a SLURM script does in
+<code class="docutils literal notranslate"><span class="pre">#SBATCH</span></code> lines: <code class="docutils literal notranslate"><span class="pre">--cores</span></code>, <code class="docutils literal notranslate"><span class="pre">--memory</span></code> (bytes, or with a unit), <code class="docutils literal notranslate"><span class="pre">--time</span></code>
+(seconds, or <code class="docutils literal notranslate"><span class="pre">HH:MM:SS</span></code>), <code class="docutils literal notranslate"><span class="pre">--chdir</span></code>, <code class="docutils literal notranslate"><span class="pre">--output</span></code>, <code class="docutils literal notranslate"><span class="pre">--name</span></code> and <code class="docutils literal notranslate"><span class="pre">--kind</span></code>
+(<code class="docutils literal notranslate"><span class="pre">task</span></code> or <code class="docutils literal notranslate"><span class="pre">evaluator</span></code>). An evaluator – a flowchart’s own process, light and
+mostly waiting on its tasks – is charged no cores and 1 GB, and tasks are
+admitted against the tasks running alone, so evaluators can never hold the
+cores or memory their tasks wait for; an evaluator itself starts only when
+everything still fits. A job named <code class="docutils literal notranslate"><span class="pre">seamm-&lt;number&gt;</span></code> (the
+JobServer’s name for an evaluator) is an evaluator unless it says otherwise.</p>
+<p>There is no daemon. The queue is one SQLite file, <code class="docutils literal notranslate"><span class="pre">&lt;root&gt;/taskserver/queue.db</span></code>;
+every <code class="docutils literal notranslate"><span class="pre">submit</span></code> and <code class="docutils literal notranslate"><span class="pre">status</span></code> call, and every job’s runner when its job ends,
+makes a scheduling pass that starts the queued jobs that fit, in order. A queued
+job is claimed by one guarded <code class="docutils literal notranslate"><span class="pre">UPDATE</span></code> in a <code class="docutils literal notranslate"><span class="pre">BEGIN</span> <span class="pre">IMMEDIATE</span></code> transaction,
+so concurrent passes never start a job twice. Each job runs under its own runner
+(<code class="docutils literal notranslate"><span class="pre">run-job</span></code>) in a session of its own, so nothing that restarts or is upgraded
+touches it. The runner enforces the job’s time limit – measured with
+<code class="docutils literal notranslate"><span class="pre">time.monotonic</span></code>, which stops while the machine sleeps – and its memory: the
+job is stopped when its processes use more than 125 % of its request for 30 s,
+and the newest job is stopped when the machine itself runs low on memory.</p>
+<p>The machine’s capacity is in <code class="docutils literal notranslate"><span class="pre">&lt;root&gt;/taskserver.ini</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">taskserver</span><span class="p">]</span>
+<span class="n">cores</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">memory</span> <span class="o">=</span> <span class="mi">8</span> <span class="n">GB</span>
+</pre></div>
+</div>
+<p>by default its physical cores and half its memory (the rest is for the desktop,
+the evaluators and everything else).</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.DEFAULT_MEMORY_PER_CORE">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_MEMORY_PER_CORE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2147483648</span></span><a class="headerlink" href="#seamm_scheduler.taskserver.DEFAULT_MEMORY_PER_CORE" title="Link to this definition">#</a></dt>
+<dd><p>Charged to a job that asks for no memory, per core</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.EVALUATOR_MEMORY">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">EVALUATOR_MEMORY</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1073741824</span></span><a class="headerlink" href="#seamm_scheduler.taskserver.EVALUATOR_MEMORY" title="Link to this definition">#</a></dt>
+<dd><p>Charged to an evaluator</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.KEEP_ENVIRONMENT">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">KEEP_ENVIRONMENT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'HOME',</span> <span class="pre">'LANG',</span> <span class="pre">'LOGNAME',</span> <span class="pre">'PATH',</span> <span class="pre">'SHELL',</span> <span class="pre">'TMPDIR',</span> <span class="pre">'TZ',</span> <span class="pre">'USER'}</span></span><a class="headerlink" href="#seamm_scheduler.taskserver.KEEP_ENVIRONMENT" title="Link to this definition">#</a></dt>
+<dd><p>The variables a job’s script starts with (and LC_*); the script sets up the
+rest itself, as a batch job does.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.KEEP_FINISHED">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">KEEP_FINISHED</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2592000</span></span><a class="headerlink" href="#seamm_scheduler.taskserver.KEEP_FINISHED" title="Link to this definition">#</a></dt>
+<dd><p>Terminal jobs older than this are removed from the queue (seconds)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.KILL_GRACE">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">KILL_GRACE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10.0</span></span><a class="headerlink" href="#seamm_scheduler.taskserver.KILL_GRACE" title="Link to this definition">#</a></dt>
+<dd><p>Seconds between SIGTERM and SIGKILL</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.MACHINE_MEMORY_FLOOR">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">MACHINE_MEMORY_FLOOR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.1</span></span><a class="headerlink" href="#seamm_scheduler.taskserver.MACHINE_MEMORY_FLOOR" title="Link to this definition">#</a></dt>
+<dd><p>Below this fraction of the machine’s memory available, the newest job stops</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.MEMORY_GRACE">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">MEMORY_GRACE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">30.0</span></span><a class="headerlink" href="#seamm_scheduler.taskserver.MEMORY_GRACE" title="Link to this definition">#</a></dt>
+<dd><p>… for this long (seconds) is stopped</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.MEMORY_LIMIT_FACTOR">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">MEMORY_LIMIT_FACTOR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.25</span></span><a class="headerlink" href="#seamm_scheduler.taskserver.MEMORY_LIMIT_FACTOR" title="Link to this definition">#</a></dt>
+<dd><p>A job using more than this fraction of its memory request …</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.QUEUED">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">QUEUED</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'queued'</span></span><a class="headerlink" href="#seamm_scheduler.taskserver.QUEUED" title="Link to this definition">#</a></dt>
+<dd><p>claimed, its runner not yet running the script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Job states. <code class="docutils literal notranslate"><span class="pre">starting</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.Queue">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">Queue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#Queue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.Queue" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The queue in <code class="docutils literal notranslate"><span class="pre">&lt;root&gt;/taskserver/queue.db</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.Queue.cancel">
+<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#Queue.cancel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.Queue.cancel" title="Link to this definition">#</a></dt>
+<dd><p>Cancel a job: a queued one at once, a running one through its runner.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.Queue.charge">
+<span class="sig-name descname"><span class="pre">charge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#Queue.charge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.Queue.charge" title="Link to this definition">#</a></dt>
+<dd><p>What a job takes from the machine while it runs: (cores, memory).</p>
+<p>An evaluator: no cores, and 1 GB (a quarter of the memory of a queue with
+less than 4 GB, so evaluators can still run there).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.Queue.check">
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#Queue.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.Queue.check" title="Link to this definition">#</a></dt>
+<dd><p>Mark jobs whose runner has vanished as lost (a sleeping one is not).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.Queue.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#Queue.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.Queue.close" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.Queue.finish">
+<span class="sig-name descname"><span class="pre">finish</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exit_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#Queue.finish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.Queue.finish" title="Link to this definition">#</a></dt>
+<dd><p>Record a job’s end, unless it has already ended.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.Queue.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#Queue.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.Queue.get" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.Queue.jobs">
+<span class="sig-name descname"><span class="pre">jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#Queue.jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.Queue.jobs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.Queue.schedule">
+<span class="sig-name descname"><span class="pre">schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#Queue.schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.Queue.schedule" title="Link to this definition">#</a></dt>
+<dd><p>Claim the queued jobs that fit, in order, and start their runners.</p>
+<p>Returns the ids started.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.Queue.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#Queue.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.Queue.submit" title="Link to this definition">#</a></dt>
+<dd><p>Add a job; return its id. The request is checked against the machine.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.RESERVE_AFTER">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">RESERVE_AFTER</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1800</span></span><a class="headerlink" href="#seamm_scheduler.taskserver.RESERVE_AFTER" title="Link to this definition">#</a></dt>
+<dd><p>The oldest queued job reserves room after waiting this long (seconds)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.SCHEMA_VERSION">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">SCHEMA_VERSION</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#seamm_scheduler.taskserver.SCHEMA_VERSION" title="Link to this definition">#</a></dt>
+<dd><p>the job’s own pid)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The version of the queue’s database layout (2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.START_TIMEOUT">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">START_TIMEOUT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">120.0</span></span><a class="headerlink" href="#seamm_scheduler.taskserver.START_TIMEOUT" title="Link to this definition">#</a></dt>
+<dd><p>A claimed job whose runner has not started after this long is lost</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.capacity">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">capacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#capacity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.capacity" title="Link to this definition">#</a></dt>
+<dd><p>The machine’s <code class="docutils literal notranslate"><span class="pre">{&quot;cores&quot;:</span> <span class="pre">int,</span> <span class="pre">&quot;memory&quot;:</span> <span class="pre">bytes}</span></code> for the queue.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.default_root">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">default_root</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#default_root"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.default_root" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.format_memory">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">format_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nbytes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#format_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.format_memory" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.main">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.main" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.parse_directives">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">parse_directives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">script</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#parse_directives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.parse_directives" title="Link to this definition">#</a></dt>
+<dd><p>The request in a script’s <code class="docutils literal notranslate"><span class="pre">#SEAMM</span> <span class="pre">--key</span> <span class="pre">value</span></code> lines.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.parse_memory">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">parse_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#parse_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.parse_memory" title="Link to this definition">#</a></dt>
+<dd><p>Bytes from <code class="docutils literal notranslate"><span class="pre">&quot;8</span> <span class="pre">GB&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;512M&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;2gb&quot;</span></code>, or a plain number of bytes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.parse_time">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">parse_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#parse_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.parse_time" title="Link to this definition">#</a></dt>
+<dd><p>Seconds from <code class="docutils literal notranslate"><span class="pre">3600</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;1:00:00&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;1-00:00:00&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;90s&quot;</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.run_job">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">run_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#run_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.run_job" title="Link to this definition">#</a></dt>
+<dd><p>Run job <code class="docutils literal notranslate"><span class="pre">job_id</span></code> to its end: time and memory limits, cancellation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="seamm_scheduler.taskserver.settings">
+<span class="sig-prename descclassname"><span class="pre">seamm_scheduler.taskserver.</span></span><span class="sig-name descname"><span class="pre">settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/taskserver.html#settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.taskserver.settings" title="Link to this definition">#</a></dt>
+<dd><p>The runner’s limits from <code class="docutils literal notranslate"><span class="pre">&lt;root&gt;/taskserver.ini</span></code>, with the defaults.</p>
+</dd></dl>
+
+</section>
 <section id="module-seamm_scheduler">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-seamm_scheduler" title="Link to this heading">#</a></h2>
 <p>seamm_scheduler: queueing systems (SLURM, PBS) for SEAMM, with local and ssh
@@ -1814,6 +2210,7 @@ transports.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.config.TargetSection.max_concurrent_jobs"><code class="docutils literal notranslate"><span class="pre">TargetSection.max_concurrent_jobs</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.config.TargetSection.max_queued_tasks"><code class="docutils literal notranslate"><span class="pre">TargetSection.max_queued_tasks</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.config.TargetSection.max_resubmits"><code class="docutils literal notranslate"><span class="pre">TargetSection.max_resubmits</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.config.TargetSection.max_walltime"><code class="docutils literal notranslate"><span class="pre">TargetSection.max_walltime</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.config.TargetSection.merge_overrides"><code class="docutils literal notranslate"><span class="pre">TargetSection.merge_overrides()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.config.TargetSection.name"><code class="docutils literal notranslate"><span class="pre">TargetSection.name</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.config.TargetSection.poll_interval"><code class="docutils literal notranslate"><span class="pre">TargetSection.poll_interval</span></code></a></li>
@@ -1921,6 +2318,30 @@ transports.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.script.build_script"><code class="docutils literal notranslate"><span class="pre">build_script()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-seamm_scheduler.seamm">seamm_scheduler.seamm module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm"><code class="docutils literal notranslate"><span class="pre">Seamm</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.cancel_cmd"><code class="docutils literal notranslate"><span class="pre">Seamm.cancel_cmd()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.classify"><code class="docutils literal notranslate"><span class="pre">Seamm.classify()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.count_cmd"><code class="docutils literal notranslate"><span class="pre">Seamm.count_cmd()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.directive_lines"><code class="docutils literal notranslate"><span class="pre">Seamm.directive_lines()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.directive_prefix"><code class="docutils literal notranslate"><span class="pre">Seamm.directive_prefix</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.directives"><code class="docutils literal notranslate"><span class="pre">Seamm.directives()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.env_names"><code class="docutils literal notranslate"><span class="pre">Seamm.env_names</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.env_prefixes"><code class="docutils literal notranslate"><span class="pre">Seamm.env_prefixes</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.find_cmd"><code class="docutils literal notranslate"><span class="pre">Seamm.find_cmd()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.log_directives"><code class="docutils literal notranslate"><span class="pre">Seamm.log_directives()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.name"><code class="docutils literal notranslate"><span class="pre">Seamm.name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.parse_status"><code class="docutils literal notranslate"><span class="pre">Seamm.parse_status()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.parse_submit"><code class="docutils literal notranslate"><span class="pre">Seamm.parse_submit()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.python"><code class="docutils literal notranslate"><span class="pre">Seamm.python</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.root"><code class="docutils literal notranslate"><span class="pre">Seamm.root</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.status_cmd"><code class="docutils literal notranslate"><span class="pre">Seamm.status_cmd()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.Seamm.submit_cmd"><code class="docutils literal notranslate"><span class="pre">Seamm.submit_cmd()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.seamm.classify"><code class="docutils literal notranslate"><span class="pre">classify()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-seamm_scheduler.slurm">seamm_scheduler.slurm module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.slurm.LocalSlurm"><code class="docutils literal notranslate"><span class="pre">LocalSlurm</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.slurm.Slurm"><code class="docutils literal notranslate"><span class="pre">Slurm</span></code></a><ul class="nav section-nav flex-column">
@@ -1984,6 +2405,42 @@ transports.</p>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.stage.StageError"><code class="docutils literal notranslate"><span class="pre">StageError</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-seamm_scheduler.taskserver">seamm_scheduler.taskserver module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.DEFAULT_MEMORY_PER_CORE"><code class="docutils literal notranslate"><span class="pre">DEFAULT_MEMORY_PER_CORE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.EVALUATOR_MEMORY"><code class="docutils literal notranslate"><span class="pre">EVALUATOR_MEMORY</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.KEEP_ENVIRONMENT"><code class="docutils literal notranslate"><span class="pre">KEEP_ENVIRONMENT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.KEEP_FINISHED"><code class="docutils literal notranslate"><span class="pre">KEEP_FINISHED</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.KILL_GRACE"><code class="docutils literal notranslate"><span class="pre">KILL_GRACE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.MACHINE_MEMORY_FLOOR"><code class="docutils literal notranslate"><span class="pre">MACHINE_MEMORY_FLOOR</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.MEMORY_GRACE"><code class="docutils literal notranslate"><span class="pre">MEMORY_GRACE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.MEMORY_LIMIT_FACTOR"><code class="docutils literal notranslate"><span class="pre">MEMORY_LIMIT_FACTOR</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.QUEUED"><code class="docutils literal notranslate"><span class="pre">QUEUED</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.Queue"><code class="docutils literal notranslate"><span class="pre">Queue</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.Queue.cancel"><code class="docutils literal notranslate"><span class="pre">Queue.cancel()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.Queue.charge"><code class="docutils literal notranslate"><span class="pre">Queue.charge()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.Queue.check"><code class="docutils literal notranslate"><span class="pre">Queue.check()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.Queue.close"><code class="docutils literal notranslate"><span class="pre">Queue.close()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.Queue.finish"><code class="docutils literal notranslate"><span class="pre">Queue.finish()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.Queue.get"><code class="docutils literal notranslate"><span class="pre">Queue.get()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.Queue.jobs"><code class="docutils literal notranslate"><span class="pre">Queue.jobs()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.Queue.schedule"><code class="docutils literal notranslate"><span class="pre">Queue.schedule()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.Queue.submit"><code class="docutils literal notranslate"><span class="pre">Queue.submit()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.RESERVE_AFTER"><code class="docutils literal notranslate"><span class="pre">RESERVE_AFTER</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.SCHEMA_VERSION"><code class="docutils literal notranslate"><span class="pre">SCHEMA_VERSION</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.START_TIMEOUT"><code class="docutils literal notranslate"><span class="pre">START_TIMEOUT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.capacity"><code class="docutils literal notranslate"><span class="pre">capacity()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.default_root"><code class="docutils literal notranslate"><span class="pre">default_root()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.format_memory"><code class="docutils literal notranslate"><span class="pre">format_memory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.parse_directives"><code class="docutils literal notranslate"><span class="pre">parse_directives()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.parse_memory"><code class="docutils literal notranslate"><span class="pre">parse_memory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.parse_time"><code class="docutils literal notranslate"><span class="pre">parse_time()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.run_job"><code class="docutils literal notranslate"><span class="pre">run_job()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.taskserver.settings"><code class="docutils literal notranslate"><span class="pre">settings()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-seamm_scheduler">Module contents</a></li>

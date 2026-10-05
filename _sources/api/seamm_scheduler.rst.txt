@@ -52,6 +52,14 @@ seamm\_scheduler.script module
    :show-inheritance:
    :undoc-members:
 
+seamm\_scheduler.seamm module
+-----------------------------
+
+.. automodule:: seamm_scheduler.seamm
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 seamm\_scheduler.slurm module
 -----------------------------
 
@@ -72,6 +80,14 @@ seamm\_scheduler.stage module
 -----------------------------
 
 .. automodule:: seamm_scheduler.stage
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+seamm\_scheduler.taskserver module
+----------------------------------
+
+.. automodule:: seamm_scheduler.taskserver
    :members:
    :show-inheritance:
    :undoc-members:
