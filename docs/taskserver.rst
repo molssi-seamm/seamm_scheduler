@@ -48,7 +48,10 @@ up this way. A job's script starts with a minimal environment (``PATH``,
 One queue serves the whole machine, shared by its installations (``~/SEAMM``,
 ``~/SEAMM_DEV``, ...) so that together they never use more than the machine has:
 it lives in the default installation's root unless a section names another with
-``remote_seamm_root``.
+``remote_seamm_root``. An installation run with ``SEAMM_ROOT`` set (a shell for
+``~/SEAMM_DEV``, say) gets a queue and capacity of its own under that root, so for
+two installations to share the machine's queue, give their sections the same
+``remote_seamm_root``, or leave ``SEAMM_ROOT`` unset.
 
 Using it
 --------
