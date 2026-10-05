@@ -31,7 +31,24 @@ stopped.
 
 The flowcharts themselves (the JobServer's jobs) take no cores and are never
 counted against calculations, so they can never hold what their own calculations
-wait for.
+wait for. Each is charged 1 GB (a quarter of a queue with less than 4 GB) when
+deciding whether another flowchart may start, so the memory charged can reach the
+capacity plus that of the running flowcharts; the JobServer's
+``max_concurrent_jobs`` is what caps them. If they use much more than they are
+charged and the machine runs low, the *newest calculation* is the job stopped,
+after 30 seconds below 10 % of the memory and once per such episode; its reason
+says so.
+
+A calculation that has waited half an hour for room is not overtaken by later
+ones, so a large one cannot wait for ever; a flowchart never holds calculations
+up this way. A job's script starts with a minimal environment (``PATH``,
+``HOME``, the locale and a few others), as a batch job does without
+``--export``, and sets up the rest itself.
+
+One queue serves the whole machine, shared by its installations (``~/SEAMM``,
+``~/SEAMM_DEV``, ...) so that together they never use more than the machine has:
+it lives in the default installation's root unless a section names another with
+``remote_seamm_root``.
 
 Using it
 --------

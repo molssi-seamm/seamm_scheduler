@@ -236,7 +236,7 @@ class TargetSection:
             self.task_scheduler,
             ssh_options=TASK_SSH_OPTIONS,
             timeout=_TASK_COMMAND_TIMEOUT,
-            drop_env_prefixes=("SLURM_", "PBS_"),
+            drop_env_prefixes=("SLURM_", "PBS_", "SEAMM_TASKSERVER_", "SEAMM_CE"),
         )
 
     def build_task_stager(self):
@@ -303,10 +303,18 @@ class TargetSection:
             t = SshTransport(host, ssh_options=ssh_options, timeout=timeout)
         queue = get_scheduler(scheduler)
         if scheduler == "seamm":
-            # The TaskServer runs with the target machine's own Python; one
-            # queue per machine, under ~/SEAMM unless the section says otherwise.
+            # The TaskServer runs with the target machine's own Python, never one
+            # found on the PATH. There is one queue per machine, shared by its
+            # installations so that they share its cores and memory: under the
+            # default installation's root ($SEAMM_ROOT, else ~/SEAMM) unless the
+            # section names another (remote_seamm_root).
             if transport == "ssh":
-                queue.python = self.remote_python or "python3"
+                if not self.remote_python:
+                    raise RuntimeError(
+                        f"section '{self.name}' uses the TaskServer on {host} over "
+                        "ssh, so it needs remote_python: the Python of SEAMM there."
+                    )
+                queue.python = self.remote_python
             queue.root = self.remote_seamm_root or None
         return QueueBackend(queue, t)
 

@@ -387,3 +387,129 @@ def test_scheduler_drives_the_queue(tmp_path):
         time.sleep(0.5)
     assert status.category == "completed"
     assert (tmp_path / "hello.txt").read_text().strip() == "hello"
+
+
+# ---- review fixes (design session, 2026-10-05) --------------------------------
+
+
+def _running_row(q, kind, name, memory):
+    """A row as if its runner were running (this process stands in for it)."""
+    import psutil
+
+    me = psutil.Process()
+    cursor = q.db.execute(
+        "INSERT INTO jobs (name, kind, script, cores, memory, state, submitted,"
+        " started, pid, pid_start) VALUES (?, ?, 'x', 1, ?, 'running', ?, ?, ?, ?)",
+        (name, kind, memory, time.time(), time.time(), os.getpid(), me.create_time()),
+    )
+    return cursor.lastrowid
+
+
+def test_an_old_evaluator_never_blocks_tasks(tmp_path):
+    """Four evaluators fill a 2 GB queue (512 MB each); a fifth has waited an
+    hour for memory; the running evaluators' task must still start (it would
+    deadlock otherwise)."""
+    root = setup_root(tmp_path, cores=2, memory="2 GB")
+    q = ts.Queue(root)
+    for k in range(1, 5):
+        _running_row(q, "evaluator", f"seamm-{k}", 1)
+    waiting = q.submit("#!/bin/bash\n", name="seamm-5")
+    q.db.execute(
+        "UPDATE jobs SET submitted = ? WHERE id = ?", (time.time() - 3600, waiting)
+    )
+    task = q.submit("#!/bin/bash\n", cores=1, memory=100 * 2**20)
+    assert q.schedule(start=False) == [task]
+    q.close()
+
+
+def test_an_old_task_reserves_only_against_tasks(tmp_path):
+    root = setup_root(tmp_path, cores=2, memory="4 GB")
+    q = ts.Queue(root)
+    _running_row(q, "task", "busy", 100 * 2**20)  # one core in use
+    big = q.submit("#!/bin/bash\n", cores=2, memory=100 * 2**20)
+    q.db.execute(
+        "UPDATE jobs SET submitted = ? WHERE id = ?", (time.time() - 3600, big)
+    )
+    small = q.submit("#!/bin/bash\n", cores=1, memory=100 * 2**20)
+    evaluator = q.submit("#!/bin/bash\n", name="seamm-9")
+    claimed = q.schedule(start=False)
+    assert small not in claimed  # does not jump the reserving task
+    assert evaluator in claimed  # evaluators are not held up
+    q.close()
+
+
+def test_a_task_larger_than_the_queue_now_fails(tmp_path):
+    root = setup_root(tmp_path, cores=4)
+    q = ts.Queue(root)
+    job = q.submit("#!/bin/bash\n", cores=4, memory=100 * 2**20)
+    (root / "taskserver.ini").write_text("[taskserver]\ncores = 2\nmemory = 2 GB\n")
+    assert q.schedule(start=False) == []
+    row = q.get(job)
+    assert row["state"] == "failed" and "larger" in row["reason"]
+    q.close()
+
+
+def test_a_job_starts_with_a_minimal_environment(tmp_path):
+    root = setup_root(tmp_path)
+    work = tmp_path / "work"
+    work.mkdir()
+    env = dict(os.environ, SEAMM_CE='{"NTASKS": 9}', OMP_NUM_THREADS="99")
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "seamm_scheduler.taskserver",
+            "--root",
+            str(root),
+            "submit",
+        ],
+        input=f"#!/bin/bash\n#SEAMM --output {work}/env.txt\nenv\n",
+        capture_output=True,
+        text=True,
+        env=env,
+        timeout=60,
+    )
+    job = int(result.stdout.strip())
+    wait_for(root, [job])
+    text = (work / "env.txt").read_text()
+    assert "SEAMM_TASKSERVER_JOB_ID=" in text
+    assert "SEAMM_CE" not in text and "OMP_NUM_THREADS" not in text
+
+
+def test_a_detached_child_is_stopped_with_its_job(tmp_path):
+    root = setup_root(tmp_path, kill_grace=1)
+    pidfile = tmp_path / "child.pid"
+    script = textwrap.dedent(f"""\
+        #!/bin/bash
+        #SEAMM --time 3
+        {sys.executable} - <<'EOF'
+        import subprocess, sys
+        child = subprocess.Popen(
+            [{sys.executable!r}, "-c", "import time; time.sleep(120)"],
+            start_new_session=True,
+        )
+        open({str(pidfile)!r}, "w").write(str(child.pid))
+        child.wait()
+        EOF
+        """)
+    job = submit(root, script)
+    record = wait_for(root, [job], timeout=60)[str(job)]
+    assert record["state"] == "timeout"
+    child = int(pidfile.read_text())
+    deadline = time.time() + 10
+    while time.time() < deadline and ts._alive(child, None):
+        time.sleep(0.2)
+    assert not ts._alive(child, None)
+
+
+def test_the_floor_stops_one_job_after_its_grace(tmp_path):
+    """A machine 'always' low (floor 100 %): after the grace the newest task is
+    stopped -- one per episode, so the other runs to its end."""
+    root = setup_root(tmp_path, cores=2, memory_floor=1.0, memory_grace=2, kill_grace=1)
+    first = submit(root, "#!/bin/bash\n#SEAMM --memory 10M\nsleep 12\n")
+    time.sleep(1.5)
+    second = submit(root, "#!/bin/bash\n#SEAMM --memory 10M\nsleep 12\n")
+    records = wait_for(root, [first, second], timeout=60)
+    assert records[str(second)]["state"] == "memory"
+    assert "newest" in records[str(second)]["reason"]
+    assert records[str(first)]["state"] == "completed"

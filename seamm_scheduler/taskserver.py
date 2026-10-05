@@ -99,6 +99,19 @@ KEEP_FINISHED = 30 * 24 * 3600
 
 EVALUATOR_NAME = re.compile(r"^seamm-\d+$")
 
+#: The variables a job's script starts with (and LC_*); the script sets up the
+#: rest itself, as a batch job does.
+KEEP_ENVIRONMENT = {
+    "PATH",
+    "HOME",
+    "USER",
+    "LOGNAME",
+    "SHELL",
+    "LANG",
+    "TMPDIR",
+    "TZ",
+}
+
 
 # ----------------------------------------------------------------------------
 # Sizes and times
@@ -274,9 +287,13 @@ class Queue:
 
     # -- jobs ---------------------------------------------------------------
     def charge(self, row):
-        """What a job takes from the machine while it runs: (cores, memory)."""
+        """What a job takes from the machine while it runs: (cores, memory).
+
+        An evaluator: no cores, and 1 GB (a quarter of the memory of a queue with
+        less than 4 GB, so evaluators can still run there).
+        """
         if row["kind"] == "evaluator":
-            return 0, EVALUATOR_MEMORY
+            return 0, min(EVALUATOR_MEMORY, capacity(self.root)["memory"] // 4)
         return row["cores"], row["memory"]
 
     def submit(
@@ -402,7 +419,13 @@ class Queue:
         ).fetchall():
             if row["state"] == STARTING and row["pid"] is None:
                 if now - (row["started"] or now) > START_TIMEOUT:
-                    self.finish(row["id"], LOST, reason="its runner never started")
+                    # Only if its runner has still not claimed it: a slow runner
+                    # may be starting the script right now.
+                    self.db.execute(
+                        "UPDATE jobs SET state = ?, ended = ?, reason = ?"
+                        " WHERE id = ? AND state = ? AND pid IS NULL",
+                        (LOST, now, "its runner never started", row["id"], STARTING),
+                    )
                 continue
             if row["pid"] is not None and not _alive(row["pid"], row["pid_start"]):
                 # Its job runs in a session of its own: stop it, or a rerun of
@@ -444,19 +467,43 @@ class Queue:
             queued = db.execute(
                 "SELECT * FROM jobs WHERE state = ? ORDER BY id", (QUEUED,)
             ).fetchall()
-            for i, row in enumerate(queued):
+            # The oldest task that has waited long enough reserves the task pool:
+            # no later task jumps it. Evaluators never reserve -- one waiting for
+            # memory the running evaluators' tasks will free would otherwise stop
+            # those tasks, and itself, for good.
+            reserved = False
+            for row in queued:
                 c, m = self.charge(row)
+                if row["kind"] == "task" and (
+                    c > limits["cores"] or m > limits["memory"]
+                ):
+                    # Larger than the machine's queue now (its capacity lowered)
+                    db.execute(
+                        "UPDATE jobs SET state = ?, ended = ?, reason = ?"
+                        " WHERE id = ? AND state = ?",
+                        (
+                            FAILED,
+                            now,
+                            "larger than this machine's queue: "
+                            f"{limits['cores']} cores, "
+                            f"{format_memory(limits['memory'])}",
+                            row["id"],
+                            QUEUED,
+                        ),
+                    )
+                    continue
                 if row["kind"] == "evaluator":
                     fits = task_memory + evaluator_memory + m <= limits["memory"]
                 else:
+                    if reserved:
+                        continue
                     fits = (
                         task_cores + c <= limits["cores"]
                         and task_memory + m <= limits["memory"]
                     )
                 if not fits:
-                    if i == 0 and now - row["submitted"] > RESERVE_AFTER:
-                        # The oldest job has waited long enough: nothing jumps it
-                        break
+                    if row["kind"] == "task" and now - row["submitted"] > RESERVE_AFTER:
+                        reserved = True
                     continue
                 cursor = db.execute(
                     "UPDATE jobs SET state = ?, started = ? WHERE id = ? AND state = ?",
@@ -531,7 +578,14 @@ def run_job(root, job_id, poll=2.0):
     script.chmod(0o700)
     chdir = row["chdir"] or str(Path.home())
     output = row["output"] or str(directory / "output.txt")
-    env = dict(os.environ)
+    # A minimal environment, as SLURM's export=NONE: the runner was started by
+    # whoever made the scheduling pass (any evaluator), whose own variables
+    # (another job's share, thread counts, ids) must not leak into this job.
+    env = {
+        k: v
+        for k, v in os.environ.items()
+        if k in KEEP_ENVIRONMENT or k.startswith("LC_")
+    }
     env.update(
         {
             "SEAMM_TASKSERVER_JOB_ID": str(job_id),
@@ -569,28 +623,31 @@ def run_job(root, job_id, poll=2.0):
     limits = settings(queue.root)
     limit = row["memory"] * limits["memory_factor"]
     last_memory_check = 0.0
-    while True:
-        try:
-            exit_code = job.wait(timeout=poll)
-            state = COMPLETED if exit_code == 0 else FAILED
-            if exit_code != 0:
-                reason = f"exit code {exit_code}"
-            break
-        except subprocess.TimeoutExpired:
-            pass
-        current = queue.get(job_id)
-        if current is not None and current["cancel"]:
-            _stop(job, limits["kill_grace"])
-            state, reason = CANCELLED, "cancelled"
-            break
-        if row["time_limit"] and time.monotonic() - t0 > row["time_limit"]:
-            _stop(job, limits["kill_grace"])
-            state, reason = TIMEOUT, f"time limit of {row['time_limit']:.0f} s"
-            break
-        now = time.monotonic()
-        if now - last_memory_check >= min(5.0, max(1.0, limits["memory_grace"] / 3)):
+    try:
+        while True:
+            try:
+                exit_code = job.wait(timeout=poll)
+                state = COMPLETED if exit_code == 0 else FAILED
+                if exit_code != 0:
+                    reason = f"exit code {exit_code}"
+                break
+            except subprocess.TimeoutExpired:
+                pass
+            current = queue.get(job_id)
+            if current is not None and current["cancel"]:
+                _stop(job, limits["kill_grace"])
+                state, reason = CANCELLED, "cancelled"
+                break
+            if row["time_limit"] and time.monotonic() - t0 > row["time_limit"]:
+                _stop(job, limits["kill_grace"])
+                state, reason = TIMEOUT, f"time limit of {row['time_limit']:.0f} s"
+                break
+            now = time.monotonic()
+            interval = min(5.0, max(1.0, limits["memory_grace"] / 3))
+            if now - last_memory_check < interval:
+                continue
             last_memory_check = now
-            used = _session_memory(job.pid)
+            used = _job_memory(job.pid)
             if row["kind"] == "task" and used > limit:
                 over_since = over_since if over_since is not None else now
                 if now - over_since > limits["memory_grace"]:
@@ -603,20 +660,77 @@ def run_job(root, job_id, poll=2.0):
                     break
             else:
                 over_since = None
-            vm = psutil.virtual_memory()
-            floor = limits["memory_floor"] * vm.total
-            if vm.available < floor and _newest(queue, job_id):
+            if _machine_low(queue, job_id, limits):
                 _stop(job, limits["kill_grace"])
                 state = MEMORY
                 reason = (
-                    f"the machine was low on memory ({format_memory(vm.available)} "
-                    "available); the newest job was stopped"
+                    "the machine was low on memory for "
+                    f"{limits['memory_grace']:.0f} s; job {job_id}, the newest, "
+                    "was stopped"
                 )
                 break
-    if exit_code is None:
-        exit_code = job.returncode
-    queue.finish(job_id, state, exit_code=exit_code, reason=reason)
-    queue.schedule()
+    except Exception as e:
+        # Never leave the job running with its row 'running' (a database busy
+        # past its timeout, say): stop it and record why.
+        _stop(job, limits["kill_grace"])
+        state, reason = FAILED, f"its runner failed: {e}"
+    finally:
+        if exit_code is None:
+            exit_code = job.returncode
+        try:
+            queue.finish(job_id, state, exit_code=exit_code, reason=reason)
+            queue.schedule()
+        except Exception as e:
+            logger.error(f"Could not record the end of job {job_id}: {e}")
+
+
+def _machine_low(queue, job_id, limits):
+    """Whether this job should go because the machine is low on memory.
+
+    The machine must have been below the floor for the grace period, this must
+    be the newest task, and only one job is stopped in a low-memory episode (it
+    ends when the machine has memory again), so a passing dip or a process
+    outside the queue does not walk through the queue stopping task after task.
+    """
+    import psutil
+
+    vm = psutil.virtual_memory()
+    low = vm.available < limits["memory_floor"] * vm.total
+    db = queue.db
+    now = time.time()
+    if not low:
+        # The common case, read-only unless an episode has just ended
+        episode = db.execute(
+            "SELECT count(*) FROM meta WHERE key IN ('low_since', 'low_killed')"
+        ).fetchone()[0]
+        if episode:
+            db.execute("DELETE FROM meta WHERE key IN ('low_since', 'low_killed')")
+        return False
+    db.execute("BEGIN IMMEDIATE")
+    try:
+        meta = dict(
+            db.execute(
+                "SELECT key, value FROM meta WHERE key IN ('low_since', 'low_killed')"
+            ).fetchall()
+        )
+        if "low_since" not in meta:
+            db.execute("INSERT INTO meta VALUES ('low_since', ?)", (str(now),))
+            db.execute("COMMIT")
+            return False
+        stop = (
+            "low_killed" not in meta
+            and now - float(meta["low_since"]) > limits["memory_grace"]
+            and _newest(queue, job_id)
+        )
+        if stop:
+            db.execute(
+                "INSERT OR REPLACE INTO meta VALUES ('low_killed', ?)", (str(job_id),)
+            )
+        db.execute("COMMIT")
+        return stop
+    except BaseException:
+        db.execute("ROLLBACK")
+        raise
 
 
 def _newest(queue, job_id):
@@ -628,59 +742,96 @@ def _newest(queue, job_id):
     return row is not None and row["id"] == job_id
 
 
-def _session_memory(pid):
-    """The memory used by the processes of the job's session, in bytes.
+def _job_processes(pid):
+    """The job's processes: its session or group, and every descendant -- also
+    those that started sessions of their own (a pool's codes)."""
+    import psutil
+
+    found = {}
+    try:
+        root = psutil.Process(pid)
+        found[root.pid] = root
+        for child in root.children(recursive=True):
+            found[child.pid] = child
+    except psutil.Error:
+        pass
+    try:
+        sid = os.getsid(pid)
+    except OSError:
+        sid = None
+    if sid is not None:
+        for process in psutil.process_iter(["pid"]):
+            try:
+                if os.getsid(process.pid) == sid:
+                    found.setdefault(process.pid, process)
+            except (psutil.Error, OSError):
+                continue
+    return list(found.values())
+
+
+def _job_memory(pid):
+    """The memory used by the job's processes, in bytes.
 
     The unique set size where psutil offers it (on macOS RSS misses compressed
     and swapped pages), else the resident size.
     """
     import psutil
 
-    try:
-        sid = os.getsid(pid)
-    except OSError:
-        return 0
     total = 0
-    for process in psutil.process_iter(["pid"]):
+    for process in _job_processes(pid):
         try:
-            if os.getsid(process.pid) != sid:
-                continue
             try:
                 total += process.memory_full_info().uss
             except (psutil.AccessDenied, AttributeError):
                 total += process.memory_info().rss
-        except (psutil.Error, OSError):
+        except psutil.Error:
             continue
     return total
 
 
+def _signal_all(processes, sig):
+    for process in processes:
+        try:
+            process.send_signal(sig)
+        except Exception:
+            pass
+
+
 def _stop(job, grace=KILL_GRACE):
-    """SIGTERM the job's session, then SIGKILL if it is still there."""
+    """SIGTERM the job and all its processes, then SIGKILL those still there."""
+    import psutil
+
+    processes = _job_processes(job.pid)
     try:
         os.killpg(job.pid, signal.SIGTERM)
     except (ProcessLookupError, PermissionError):
-        return
+        pass
+    _signal_all(processes, signal.SIGTERM)
     try:
         job.wait(timeout=grace)
     except subprocess.TimeoutExpired:
         pass
+    _, alive = psutil.wait_procs(processes, timeout=1.0)
     try:
         os.killpg(job.pid, signal.SIGKILL)
     except (ProcessLookupError, PermissionError):
         pass
+    _signal_all(alive, signal.SIGKILL)
     try:
         job.wait(timeout=grace)
     except subprocess.TimeoutExpired:
         pass
 
 
-def _kill_session(pid):
-    for sig in (signal.SIGTERM, signal.SIGKILL):
-        try:
-            os.killpg(pid, sig)
-        except (ProcessLookupError, PermissionError):
-            return
-        time.sleep(1.0)
+def _kill_session(pid, grace=KILL_GRACE):
+    """Stop a job that is not our child (its runner has gone): all its
+    processes, SIGTERM then SIGKILL."""
+    import psutil
+
+    processes = _job_processes(pid)
+    _signal_all(processes, signal.SIGTERM)
+    _, alive = psutil.wait_procs(processes, timeout=grace)
+    _signal_all(alive, signal.SIGKILL)
 
 
 def _alive(pid, start):
