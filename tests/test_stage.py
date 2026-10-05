@@ -41,7 +41,8 @@ def test_rsync_stager_stage_in_makes_remote_dir_then_pushes():
     assert result == "/remote/Job_1"
     assert run.call_count == 3
     mkdir_call, rsync_call, side_files_call = run.call_args_list
-    assert "--delete" in side_files_call.args[0]
+    # The mirrored files there are listed, to remove those no longer here
+    assert "find . -type f" in side_files_call.args[0][-1]
 
     assert mkdir_call.args[0] == ["ssh", "molssi10", "mkdir -p /remote/Job_1"]
 
@@ -59,7 +60,8 @@ def test_rsync_stager_stage_out_pulls_in_reverse():
         stager = RsyncStager("molssi10")
         stager.stage_out("/remote/Job_1", "/local/Job_1")
 
-    assert run.call_count == 2
+    # Nothing here to mirror (no SQLite side files), so only the copy
+    assert run.call_count == 1
     rsync_argv = run.call_args_list[0].args[0]
     assert "--delete" not in rsync_argv
     assert rsync_argv[-2] == "molssi10:/remote/Job_1/"
@@ -208,6 +210,7 @@ def test_stage_out_removes_a_stale_sqlite_log(tmp_path):
     (remote / "seamm.db-shm").write_text("index")
     (remote / "sub" / "other.db-wal").write_text("a nested log")
     (remote / "job.out").write_text("output")
+    (remote / "sub" / "loop_entry.db").write_text("a parallel loop's copy")
     (local / ".stage.lock").write_text("")  # only here: must survive
     (local / "only_here").mkdir()  # an empty directory only here: must survive
 
@@ -219,6 +222,14 @@ def test_stage_out_removes_a_stale_sqlite_log(tmp_path):
     (remote / "seamm.db").write_text("database, the final state")
     (remote / "seamm.db-wal").unlink()
     (remote / "seamm.db-shm").unlink()
+    (remote / "sub" / "loop_entry.db").unlink()  # the loop ended
+    stager.stage_out(str(remote), str(local))
+    assert not (local / "sub" / "loop_entry.db").exists()
+    # A nested log too (an iteration's own database)
+    (remote / "sub" / "other.db-wal").unlink()
+    stager.stage_out(str(remote), str(local))
+    assert not (local / "sub" / "other.db-wal").exists()
+    (remote / "sub" / "other.db-wal").write_text("a nested log")  # for below
     stager.stage_out(str(remote), str(local))
 
     assert (local / "seamm.db").read_text() == "database, the final state"
@@ -228,3 +239,30 @@ def test_stage_out_removes_a_stale_sqlite_log(tmp_path):
     assert (local / ".stage.lock").exists()
     assert (local / "only_here").is_dir()
     assert (local / "job.out").exists()
+
+
+def test_stage_in_removes_a_stale_log_there(tmp_path):
+    """Pushing a job back (a resubmit) removes the side files gone here."""
+    import stat
+
+    fake_ssh = tmp_path / "fake_ssh"
+    fake_ssh.write_text('#!/bin/sh\nshift\nexec sh -c "$*"\n')
+    fake_ssh.chmod(fake_ssh.stat().st_mode | stat.S_IEXEC)
+    local = tmp_path / "local"
+    remote = tmp_path / "remote"
+    (local / "4" / "iter_1" / "_evaluator").mkdir(parents=True)
+    (remote / "4" / "iter_1" / "_evaluator").mkdir(parents=True)
+    (local / "seamm.db").write_text("db")
+    (remote / "seamm.db-wal").write_text("stale log")
+    (remote / "4" / "iter_1" / "_evaluator" / "seamm.db-shm").write_text("stale")
+    (remote / "4" / "loop_entry.db").write_text("stale copy")
+    (local / "4" / "iter_1" / "_evaluator" / "seamm.db-wal").write_text("current")
+    stager = RsyncStager("remotehost", ssh_command=str(fake_ssh))
+    stager.stage_in(str(local), str(remote))
+    assert not (remote / "seamm.db-wal").exists()
+    assert not (remote / "4" / "iter_1" / "_evaluator" / "seamm.db-shm").exists()
+    assert not (remote / "4" / "loop_entry.db").exists()
+    assert (remote / "4" / "iter_1" / "_evaluator" / "seamm.db-wal").read_text() == (
+        "current"
+    )
+    assert (remote / "seamm.db").read_text() == "db"

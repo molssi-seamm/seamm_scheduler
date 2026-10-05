@@ -20,6 +20,7 @@ directories at once: :meth:`JobStager.push` and :meth:`JobStager.pull` copy a
 list of paths relative to a base directory in one ``rsync``.
 """
 
+from pathlib import Path
 import shlex
 import subprocess
 from abc import ABC, abstractmethod
@@ -81,21 +82,37 @@ class LocalStager(JobStager):
         pass
 
 
-# A second pass that makes SQLite's side files (the write-ahead log, its index and
-# the rollback journal) match the other side exactly, deleting those it no longer
-# has. Copying never deletes, and a stale log left beside a newer database (the
-# job finished and folded its log in after an earlier copy brought the log here)
-# is replayed over that database when it is opened: the job database then looks
-# as it was at the earlier copy. Only these files are touched by the deletion.
-SQLITE_SIDE_FILES = [
-    "--delete",
-    "--filter=P */",  # never delete a directory, even an empty one
-    "--include=*/",
-    "--include=*-wal",
-    "--include=*-shm",
-    "--include=*-journal",
-    "--exclude=*",
-]
+# Files that must match the other side exactly, deleted when it no longer has
+# them: SQLite's side files (the write-ahead log, its index and the rollback
+# journal) and a parallel loop's ``loop_entry.db``. Copying never deletes, and a
+# stale log left beside a newer database (the job finished and folded its log in
+# after an earlier copy brought the log here) is replayed over that database when
+# it is opened: the job database then looks as it was at the earlier copy. A
+# ``loop_entry.db`` staged back while its loop ran would stay for good.
+#
+# This is done by listing the files, not with rsync's filters: an rsync filter
+# that deletes only these files and never a directory ("P */") behaves
+# differently in openrsync (macOS), which then protects the directories'
+# contents too, so nested files were not removed.
+MIRRORED_NAMES = ("*-wal", "*-shm", "*-journal", "loop_entry.db")
+
+
+def _mirrored(name):
+    import fnmatch
+
+    return any(fnmatch.fnmatch(name, pattern) for pattern in MIRRORED_NAMES)
+
+
+def _local_mirrored(directory):
+    """The mirrored files under a local directory, as relative paths."""
+    base = Path(directory)
+    if not base.is_dir():
+        return []
+    return sorted(
+        str(p.relative_to(base))
+        for p in base.rglob("*")
+        if p.is_file() and _mirrored(p.name)
+    )
 
 
 class RsyncStager(JobStager):
@@ -138,16 +155,40 @@ class RsyncStager(JobStager):
     def stage_in(self, local_wdir, remote_wdir):
         self._run_ssh(["mkdir", "-p", str(remote_wdir)])
         self._rsync(f"{local_wdir}/", f"{self.host}:{remote_wdir}/")
-        self._rsync(
-            f"{local_wdir}/", f"{self.host}:{remote_wdir}/", extra=SQLITE_SIDE_FILES
+        # Remove there the mirrored files no longer here
+        names = " -o ".join(f"-name {shlex.quote(n)}" for n in MIRRORED_NAMES)
+        found = self._ssh_output(
+            f"cd {shlex.quote(str(remote_wdir))} && find . -type f \\( {names} \\)"
         )
+        local = Path(local_wdir)
+        stale = [
+            f
+            for f in (line.strip() for line in found.splitlines())
+            if f and not (local / f).exists()
+        ]
+        if stale:
+            self._ssh_output(
+                f"cd {shlex.quote(str(remote_wdir))} && "
+                'while IFS= read -r f; do rm -f -- "$f"; done',
+                input_text="\n".join(stale) + "\n",
+            )
         return remote_wdir
 
     def stage_out(self, remote_wdir, local_wdir):
         self._rsync(f"{self.host}:{remote_wdir}/", f"{local_wdir}/")
-        self._rsync(
-            f"{self.host}:{remote_wdir}/", f"{local_wdir}/", extra=SQLITE_SIDE_FILES
-        )
+        # Remove here the mirrored files no longer there
+        candidates = _local_mirrored(local_wdir)
+        if candidates:
+            there = self._ssh_output(
+                f"cd {shlex.quote(str(remote_wdir))} && "
+                'while IFS= read -r f; do [ -e "$f" ] && printf "%s\\n" "$f"; done; '
+                "true",
+                input_text="\n".join(candidates) + "\n",
+            )
+            present = {line.strip() for line in there.splitlines()}
+            for name in candidates:
+                if name not in present:
+                    (Path(local_wdir) / name).unlink(missing_ok=True)
 
     def push(self, local_base, remote_base, paths, *, delete=False):
         """One ``rsync --files-from`` for many paths: a bundle's task
@@ -197,6 +238,28 @@ class RsyncStager(JobStager):
                 f"{self.ssh_command} {self.host} {remote_cmd!r} failed "
                 f"({proc.returncode}): {proc.stderr.strip()}"
             )
+
+    def _ssh_output(self, remote_cmd, input_text=None):
+        """Run a shell command on the host; its standard output."""
+        kwargs = {} if self.timeout is None else {"timeout": self.timeout}
+        try:
+            proc = subprocess.run(
+                [self.ssh_command, *self.ssh_options, self.host, remote_cmd],
+                input=input_text,
+                capture_output=True,
+                text=True,
+                **kwargs,
+            )
+        except subprocess.TimeoutExpired:
+            raise StageError(
+                f"ssh: {self.host} {remote_cmd!r} timed out after {self.timeout} s"
+            ) from None
+        if proc.returncode != 0:
+            raise StageError(
+                f"{self.ssh_command} {self.host} {remote_cmd!r} failed "
+                f"({proc.returncode}): {proc.stderr.strip()}"
+            )
+        return proc.stdout
 
     def _rsync(self, src, dst, *, extra=(), input_text=None):
         ssh = self.ssh_command

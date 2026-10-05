@@ -246,7 +246,7 @@ def format_memory_mb(nbytes):
 
 
 def get_scheduler(name):
-    """The scheduler called ``name`` ("slurm", "pbs")."""
+    """The scheduler called ``name`` ("slurm", "pbs", "seamm")."""
     key = (name or "").strip().lower()
     if key not in SCHEDULERS:
         raise ValueError(
@@ -262,4 +262,5 @@ def get_scheduler(name):
 SCHEDULERS = {
     "slurm": ("seamm_scheduler.slurm", "Slurm"),
     "pbs": ("seamm_scheduler.pbs", "Pbs"),
+    "seamm": ("seamm_scheduler.seamm", "Seamm"),
 }

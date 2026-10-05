@@ -60,6 +60,7 @@ _NON_DIRECTIVE_KEYS = {
     "shared_filesystem",
     "bundle_tasks",
     "bundle_walltime",
+    "max_walltime",
     "max_queued_tasks",
     "inline_below",
     "url",
@@ -139,6 +140,9 @@ class TargetSection:
     # may add up to from its tasks' estimates.
     bundle_tasks: Optional[int] = None
     bundle_walltime: Optional[float] = None
+    # The queue's longest walltime (seconds): a timed-out task's retry asks for
+    # more time, but never more than this.
+    max_walltime: Optional[float] = None
     # Most queued + running jobs of this user at once (TinkerCliffs: 1,000,
     # every array element counting).
     max_queued_tasks: Optional[int] = None
@@ -232,7 +236,7 @@ class TargetSection:
             self.task_scheduler,
             ssh_options=TASK_SSH_OPTIONS,
             timeout=_TASK_COMMAND_TIMEOUT,
-            drop_env_prefixes=("SLURM_", "PBS_"),
+            drop_env_prefixes=("SLURM_", "PBS_", "SEAMM_TASKSERVER_", "SEAMM_CE"),
         )
 
     def build_task_stager(self):
@@ -297,7 +301,22 @@ class TargetSection:
             t = LocalTransport(drop_env_prefixes=drop_env_prefixes)
         else:
             t = SshTransport(host, ssh_options=ssh_options, timeout=timeout)
-        return QueueBackend(get_scheduler(scheduler), t)
+        queue = get_scheduler(scheduler)
+        if scheduler == "seamm":
+            # The TaskServer runs with the target machine's own Python, never one
+            # found on the PATH. There is one queue per machine, shared by its
+            # installations so that they share its cores and memory: under the
+            # default installation's root ($SEAMM_ROOT, else ~/SEAMM) unless the
+            # section names another (remote_seamm_root).
+            if transport == "ssh":
+                if not self.remote_python:
+                    raise RuntimeError(
+                        f"section '{self.name}' uses the TaskServer on {host} over "
+                        "ssh, so it needs remote_python: the Python of SEAMM there."
+                    )
+                queue.python = self.remote_python
+            queue.root = self.remote_seamm_root or None
+        return QueueBackend(queue, t)
 
     def _stager(self, transport, host, ssh_options=(), timeout=None):
         if transport == "local":
@@ -528,6 +547,7 @@ def _build_section(config, section):
         shared_filesystem=_bool(section, items, "shared_filesystem"),
         bundle_tasks=_int(section, items, "bundle_tasks"),
         bundle_walltime=_seconds(section, items, "bundle_walltime"),
+        max_walltime=_seconds(section, items, "max_walltime"),
         max_queued_tasks=_int(section, items, "max_queued_tasks"),
         inline_below=_float(section, items, "inline_below"),
         url=items.get("url") or None,
