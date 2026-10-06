@@ -56,6 +56,18 @@ def wait_for(root, ids, timeout=60):
     raise AssertionError(f"jobs {ids} did not end: {records}")
 
 
+def wait_until_running(root, job, timeout=30):
+    """Poll until the job is running (it may already have ended)."""
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        out = cli(root, "status", "--json", str(job)).stdout
+        (record,) = json.loads(out)
+        if record["state"] == "running" or record["state"] in ts.TERMINAL:
+            return record
+        time.sleep(0.2)
+    raise AssertionError(f"job {job} did not start: {record}")
+
+
 def submit(root, script, *args):
     result = cli(root, "submit", *args, input_text=script)
     assert result.returncode == 0, result.stderr
@@ -507,7 +519,9 @@ def test_the_floor_stops_one_job_after_its_grace(tmp_path):
     stopped -- one per episode, so the other runs to its end."""
     root = setup_root(tmp_path, cores=2, memory_floor=1.0, memory_grace=2, kill_grace=1)
     first = submit(root, "#!/bin/bash\n#SEAMM --memory 10M\nsleep 12\n")
-    time.sleep(1.5)
+    # The first must be running, so that the second is the newest (a fixed
+    # sleep raced a slow runner)
+    assert wait_until_running(root, first)["state"] == "running"
     second = submit(root, "#!/bin/bash\n#SEAMM --memory 10M\nsleep 12\n")
     records = wait_for(root, [first, second], timeout=60)
     assert records[str(second)]["state"] == "memory"
