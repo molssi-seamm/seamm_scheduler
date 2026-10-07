@@ -6,6 +6,7 @@ History
       JobServer's ``<root>/<name>.ini`` section: where the flowchart runs, the
       JobServer's behaviour, the submission directives and their portable
       spellings, the task layer's keys, and the ``.limits`` companion.
+    * Requires Python 3.12.
 
 2026.10.5 -- The TaskServer: a queue for a machine without one
     * ``seamm-taskserver`` shares one machine's cores and memory among everything
