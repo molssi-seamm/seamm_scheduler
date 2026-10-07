@@ -21,6 +21,95 @@ Lives here, not in ``seamm_jobserver``, so any dependency-light consumer --
 ``seamm_jobserver``, ``seamm_webui``'s queue list, ``seamm_exec``'s task layer
 -- can read and validate the file without pulling in the rest of the SEAMM
 stack. See ``seamm_exec``'s ``docs/developer_guide/campaigns/2026-10-02/``.
+
+The keys of a section
+---------------------
+
+Where the flowchart runs and how to reach the queue:
+
+``type``
+    ``local``: a subprocess of the JobServer, no scheduler. ``queue``: a
+    batch job on the queueing system named by ``scheduler``. ``slurm``: the
+    original spelling of ``queue`` with SLURM. Default ``slurm``.
+``scheduler``
+    ``slurm`` (default), ``pbs``, or ``seamm`` (the machine's TaskServer).
+    Also the scheduler of the tasks when ``tasks = queue``.
+``transport``
+    ``local``: the scheduler's commands run here. ``ssh``: they run on ``host``
+    over passwordless ssh.
+``host``
+    The ssh host, for ``transport = ssh``.
+``remote_root``
+    ``ssh`` only: the directory on the remote host under which each job (and
+    each task, for ``tasks = queue``) gets its own directory, staged there
+    and back with rsync. Without it a shared filesystem is assumed.
+``remote_run_from_jobserver``, ``remote_conda_env``
+    ``ssh`` only: how to start SEAMM on the remote host -- the absolute path
+    of its ``run_from_jobserver`` (preferred), or a conda environment name.
+``setup``
+    Shell lines run at the top of the batch script, before SEAMM; indented
+    continuation lines for several. Trusted text, copied into the job's
+    ``target.json``.
+``default``
+    In ``[DEFAULT]`` only: the section a job uses when it names none.
+
+The JobServer's behaviour for the section:
+
+``max_concurrent_jobs``
+    How many of this section's jobs are kept submitted at once (default 20).
+``max_resubmits``
+    How many times a job the queue lost is submitted again (default 3).
+``poll_interval``
+    Seconds between polls of the queue (default 60).
+
+Submission directives -- every other key. Each becomes a directive of the
+scheduler in its own spelling (SLURM: ``#SBATCH --<key>=<value>`` with
+underscores as dashes), so any option the scheduler takes works. The portable
+spellings, which PBS maps onto its own, are ``account``, ``partition`` (PBS
+``queue``), ``qos``, ``constraint``, ``nodes``, ``ntasks``, ``cpus_per_task``,
+``mem``, ``mem_per_cpu``, ``time`` (PBS ``walltime``), ``gres`` and
+``export``. A blank value passes no directive. Set ``mem`` or
+``mem_per_cpu``: a site that reserves the whole node per job by default will
+otherwise run one job at a time. ``export = NONE`` makes SLURM rebuild the
+job's environment as from a fresh login, which an ssh submission needs when
+the cluster loads codes as modules.
+
+The task layer -- where the flowchart's calculations run (all optional; a
+section without ``tasks`` behaves as before the task layer existed):
+
+``tasks``
+    ``pool``: in the flowchart's own allocation (the default). ``taskserver``:
+    through the machine's TaskServer at ``url``. ``queue``: as batch jobs
+    submitted by the task layer to ``scheduler``.
+``shared_filesystem``
+    Whether the flowchart and the cluster see the same storage, so task
+    directories need no staging. Default yes for ``transport = local`` or a
+    flowchart that is itself a batch job on the cluster; no for ``ssh``.
+``bundle_tasks``, ``bundle_walltime``
+    How tasks are packed into one batch job: a fixed number, or as many as
+    fit the walltime (seconds, or a SLURM time) from their estimates. Without
+    either, by estimate within the section's ``time``.
+``max_walltime``
+    The queue's longest walltime; a timed-out task's retry asks for more time
+    but never more than this.
+``max_queued_tasks``
+    The most queued and running bundle jobs of this user at once (sites cap
+    a user's jobs; every array element counts). Shared by every task set a
+    job runs at once.
+``inline_below``
+    Tasks estimated below this many seconds (default 60) run in the
+    flowchart's pool when their program is installed there.
+``remote_python``, ``remote_seamm_root``
+    ``ssh`` only: a Python with ``seamm_exec`` on the cluster, which runs the
+    task worker and configures each program from the cluster's own
+    ``<root>/<program>.ini``, and that root (default: the venv's).
+``url``
+    ``tasks = taskserver``: the TaskServer's URL.
+
+Per-job overrides: the companion section ``[<name>.limits]`` says which
+directives a job may override (``overridable = a, b, c``) and, per directive,
+``<key>.choices``, ``<key>.min`` and ``<key>.max``. Without the section nothing
+is overridable.
 """
 
 import configparser

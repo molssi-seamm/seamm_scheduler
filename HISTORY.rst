@@ -1,6 +1,13 @@
 =======
 History
 =======
+2026.10.7 -- Internal: every key of a target section documented
+    * ``seamm_scheduler.config``'s module documentation describes each key of a
+      JobServer's ``<root>/<name>.ini`` section: where the flowchart runs, the
+      JobServer's behaviour, the submission directives and their portable
+      spellings, the task layer's keys, and the ``.limits`` companion.
+    * Requires Python 3.12.
+
 2026.10.5 -- The TaskServer: a queue for a machine without one
     * ``seamm-taskserver`` shares one machine's cores and memory among everything
       SEAMM runs on it -- the calculations of several flowcharts, and the flowcharts
