@@ -485,6 +485,93 @@ included), which the Dashboard can show, so a section must never hold secrets.</
 <code class="docutils literal notranslate"><span class="pre">seamm_jobserver</span></code>, <code class="docutils literal notranslate"><span class="pre">seamm_webui</span></code>’s queue list, <code class="docutils literal notranslate"><span class="pre">seamm_exec</span></code>’s task layer
 – can read and validate the file without pulling in the rest of the SEAMM
 stack. See <code class="docutils literal notranslate"><span class="pre">seamm_exec</span></code>’s <code class="docutils literal notranslate"><span class="pre">docs/developer_guide/campaigns/2026-10-02/</span></code>.</p>
+<section id="the-keys-of-a-section">
+<h3>The keys of a section<a class="headerlink" href="#the-keys-of-a-section" title="Link to this heading">#</a></h3>
+<p>Where the flowchart runs and how to reach the queue:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">type</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">local</span></code>: a subprocess of the JobServer, no scheduler. <code class="docutils literal notranslate"><span class="pre">queue</span></code>: a
+batch job on the queueing system named by <code class="docutils literal notranslate"><span class="pre">scheduler</span></code>. <code class="docutils literal notranslate"><span class="pre">slurm</span></code>: the
+original spelling of <code class="docutils literal notranslate"><span class="pre">queue</span></code> with SLURM. Default <code class="docutils literal notranslate"><span class="pre">slurm</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">scheduler</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">slurm</span></code> (default), <code class="docutils literal notranslate"><span class="pre">pbs</span></code>, or <code class="docutils literal notranslate"><span class="pre">seamm</span></code> (the machine’s TaskServer).
+Also the scheduler of the tasks when <code class="docutils literal notranslate"><span class="pre">tasks</span> <span class="pre">=</span> <span class="pre">queue</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">transport</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">local</span></code>: the scheduler’s commands run here. <code class="docutils literal notranslate"><span class="pre">ssh</span></code>: they run on <code class="docutils literal notranslate"><span class="pre">host</span></code>
+over passwordless ssh.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">host</span></code></dt><dd><p>The ssh host, for <code class="docutils literal notranslate"><span class="pre">transport</span> <span class="pre">=</span> <span class="pre">ssh</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">remote_root</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">ssh</span></code> only: the directory on the remote host under which each job (and
+each task, for <code class="docutils literal notranslate"><span class="pre">tasks</span> <span class="pre">=</span> <span class="pre">queue</span></code>) gets its own directory, staged there
+and back with rsync. Without it a shared filesystem is assumed.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">remote_run_from_jobserver</span></code>, <code class="docutils literal notranslate"><span class="pre">remote_conda_env</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">ssh</span></code> only: how to start SEAMM on the remote host – the absolute path
+of its <code class="docutils literal notranslate"><span class="pre">run_from_jobserver</span></code> (preferred), or a conda environment name.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">setup</span></code></dt><dd><p>Shell lines run at the top of the batch script, before SEAMM; indented
+continuation lines for several. Trusted text, copied into the job’s
+<code class="docutils literal notranslate"><span class="pre">target.json</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">default</span></code></dt><dd><p>In <code class="docutils literal notranslate"><span class="pre">[DEFAULT]</span></code> only: the section a job uses when it names none.</p>
+</dd>
+</dl>
+<p>The JobServer’s behaviour for the section:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">max_concurrent_jobs</span></code></dt><dd><p>How many of this section’s jobs are kept submitted at once (default 20).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">max_resubmits</span></code></dt><dd><p>How many times a job the queue lost is submitted again (default 3).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">poll_interval</span></code></dt><dd><p>Seconds between polls of the queue (default 60).</p>
+</dd>
+</dl>
+<p>Submission directives – every other key. Each becomes a directive of the
+scheduler in its own spelling (SLURM: <code class="docutils literal notranslate"><span class="pre">#SBATCH</span> <span class="pre">--&lt;key&gt;=&lt;value&gt;</span></code> with
+underscores as dashes), so any option the scheduler takes works. The portable
+spellings, which PBS maps onto its own, are <code class="docutils literal notranslate"><span class="pre">account</span></code>, <code class="docutils literal notranslate"><span class="pre">partition</span></code> (PBS
+<code class="docutils literal notranslate"><span class="pre">queue</span></code>), <code class="docutils literal notranslate"><span class="pre">qos</span></code>, <code class="docutils literal notranslate"><span class="pre">constraint</span></code>, <code class="docutils literal notranslate"><span class="pre">nodes</span></code>, <code class="docutils literal notranslate"><span class="pre">ntasks</span></code>, <code class="docutils literal notranslate"><span class="pre">cpus_per_task</span></code>,
+<code class="docutils literal notranslate"><span class="pre">mem</span></code>, <code class="docutils literal notranslate"><span class="pre">mem_per_cpu</span></code>, <code class="docutils literal notranslate"><span class="pre">time</span></code> (PBS <code class="docutils literal notranslate"><span class="pre">walltime</span></code>), <code class="docutils literal notranslate"><span class="pre">gres</span></code> and
+<code class="docutils literal notranslate"><span class="pre">export</span></code>. A blank value passes no directive. Set <code class="docutils literal notranslate"><span class="pre">mem</span></code> or
+<code class="docutils literal notranslate"><span class="pre">mem_per_cpu</span></code>: a site that reserves the whole node per job by default will
+otherwise run one job at a time. <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">=</span> <span class="pre">NONE</span></code> makes SLURM rebuild the
+job’s environment as from a fresh login, which an ssh submission needs when
+the cluster loads codes as modules.</p>
+<p>The task layer – where the flowchart’s calculations run (all optional; a
+section without <code class="docutils literal notranslate"><span class="pre">tasks</span></code> behaves as before the task layer existed):</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">tasks</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">pool</span></code>: in the flowchart’s own allocation (the default). <code class="docutils literal notranslate"><span class="pre">taskserver</span></code>:
+through the machine’s TaskServer at <code class="docutils literal notranslate"><span class="pre">url</span></code>. <code class="docutils literal notranslate"><span class="pre">queue</span></code>: as batch jobs
+submitted by the task layer to <code class="docutils literal notranslate"><span class="pre">scheduler</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">shared_filesystem</span></code></dt><dd><p>Whether the flowchart and the cluster see the same storage, so task
+directories need no staging. Default yes for <code class="docutils literal notranslate"><span class="pre">transport</span> <span class="pre">=</span> <span class="pre">local</span></code> or a
+flowchart that is itself a batch job on the cluster; no for <code class="docutils literal notranslate"><span class="pre">ssh</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">bundle_tasks</span></code>, <code class="docutils literal notranslate"><span class="pre">bundle_walltime</span></code></dt><dd><p>How tasks are packed into one batch job: a fixed number, or as many as
+fit the walltime (seconds, or a SLURM time) from their estimates. Without
+either, by estimate within the section’s <code class="docutils literal notranslate"><span class="pre">time</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">max_walltime</span></code></dt><dd><p>The queue’s longest walltime; a timed-out task’s retry asks for more time
+but never more than this.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">max_queued_tasks</span></code></dt><dd><p>The most queued and running bundle jobs of this user at once (sites cap
+a user’s jobs; every array element counts). Shared by every task set a
+job runs at once.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">inline_below</span></code></dt><dd><p>Tasks estimated below this many seconds (default 60) run in the
+flowchart’s pool when their program is installed there.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">remote_python</span></code>, <code class="docutils literal notranslate"><span class="pre">remote_seamm_root</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">ssh</span></code> only: a Python with <code class="docutils literal notranslate"><span class="pre">seamm_exec</span></code> on the cluster, which runs the
+task worker and configures each program from the cluster’s own
+<code class="docutils literal notranslate"><span class="pre">&lt;root&gt;/&lt;program&gt;.ini</span></code>, and that root (default: the venv’s).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">url</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">tasks</span> <span class="pre">=</span> <span class="pre">taskserver</span></code>: the TaskServer’s URL.</p>
+</dd>
+</dl>
+<p>Per-job overrides: the companion section <code class="docutils literal notranslate"><span class="pre">[&lt;name&gt;.limits]</span></code> says which
+directives a job may override (<code class="docutils literal notranslate"><span class="pre">overridable</span> <span class="pre">=</span> <span class="pre">a,</span> <span class="pre">b,</span> <span class="pre">c</span></code>) and, per directive,
+<code class="docutils literal notranslate"><span class="pre">&lt;key&gt;.choices</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;key&gt;.min</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;key&gt;.max</span></code>. Without the section nothing
+is overridable.</p>
+</section>
 <dl class="py class">
 <dt class="sig sig-object py" id="seamm_scheduler.config.FieldLimits">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">seamm_scheduler.config.</span></span><span class="sig-name descname"><span class="pre">FieldLimits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/config.html#FieldLimits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.config.FieldLimits" title="Link to this definition">#</a></dt>
@@ -2186,6 +2273,7 @@ transports.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-seamm_scheduler.config">seamm_scheduler.config module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-keys-of-a-section">The keys of a section</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.config.FieldLimits"><code class="docutils literal notranslate"><span class="pre">FieldLimits</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.config.FieldLimits.choices"><code class="docutils literal notranslate"><span class="pre">FieldLimits.choices</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.config.FieldLimits.maximum"><code class="docutils literal notranslate"><span class="pre">FieldLimits.maximum</span></code></a></li>
