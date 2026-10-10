@@ -1,6 +1,12 @@
 =======
 History
 =======
+2026.10.10 -- Two guards on bundle walltimes in a target section
+    * estimate_scale and min_task_walltime are target-section keys for the task
+      layer (seamm-exec 2026.10.10.3): a multiplier on each task's estimate and the
+      least walltime each task gets in its bundle. Like the other task-layer keys,
+      they are not passed to the scheduler as directives.
+
 2026.10.7 -- Internal: every key of a target section documented
     * ``seamm_scheduler.config``'s module documentation describes each key of a
       JobServer's ``<root>/<name>.ini`` section: where the flowchart runs, the

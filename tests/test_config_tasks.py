@@ -40,6 +40,8 @@ account = seamm
 partition = normal_q
 max_queued_tasks = 800
 bundle_walltime = 04:00:00
+min_task_walltime = 30
+estimate_scale = 2.5
 inline_below = 30
 poll_interval = 20
 remote_python = /projects/seamm/psaxe/phase2/venv/bin/python
@@ -79,6 +81,8 @@ def test_new_keys_are_not_directives(sections):
     assert arc.tasks == "queue"
     assert arc.max_queued_tasks == 800
     assert arc.bundle_walltime == 4 * 3600
+    assert arc.min_task_walltime == 30 * 60  # SLURM: a bare number is minutes
+    assert arc.estimate_scale == 2.5
     assert arc.inline_below == 30.0
     assert arc.poll_interval == 20.0
     assert arc.remote_python.endswith("/venv/bin/python")
@@ -163,6 +167,9 @@ def test_settings_round_trip_with_limits(tmp_path):
         ("max_queued_tasks = many", "is not an integer"),
         ("shared_filesystem = maybe", "is not yes or no"),
         ("bundle_walltime = soon", "is not a time"),
+        ("min_task_walltime = soon", "is not a time"),
+        ("estimate_scale = 0", "must be positive"),
+        ("estimate_scale = double", "is not a number"),
     ],
 )
 def test_bad_values_are_reported(tmp_path, text, message):
