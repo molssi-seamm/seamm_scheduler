@@ -92,6 +92,11 @@ section without ``tasks`` behaves as before the task layer existed):
 ``max_walltime``
     The queue's longest walltime; a timed-out task's retry asks for more time
     but never more than this.
+``estimate_scale``, ``min_task_walltime``
+    Guards on the walltime of a bundle when it comes from the tasks' estimates:
+    each estimate is multiplied by ``estimate_scale`` (default 1), and each task
+    gets at least ``min_task_walltime`` (seconds, or a SLURM time). Still within
+    ``bundle_walltime`` and ``max_walltime``.
 ``max_queued_tasks``
     The most queued and running bundle jobs of this user at once (sites cap
     a user's jobs; every array element counts). Shared by every task set a
@@ -150,6 +155,8 @@ _NON_DIRECTIVE_KEYS = {
     "bundle_tasks",
     "bundle_walltime",
     "max_walltime",
+    "min_task_walltime",
+    "estimate_scale",
     "max_queued_tasks",
     "inline_below",
     "url",
@@ -232,6 +239,10 @@ class TargetSection:
     # The queue's longest walltime (seconds): a timed-out task's retry asks for
     # more time, but never more than this.
     max_walltime: Optional[float] = None
+    # Guards on a bundle's walltime from estimates: a multiplier on each task's
+    # estimate, and the least walltime (seconds) per task.
+    estimate_scale: Optional[float] = None
+    min_task_walltime: Optional[float] = None
     # Most queued + running jobs of this user at once (TinkerCliffs: 1,000,
     # every array element counting).
     max_queued_tasks: Optional[int] = None
@@ -637,6 +648,8 @@ def _build_section(config, section):
         bundle_tasks=_int(section, items, "bundle_tasks"),
         bundle_walltime=_seconds(section, items, "bundle_walltime"),
         max_walltime=_seconds(section, items, "max_walltime"),
+        estimate_scale=_positive(section, items, "estimate_scale"),
+        min_task_walltime=_seconds(section, items, "min_task_walltime"),
         max_queued_tasks=_int(section, items, "max_queued_tasks"),
         inline_below=_float(section, items, "inline_below"),
         url=items.get("url") or None,
@@ -679,6 +692,13 @@ def _float(section, items, key):
         raise RuntimeError(
             f"section '{section}': {key} = {value} is not a number"
         ) from None
+
+
+def _positive(section, items, key):
+    value = _float(section, items, key)
+    if value is not None and value <= 0:
+        raise RuntimeError(f"section '{section}': {key} = {value} must be positive")
+    return value
 
 
 def _seconds(section, items, key):
