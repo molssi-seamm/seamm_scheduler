@@ -240,6 +240,39 @@ def test_slurm_poll_failed_when_sacct_cannot_answer():
     assert not s.poll_failed
 
 
+def test_slurm_poll_failures_are_logged_once(caplog):
+    """Why squeue or sacct failed is logged, once until the reason changes, so a
+    long outage does not fill the log (2026-10-20: a failed poll left no trace)."""
+    s = Slurm()
+
+    def ssh_down(argv, input_text=None):
+        return 255, "", "ssh: connect to host tc port 22: Operation timed out"
+
+    with caplog.at_level("INFO", logger="seamm_scheduler"):
+        s.poll(ssh_down, ["1"])
+        s.poll(ssh_down, ["1"])
+    warnings = [r.getMessage() for r in caplog.records if r.levelname == "WARNING"]
+    assert warnings == [
+        "squeue failed (exit 255): ssh: connect to host tc port 22: Operation timed "
+        "out",
+        "sacct failed (exit 255): ssh: connect to host tc port 22: Operation timed "
+        "out",
+    ]
+
+    def gone(argv, input_text=None):
+        if argv[0] == "sacct":
+            return 0, json.dumps({"jobs": []}), ""
+        return 0, json.dumps({"jobs": []}), ""
+
+    caplog.clear()
+    with caplog.at_level("INFO", logger="seamm_scheduler"):
+        s.poll(gone, ["1"])
+    assert [r.getMessage() for r in caplog.records] == [
+        "squeue works again.",
+        "sacct works again.",
+    ]
+
+
 def test_slurm_unparseable_output_is_a_failed_poll():
     s = Slurm()
 
