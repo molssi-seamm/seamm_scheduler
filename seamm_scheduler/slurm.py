@@ -145,6 +145,24 @@ class Slurm(Scheduler):
         self._failed = False
         self._squeue_failed = False
         self._no_accounting = False
+        # The last failure logged for each command, so that a long outage is
+        # reported once rather than at every poll
+        self._last_failure = {}
+
+    def _report_failure(self, command, rc, err):
+        """Log why ``command`` (squeue or sacct) could not be asked, once until
+        the reason changes."""
+        lines = [x.strip() for x in (err or "").strip().splitlines() if x.strip()]
+        reason = " | ".join(lines[-3:]) or "no error output"
+        text = f"{command} failed (exit {rc}): {reason}"
+        if self._last_failure.get(command) != text:
+            logger.warning(text)
+            self._last_failure[command] = text
+
+    def _report_success(self, command):
+        """Note that ``command`` works again after a failure was logged."""
+        if self._last_failure.pop(command, None) is not None:
+            logger.info(f"{command} works again.")
 
     # ------------------------------------------------------------------
     # Directives
@@ -315,6 +333,7 @@ class Slurm(Scheduler):
             rc, out, err = run(["squeue", "--json", "--jobs", ids])
             if rc == 0:
                 self._squeue_json = True
+                self._report_success("squeue")
                 try:
                     return self._parse_squeue_json(out)
                 except (ValueError, KeyError, TypeError) as e:
@@ -332,13 +351,16 @@ class Slurm(Scheduler):
                 # controller unreachable) means squeue could not be asked.
                 if not _is_invalid_job_id(err):
                     self._squeue_failed = True
+                    self._report_failure("squeue", rc, err)
                 return {}
 
         rc, out, err = run(self.status_cmd(job_ids))
         if rc != 0:
             if not _is_invalid_job_id(err):
                 self._squeue_failed = True
+                self._report_failure("squeue", rc, err)
             return {}
+        self._report_success("squeue")
         return self._parse_squeue_text(out)
 
     @staticmethod
@@ -387,6 +409,7 @@ class Slurm(Scheduler):
             rc, out, err = run(["sacct", "--json", "--jobs", ids])
             if rc == 0:
                 self._sacct_json = True
+                self._report_success("sacct")
                 try:
                     return self._parse_sacct_json(out)
                 except (ValueError, KeyError, TypeError) as e:
@@ -400,6 +423,7 @@ class Slurm(Scheduler):
                 return {}
             else:
                 self._failed = True
+                self._report_failure("sacct", rc, err)
                 return {}
 
         fmt = "JobID,State,ExitCode"
@@ -411,7 +435,9 @@ class Slurm(Scheduler):
                 self._no_accounting = True
             else:
                 self._failed = True
+                self._report_failure("sacct", rc, err)
             return {}
+        self._report_success("sacct")
         return self._parse_sacct_text(out)
 
     @staticmethod

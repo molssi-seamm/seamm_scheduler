@@ -1,6 +1,12 @@
 =======
 History
 =======
+2026.10.21 -- Why a poll of SLURM failed is logged
+    * When squeue or sacct cannot be asked -- ssh down, the controller not answering
+      -- the poll is marked as failed, as before, and now the command, its exit code
+      and its error are logged too. A long outage is logged once, not at every poll,
+      and the log says when the command works again.
+
 2026.10.10 -- Two guards on bundle walltimes in a target section
     * estimate_scale and min_task_walltime are target-section keys for the task
       layer (seamm-exec 2026.10.10.3): a multiplier on each task's estimate and the
