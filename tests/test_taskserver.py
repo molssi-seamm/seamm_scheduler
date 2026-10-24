@@ -314,13 +314,15 @@ def test_concurrent_submissions(tmp_path):
             ],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,
         )
         for k in range(10)
     ]
     ids = []
     for p in procs:
-        out, _ = p.communicate("#!/bin/bash\nexit 0\n", timeout=60)
+        out, err = p.communicate("#!/bin/bash\nexit 0\n", timeout=60)
+        assert out.strip().isdigit(), f"submit failed ({p.returncode}): {err}"
         ids.append(int(out.strip()))
     assert len(set(ids)) == 10
     records = wait_for(root, ids, timeout=120)

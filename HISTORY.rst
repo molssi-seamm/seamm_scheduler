@@ -1,6 +1,11 @@
 =======
 History
 =======
+2026.10.24.1 -- Bugfix: a TaskServer submit could fail when several ran at once
+    * Several submits to a new TaskServer queue at the same moment could fail one
+      of them with "database is locked" (about 1 in 30, seen in a release test): they
+      raced to set the queue's journal mode. That step now waits for the others.
+
 2026.10.24 -- The user's jobs can be listed by name and QOS
     * New: list_jobs(qos) lists the names of the user's queued and running jobs,
       optionally only those in one QOS (squeue --qos), since sites limit a user's

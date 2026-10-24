@@ -223,9 +223,28 @@ class Queue:
         self.path = self.directory / "queue.db"
         self.db = sqlite3.connect(str(self.path), timeout=60.0, isolation_level=None)
         self.db.row_factory = sqlite3.Row
-        self.db.execute("PRAGMA journal_mode=WAL")
         self.db.execute("PRAGMA busy_timeout=60000")
+        self._wal()
         self._migrate()
+
+    def _wal(self, tries=100):
+        """Switch the database to WAL, retrying while another process holds it.
+
+        Several processes opening a new queue at once (e.g. concurrent submits)
+        race to change its journal mode, and SQLite can refuse that with "database
+        is locked" at once rather than waiting out the busy timeout, which failed
+        one submit in about 30 (seamm-scheduler 2026.10.24's release run).
+        """
+        for attempt in range(tries):
+            try:
+                self.db.execute("PRAGMA journal_mode=WAL")
+                return
+            except sqlite3.OperationalError as e:
+                if "locked" not in str(e) and "busy" not in str(e):
+                    raise
+                if attempt == tries - 1:
+                    raise
+                time.sleep(0.05 + 0.01 * attempt)
 
     def close(self):
         self.db.close()
