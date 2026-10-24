@@ -398,3 +398,21 @@ def test_find_narrows_a_date_range_the_site_refuses():
 
     assert Slurm().find(run, "x") == ["79"]
     assert sum(1 for c in calls if c[0] == "sacct") == 2
+
+
+def test_slurm_list_cmd_names_and_qos():
+    """Sites limit a user's jobs per QOS, so the count can be of one QOS; the
+    names tell which job each bundle belongs to (fair shares, 2026-10-24)."""
+    assert Slurm().list_cmd() == ["squeue", "--noheader", "--me", "-r", "--format=%j"]
+    assert Slurm().list_cmd("tc_normal_base")[-1] == "--qos=tc_normal_base"
+    assert Pbs().list_cmd() is None
+
+
+def test_queue_backend_list_jobs():
+    out = "seamm-5394\nseamm-a1b2c3-bundle_0001.1-ff00aa\n\n"
+    transport = FakeTransport([(["squeue", "--noheader", "--me"], (0, out, ""))])
+    backend = QueueBackend(Slurm(), transport)
+    assert backend.list_jobs("q") == ["seamm-5394", "seamm-a1b2c3-bundle_0001.1-ff00aa"]
+    assert transport.calls[-1][0][-1] == "--qos=q"
+    assert QueueBackend(Slurm(), FakeTransport([])).list_jobs() is None
+    assert QueueBackend(Pbs(), FakeTransport([])).list_jobs() is None
