@@ -445,9 +445,10 @@
 <span class="sd">    gets at least ``min_task_walltime`` (seconds, or a SLURM time). Still within</span>
 <span class="sd">    ``bundle_walltime`` and ``max_walltime``.</span>
 <span class="sd">``max_queued_tasks``</span>
-<span class="sd">    The most queued and running bundle jobs of this user at once (sites cap</span>
-<span class="sd">    a user's jobs; every array element counts). Shared by every task set a</span>
-<span class="sd">    job runs at once.</span>
+<span class="sd">    The most queued and running jobs of this user at once (sites cap a user's</span>
+<span class="sd">    jobs; every array element counts), in the section's QOS where the</span>
+<span class="sd">    scheduler can list jobs per QOS. Shared by every task set a job runs at</span>
+<span class="sd">    once, and shared equally between the jobs with bundles queued.</span>
 <span class="sd">``inline_below``</span>
 <span class="sd">    Tasks estimated below this many seconds (default 60) run in the</span>
 <span class="sd">    flowchart's pool when their program is installed there.</span>

@@ -680,6 +680,15 @@
         <span class="k">return</span> <span class="p">[</span><span class="s2">"squeue"</span><span class="p">,</span> <span class="s2">"--noheader"</span><span class="p">,</span> <span class="s2">"--me"</span><span class="p">,</span> <span class="s2">"-r"</span><span class="p">,</span> <span class="s2">"--format=</span><span class="si">%i</span><span class="s2">"</span><span class="p">]</span></div>
 
 
+<div class="viewcode-block" id="Slurm.list_cmd">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.list_cmd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"squeue"</span><span class="p">,</span> <span class="s2">"--noheader"</span><span class="p">,</span> <span class="s2">"--me"</span><span class="p">,</span> <span class="s2">"-r"</span><span class="p">,</span> <span class="s2">"--format=%j"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">qos</span><span class="p">:</span>
+            <span class="n">argv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"--qos=</span><span class="si">{</span><span class="n">qos</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">argv</span></div>
+
+
 <div class="viewcode-block" id="Slurm.classify">
 <a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.slurm.Slurm.classify">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_state</span><span class="p">):</span>

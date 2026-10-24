@@ -431,6 +431,13 @@ or None if that cannot be known now (the queue could not be asked).</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.backend.QueueBackend.list_jobs">
+<span class="sig-name descname"><span class="pre">list_jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/backend.html#QueueBackend.list_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.backend.QueueBackend.list_jobs" title="Link to this definition">#</a></dt>
+<dd><p>The names of the user’s queued and running jobs (in <code class="docutils literal notranslate"><span class="pre">qos</span></code> if given),
+or None if they cannot be listed now or by this scheduler.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="seamm_scheduler.backend.QueueBackend.poll_many">
 <span class="sig-name descname"><span class="pre">poll_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_ids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/backend.html#QueueBackend.poll_many"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.backend.QueueBackend.poll_many" title="Link to this definition">#</a></dt>
 <dd><p>The current status of a batch of jobs, in as few commands as the
@@ -559,9 +566,10 @@ each estimate is multiplied by <code class="docutils literal notranslate"><span 
 gets at least <code class="docutils literal notranslate"><span class="pre">min_task_walltime</span></code> (seconds, or a SLURM time). Still within
 <code class="docutils literal notranslate"><span class="pre">bundle_walltime</span></code> and <code class="docutils literal notranslate"><span class="pre">max_walltime</span></code>.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">max_queued_tasks</span></code></dt><dd><p>The most queued and running bundle jobs of this user at once (sites cap
-a user’s jobs; every array element counts). Shared by every task set a
-job runs at once.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">max_queued_tasks</span></code></dt><dd><p>The most queued and running jobs of this user at once (sites cap a user’s
+jobs; every array element counts), in the section’s QOS where the
+scheduler can list jobs per QOS. Shared by every task set a job runs at
+once, and shared equally between the jobs with bundles queued.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">inline_below</span></code></dt><dd><p>Tasks estimated below this many seconds (default 60) run in the
 flowchart’s pool when their program is installed there.</p>
@@ -1281,6 +1289,14 @@ called <code class="docutils literal notranslate"><span class="pre">job_name</sp
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.scheduler.Scheduler.list_cmd">
+<span class="sig-name descname"><span class="pre">list_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/scheduler.html#Scheduler.list_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.scheduler.Scheduler.list_cmd" title="Link to this definition">#</a></dt>
+<dd><p>A command printing the names of the user’s queued and running jobs, one
+per line (one per array element) – only those in <code class="docutils literal notranslate"><span class="pre">qos</span></code> if given, since
+sites limit a user’s jobs per QOS – or None if the scheduler cannot.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="seamm_scheduler.scheduler.Scheduler.log_directives">
 <span class="sig-name descname"><span class="pre">log_directives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/scheduler.html#Scheduler.log_directives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.scheduler.Scheduler.log_directives" title="Link to this definition">#</a></dt>
 <dd><p>Directives that put the job’s own output in <code class="docutils literal notranslate"><span class="pre">directory</span></code>.</p>
@@ -1673,6 +1689,14 @@ allocation.</p>
 <span class="sig-name descname"><span class="pre">find_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/slurm.html#Slurm.find_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.slurm.Slurm.find_cmd" title="Link to this definition">#</a></dt>
 <dd><p>A command printing the ids of the user’s queued or running jobs
 called <code class="docutils literal notranslate"><span class="pre">job_name</span></code>, one per line, or None if the scheduler cannot.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamm_scheduler.slurm.Slurm.list_cmd">
+<span class="sig-name descname"><span class="pre">list_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/seamm_scheduler/slurm.html#Slurm.list_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#seamm_scheduler.slurm.Slurm.list_cmd" title="Link to this definition">#</a></dt>
+<dd><p>A command printing the names of the user’s queued and running jobs, one
+per line (one per array element) – only those in <code class="docutils literal notranslate"><span class="pre">qos</span></code> if given, since
+sites limit a user’s jobs per QOS – or None if the scheduler cannot.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2282,6 +2306,7 @@ transports.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.backend.QueueBackend.count_jobs"><code class="docutils literal notranslate"><span class="pre">QueueBackend.count_jobs()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.backend.QueueBackend.find_jobs"><code class="docutils literal notranslate"><span class="pre">QueueBackend.find_jobs()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.backend.QueueBackend.host"><code class="docutils literal notranslate"><span class="pre">QueueBackend.host</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.backend.QueueBackend.list_jobs"><code class="docutils literal notranslate"><span class="pre">QueueBackend.list_jobs()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.backend.QueueBackend.poll_many"><code class="docutils literal notranslate"><span class="pre">QueueBackend.poll_many()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.backend.QueueBackend.submit"><code class="docutils literal notranslate"><span class="pre">QueueBackend.submit()</span></code></a></li>
 </ul>
@@ -2401,6 +2426,7 @@ transports.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.scheduler.Scheduler.env_names"><code class="docutils literal notranslate"><span class="pre">Scheduler.env_names</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.scheduler.Scheduler.find"><code class="docutils literal notranslate"><span class="pre">Scheduler.find()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.scheduler.Scheduler.find_cmd"><code class="docutils literal notranslate"><span class="pre">Scheduler.find_cmd()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.scheduler.Scheduler.list_cmd"><code class="docutils literal notranslate"><span class="pre">Scheduler.list_cmd()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.scheduler.Scheduler.log_directives"><code class="docutils literal notranslate"><span class="pre">Scheduler.log_directives()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.scheduler.Scheduler.name"><code class="docutils literal notranslate"><span class="pre">Scheduler.name</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.scheduler.Scheduler.parse_status"><code class="docutils literal notranslate"><span class="pre">Scheduler.parse_status()</span></code></a></li>
@@ -2461,6 +2487,7 @@ transports.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.slurm.Slurm.env_prefixes"><code class="docutils literal notranslate"><span class="pre">Slurm.env_prefixes</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.slurm.Slurm.find"><code class="docutils literal notranslate"><span class="pre">Slurm.find()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.slurm.Slurm.find_cmd"><code class="docutils literal notranslate"><span class="pre">Slurm.find_cmd()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.slurm.Slurm.list_cmd"><code class="docutils literal notranslate"><span class="pre">Slurm.list_cmd()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.slurm.Slurm.log_directives"><code class="docutils literal notranslate"><span class="pre">Slurm.log_directives()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.slurm.Slurm.name"><code class="docutils literal notranslate"><span class="pre">Slurm.name</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seamm_scheduler.slurm.Slurm.parse_status"><code class="docutils literal notranslate"><span class="pre">Slurm.parse_status()</span></code></a></li>

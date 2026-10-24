@@ -463,6 +463,21 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">,</span> <span class="n">job_name</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="QueueBackend.list_jobs">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.backend.QueueBackend.list_jobs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The names of the user's queued and running jobs (in ``qos`` if given),</span>
+<span class="sd">        or None if they cannot be listed now or by this scheduler."""</span>
+        <span class="n">argv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">list_cmd</span><span class="p">(</span><span class="n">qos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">argv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">rc</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not list the queued jobs: </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span></div>
+
+
 <div class="viewcode-block" id="QueueBackend.count_jobs">
 <a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.backend.QueueBackend.count_jobs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">count_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
