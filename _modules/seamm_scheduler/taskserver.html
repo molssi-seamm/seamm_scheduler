@@ -590,9 +590,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="s2">"queue.db"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">isolation_level</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Row</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"PRAGMA journal_mode=WAL"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"PRAGMA busy_timeout=60000"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wal</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_migrate</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_wal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tries</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Switch the database to WAL, retrying while another process holds it.</span>
+
+<span class="sd">        Several processes opening a new queue at once (e.g. concurrent submits)</span>
+<span class="sd">        race to change its journal mode, and SQLite can refuse that with "database</span>
+<span class="sd">        is locked" at once rather than waiting out the busy timeout, which failed</span>
+<span class="sd">        one submit in about 30 (seamm-scheduler 2026.10.24's release run).</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tries</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"PRAGMA journal_mode=WAL"</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">OperationalError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">"locked"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"busy"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                    <span class="k">raise</span>
+                <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="n">tries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span> <span class="o">+</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">attempt</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Queue.close">
 <a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.taskserver.Queue.close">[docs]</a>
