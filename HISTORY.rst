@@ -1,6 +1,12 @@
 =======
 History
 =======
+2026.10.24 -- The user's jobs can be listed by name and QOS
+    * New: list_jobs(qos) lists the names of the user's queued and running jobs,
+      optionally only those in one QOS (squeue --qos), since sites limit a user's
+      jobs per QOS. seamm-exec uses it to count against max_queued_tasks per QOS
+      and to share it fairly between jobs.
+
 2026.10.21 -- Why a poll of SLURM failed is logged
     * When squeue or sacct cannot be asked -- ssh down, the controller not answering
       -- the poll is marked as failed, as before, and now the command, its exit code

@@ -98,9 +98,10 @@ section without ``tasks`` behaves as before the task layer existed):
     gets at least ``min_task_walltime`` (seconds, or a SLURM time). Still within
     ``bundle_walltime`` and ``max_walltime``.
 ``max_queued_tasks``
-    The most queued and running bundle jobs of this user at once (sites cap
-    a user's jobs; every array element counts). Shared by every task set a
-    job runs at once.
+    The most queued and running jobs of this user at once (sites cap a user's
+    jobs; every array element counts), in the section's QOS where the
+    scheduler can list jobs per QOS. Shared by every task set a job runs at
+    once, and shared equally between the jobs with bundles queued.
 ``inline_below``
     Tasks estimated below this many seconds (default 60) run in the
     flowchart's pool when their program is installed there.

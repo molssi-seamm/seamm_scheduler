@@ -295,6 +295,12 @@ class Slurm(Scheduler):
         # per-user job limit.
         return ["squeue", "--noheader", "--me", "-r", "--format=%i"]
 
+    def list_cmd(self, qos=None):
+        argv = ["squeue", "--noheader", "--me", "-r", "--format=%j"]
+        if qos:
+            argv.append(f"--qos={qos}")
+        return argv
+
     def classify(self, raw_state):
         return classify(raw_state)
 

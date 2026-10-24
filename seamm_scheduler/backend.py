@@ -99,6 +99,18 @@ class QueueBackend:
         or None if that cannot be known now (the queue could not be asked)."""
         return self.scheduler.find(self._run, job_name)
 
+    def list_jobs(self, qos=None):
+        """The names of the user's queued and running jobs (in ``qos`` if given),
+        or None if they cannot be listed now or by this scheduler."""
+        argv = self.scheduler.list_cmd(qos)
+        if argv is None:
+            return None
+        rc, out, err = self._run(argv)
+        if rc != 0:
+            logger.warning(f"Could not list the queued jobs: {err.strip()}")
+            return None
+        return [line.strip() for line in out.splitlines() if line.strip()]
+
     def count_jobs(self):
         """How many jobs the user has in the queue now, or None if unknown."""
         argv = self.scheduler.count_cmd()

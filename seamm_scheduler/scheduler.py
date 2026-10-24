@@ -196,6 +196,12 @@ class Scheduler:
         scheduler cannot. Used to respect per-user queued-job limits."""
         return None
 
+    def list_cmd(self, qos=None):
+        """A command printing the names of the user's queued and running jobs, one
+        per line (one per array element) -- only those in ``qos`` if given, since
+        sites limit a user's jobs per QOS -- or None if the scheduler cannot."""
+        return None
+
     # ------------------------------------------------------------------
     # Composition
     # ------------------------------------------------------------------
