@@ -266,3 +266,21 @@ def test_stage_in_removes_a_stale_log_there(tmp_path):
         "current"
     )
     assert (remote / "seamm.db").read_text() == "db"
+
+
+def test_local_stager_remote_exists_is_always_true():
+    assert LocalStager().remote_exists("/anything") is True
+
+
+@pytest.mark.parametrize("stdout, expected", [("yes\n", True), ("", False)])
+def test_rsync_stager_remote_exists(stdout, expected):
+    """Whether a resumed or resubmitted job's remote directory is already there,
+    so that it need not be staged in again (ChemAI 5398: 28 GB re-uploaded on a
+    resubmit blocked the JobServer for 3.5 h, 2026-10-31)."""
+    fake_proc = MagicMock(returncode=0, stdout=stdout, stderr="")
+    with patch("seamm_scheduler.stage.subprocess.run", return_value=fake_proc) as run:
+        stager = RsyncStager("host")
+        assert stager.remote_exists("/remote/Job_1") is expected
+    argv = run.call_args[0][0]
+    assert argv[:2] == ["ssh", "host"]
+    assert "test -d /remote/Job_1" in argv[-1]
