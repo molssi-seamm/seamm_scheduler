@@ -1,6 +1,11 @@
 =======
 History
 =======
+2026.11.4 -- Whether a job's remote directory exists
+    * New ``remote_exists()`` on the stagers tells whether a job's directory is already
+      on the remote host (always true for the local stager), so that the JobServer can
+      resume a resubmitted job there without staging its local copy in again.
+
 2026.10.24.1 -- Bugfix: a TaskServer submit could fail when several ran at once
     * Several submits to a new TaskServer queue at the same moment could fail one
       of them with "database is locked" (about 1 in 30, seen in a release test): they

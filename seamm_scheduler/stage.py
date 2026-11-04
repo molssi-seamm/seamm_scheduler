@@ -62,6 +62,12 @@ class JobStager(ABC):
         flowchart's results land in ``local_wdir`` where the JobServer
         (and the dashboard) can see them. No-op for ``LocalStager``."""
 
+    def remote_exists(self, remote_wdir):
+        """Whether ``remote_wdir`` already exists where the job runs: a job that is
+        resumed or resubmitted there then needs nothing staged in. Always True for
+        ``LocalStager``, which uses the local directory itself."""
+        return True
+
     def push(self, local_base, remote_base, paths, *, delete=False):
         """Copy ``paths`` (relative to ``local_base``) to the same places under
         ``remote_base``. No-op for ``LocalStager``."""
@@ -173,6 +179,12 @@ class RsyncStager(JobStager):
                 input_text="\n".join(stale) + "\n",
             )
         return remote_wdir
+
+    def remote_exists(self, remote_wdir):
+        found = self._ssh_output(
+            f"test -d {shlex.quote(str(remote_wdir))} && echo yes || true"
+        )
+        return found.strip() == "yes"
 
     def stage_out(self, remote_wdir, local_wdir):
         self._rsync(f"{self.host}:{remote_wdir}/", f"{local_wdir}/")
