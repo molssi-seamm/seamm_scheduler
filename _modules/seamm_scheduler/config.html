@@ -435,7 +435,13 @@
 <span class="sd">``bundle_tasks``, ``bundle_walltime``</span>
 <span class="sd">    How tasks are packed into one batch job: a fixed number, or as many as</span>
 <span class="sd">    fit the walltime (seconds, or a SLURM time) from their estimates. Without</span>
-<span class="sd">    either, by estimate within the section's ``time``.</span>
+<span class="sd">    either, each task is a batch job of its own, which pays the job's start-up</span>
+<span class="sd">    (tens of seconds) for every task.</span>
+<span class="sd">``task_ntasks``, ``task_mem_per_cpu``</span>
+<span class="sd">    The size of each task sent to the queue, for programs that can use several</span>
+<span class="sd">    cores in one task (e.g. ORCA): MPI ranks, and memory per rank (``8G``,</span>
+<span class="sd">    ``2000M``, or MB). Without them a task has its program's default (ORCA: 1</span>
+<span class="sd">    rank, 2 GB). A step that gives its tasks resources of its own keeps them.</span>
 <span class="sd">``max_walltime``</span>
 <span class="sd">    The queue's longest walltime; a timed-out task's retry asks for more time</span>
 <span class="sd">    but never more than this.</span>
@@ -502,6 +508,8 @@
     <span class="s2">"shared_filesystem"</span><span class="p">,</span>
     <span class="s2">"bundle_tasks"</span><span class="p">,</span>
     <span class="s2">"bundle_walltime"</span><span class="p">,</span>
+    <span class="s2">"task_ntasks"</span><span class="p">,</span>
+    <span class="s2">"task_mem_per_cpu"</span><span class="p">,</span>
     <span class="s2">"max_walltime"</span><span class="p">,</span>
     <span class="s2">"min_task_walltime"</span><span class="p">,</span>
     <span class="s2">"estimate_scale"</span><span class="p">,</span>
@@ -589,6 +597,9 @@
     <span class="c1"># may add up to from its tasks' estimates.</span>
     <span class="n">bundle_tasks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">bundle_walltime</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># The size of each queued task: MPI ranks, and memory per rank (bytes)</span>
+    <span class="n">task_ntasks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">task_mem_per_cpu</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="c1"># The queue's longest walltime (seconds): a timed-out task's retry asks for</span>
     <span class="c1"># more time, but never more than this.</span>
     <span class="n">max_walltime</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1031,6 +1042,8 @@
         <span class="n">shared_filesystem</span><span class="o">=</span><span class="n">_bool</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"shared_filesystem"</span><span class="p">),</span>
         <span class="n">bundle_tasks</span><span class="o">=</span><span class="n">_int</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"bundle_tasks"</span><span class="p">),</span>
         <span class="n">bundle_walltime</span><span class="o">=</span><span class="n">_seconds</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"bundle_walltime"</span><span class="p">),</span>
+        <span class="n">task_ntasks</span><span class="o">=</span><span class="n">_int</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"task_ntasks"</span><span class="p">),</span>
+        <span class="n">task_mem_per_cpu</span><span class="o">=</span><span class="n">_memory</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"task_mem_per_cpu"</span><span class="p">),</span>
         <span class="n">max_walltime</span><span class="o">=</span><span class="n">_seconds</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"max_walltime"</span><span class="p">),</span>
         <span class="n">estimate_scale</span><span class="o">=</span><span class="n">_positive</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"estimate_scale"</span><span class="p">),</span>
         <span class="n">min_task_walltime</span><span class="o">=</span><span class="n">_seconds</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"min_task_walltime"</span><span class="p">),</span>
@@ -1083,6 +1096,23 @@
     <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> must be positive"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_memory</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Bytes from ``8G``, ``2000M``, ``8GB`` or a plain number of MB (SLURM's</span>
+<span class="sd">    convention), or None."""</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">"([0-9.]+)\s*([KMGT]?)(I?B?)"</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"section '</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is not a memory size "</span>
+            <span class="s2">"(e.g. 8G or 2000M)"</span>
+        <span class="p">)</span>
+    <span class="n">number</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="p">{</span><span class="s2">""</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"K"</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span> <span class="s2">"M"</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"G"</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="s2">"T"</span><span class="p">:</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">4</span><span class="p">}</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="o">*</span> <span class="n">factor</span><span class="p">[</span><span class="n">unit</span><span class="p">])</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_seconds</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
