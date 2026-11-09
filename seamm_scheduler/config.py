@@ -88,7 +88,13 @@ section without ``tasks`` behaves as before the task layer existed):
 ``bundle_tasks``, ``bundle_walltime``
     How tasks are packed into one batch job: a fixed number, or as many as
     fit the walltime (seconds, or a SLURM time) from their estimates. Without
-    either, by estimate within the section's ``time``.
+    either, each task is a batch job of its own, which pays the job's start-up
+    (tens of seconds) for every task.
+``task_ntasks``, ``task_mem_per_cpu``
+    The size of each task sent to the queue, for programs that can use several
+    cores in one task (e.g. ORCA): MPI ranks, and memory per rank (``8G``,
+    ``2000M``, or MB). Without them a task has its program's default (ORCA: 1
+    rank, 2 GB). A step that gives its tasks resources of its own keeps them.
 ``max_walltime``
     The queue's longest walltime; a timed-out task's retry asks for more time
     but never more than this.
@@ -155,6 +161,8 @@ _NON_DIRECTIVE_KEYS = {
     "shared_filesystem",
     "bundle_tasks",
     "bundle_walltime",
+    "task_ntasks",
+    "task_mem_per_cpu",
     "max_walltime",
     "min_task_walltime",
     "estimate_scale",
@@ -237,6 +245,9 @@ class TargetSection:
     # may add up to from its tasks' estimates.
     bundle_tasks: Optional[int] = None
     bundle_walltime: Optional[float] = None
+    # The size of each queued task: MPI ranks, and memory per rank (bytes)
+    task_ntasks: Optional[int] = None
+    task_mem_per_cpu: Optional[int] = None
     # The queue's longest walltime (seconds): a timed-out task's retry asks for
     # more time, but never more than this.
     max_walltime: Optional[float] = None
@@ -648,6 +659,8 @@ def _build_section(config, section):
         shared_filesystem=_bool(section, items, "shared_filesystem"),
         bundle_tasks=_int(section, items, "bundle_tasks"),
         bundle_walltime=_seconds(section, items, "bundle_walltime"),
+        task_ntasks=_int(section, items, "task_ntasks"),
+        task_mem_per_cpu=_memory(section, items, "task_mem_per_cpu"),
         max_walltime=_seconds(section, items, "max_walltime"),
         estimate_scale=_positive(section, items, "estimate_scale"),
         min_task_walltime=_seconds(section, items, "min_task_walltime"),
@@ -700,6 +713,23 @@ def _positive(section, items, key):
     if value is not None and value <= 0:
         raise RuntimeError(f"section '{section}': {key} = {value} must be positive")
     return value
+
+
+def _memory(section, items, key):
+    """Bytes from ``8G``, ``2000M``, ``8GB`` or a plain number of MB (SLURM's
+    convention), or None."""
+    value = (items.get(key) or "").strip()
+    if value == "":
+        return None
+    match = re.fullmatch(r"([0-9.]+)\s*([KMGT]?)(I?B?)", value.upper())
+    if match is None:
+        raise RuntimeError(
+            f"section '{section}': {key} = {value} is not a memory size "
+            "(e.g. 8G or 2000M)"
+        )
+    number, unit, _ = match.groups()
+    factor = {"": 1024**2, "K": 1024, "M": 1024**2, "G": 1024**3, "T": 1024**4}
+    return int(float(number) * factor[unit])
 
 
 def _seconds(section, items, key):

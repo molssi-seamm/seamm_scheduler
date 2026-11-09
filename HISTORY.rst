@@ -1,6 +1,14 @@
 =======
 History
 =======
+2026.11.8 -- The size of queued tasks; one task per bundle documented
+    * A queue section (``tasks = queue``) can give the size of each task sent to it:
+      ``task_ntasks`` (MPI ranks) and ``task_mem_per_cpu`` (memory per rank, e.g.
+      ``8G``). Without them a task keeps its program's default.
+    * The documentation now says what happens without ``bundle_tasks`` or
+      ``bundle_walltime``: each task is a batch job of its own, paying the job's
+      start-up for every task. Set one of them to pack small tasks together.
+
 2026.11.4 -- Whether a job's remote directory exists
     * New ``remote_exists()`` on the stagers tells whether a job's directory is already
       on the remote host (always true for the local stager), so that the JobServer can
