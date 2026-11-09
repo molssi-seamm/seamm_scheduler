@@ -40,6 +40,8 @@ account = seamm
 partition = normal_q
 max_queued_tasks = 800
 bundle_walltime = 04:00:00
+task_ntasks = 4
+task_mem_per_cpu = 8G
 min_task_walltime = 30
 estimate_scale = 2.5
 inline_below = 30
@@ -88,6 +90,9 @@ def test_new_keys_are_not_directives(sections):
     assert arc.remote_python.endswith("/venv/bin/python")
     assert sections["chemai"].directives == {"partition": "normal"}
     assert sections["chemai"].bundle_tasks == 50
+    assert arc.task_ntasks == 4 and arc.task_mem_per_cpu == 8 * 1024**3
+    assert sections["chemai"].task_ntasks is None
+    assert sections["chemai"].task_mem_per_cpu is None
 
 
 def test_old_sections_keep_their_meaning(sections):
@@ -170,6 +175,8 @@ def test_settings_round_trip_with_limits(tmp_path):
         ("min_task_walltime = soon", "is not a time"),
         ("estimate_scale = 0", "must be positive"),
         ("estimate_scale = double", "is not a number"),
+        ("task_ntasks = some", "is not an integer"),
+        ("task_mem_per_cpu = lots", "is not a memory size"),
     ],
 )
 def test_bad_values_are_reported(tmp_path, text, message):
@@ -208,3 +215,18 @@ def test_limits_bare_time_is_minutes():
     assert s.merge_overrides({"time": "00:59:00"})["time"] == "00:59:00"
     with pytest.raises(ValueError, match="exceeds the maximum"):
         s.merge_overrides({"time": "01:01:00"})
+
+
+@pytest.mark.parametrize(
+    "text, size",
+    [
+        ("8G", 8 * 1024**3),
+        ("2000M", 2000 * 1024**2),
+        ("2000", 2000 * 1024**2),
+        ("8GB", 8 * 1024**3),
+        ("1.5 G", int(1.5 * 1024**3)),
+    ],
+)
+def test_task_memory(tmp_path, text, size):
+    (tmp_path / "h.ini").write_text(f"[q]\ntype = local\ntask_mem_per_cpu = {text}\n")
+    assert load_target(tmp_path, "h").task_mem_per_cpu == size
