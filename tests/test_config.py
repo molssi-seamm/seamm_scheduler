@@ -38,6 +38,7 @@ def test_single_section_no_default_key(tmp_path):
     assert section.directives == {"partition": "batch", "nodes": "1"}
     assert section.max_concurrent_jobs == 20
     assert section.max_resubmits == 3
+    assert section.timeout_resubmits == 0
     assert section.limits == {}
 
 
@@ -121,6 +122,23 @@ def test_max_concurrent_and_resubmits_overridable(tmp_path):
     section = load_slurm_config(tmp_path, "molssi10")
     assert section.max_concurrent_jobs == 5
     assert section.max_resubmits == 1
+
+
+def test_timeout_resubmits_is_not_a_directive(tmp_path):
+    (tmp_path / "molssi10.ini").write_text(
+        "[molssi10]\n" "transport = local\n" "timeout_resubmits = 2\n"
+    )
+    section = load_slurm_config(tmp_path, "molssi10")
+    assert section.timeout_resubmits == 2
+    assert "timeout_resubmits" not in section.directives
+
+
+def test_timeout_resubmits_must_be_an_integer(tmp_path):
+    (tmp_path / "molssi10.ini").write_text(
+        "[molssi10]\n" "transport = local\n" "timeout_resubmits = two\n"
+    )
+    with pytest.raises(RuntimeError, match="timeout_resubmits"):
+        load_slurm_config(tmp_path, "molssi10")
 
 
 def test_build_backend_local():
