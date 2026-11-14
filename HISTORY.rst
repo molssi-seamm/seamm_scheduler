@@ -1,6 +1,12 @@
 =======
 History
 =======
+2026.11.14 -- Resubmitting jobs that reached their time limit
+    * A queue section can give ``timeout_resubmits``: how many times the JobServer
+      resubmits a job that reached its time limit, to resume from its checkpoint.
+      The default, 0, marks such a job "error" (seamm-jobserver 2026.11.14), so a
+      time limit caps what a job spends.
+
 2026.11.8 -- The size of queued tasks; one task per bundle documented
     * A queue section (``tasks = queue``) can give the size of each task sent to it:
       ``task_ntasks`` (MPI ranks) and ``task_mem_per_cpu`` (memory per rank, e.g.

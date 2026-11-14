@@ -59,6 +59,10 @@ The JobServer's behaviour for the section:
     How many of this section's jobs are kept submitted at once (default 20).
 ``max_resubmits``
     How many times a job the queue lost is submitted again (default 3).
+``timeout_resubmits``
+    How many times a job that reached its time limit is submitted again, to
+    resume from its checkpoint (default 0: it is marked "error", since the
+    time limit then caps what a job can spend). At most ``max_resubmits``.
 ``poll_interval``
     Seconds between polls of the queue (default 60).
 
@@ -150,6 +154,7 @@ _NON_DIRECTIVE_KEYS = {
     "host",
     "max_concurrent_jobs",
     "max_resubmits",
+    "timeout_resubmits",
     "default",
     "remote_root",
     "remote_conda_env",
@@ -212,6 +217,9 @@ class TargetSection:
     directives: dict = field(default_factory=dict)
     max_concurrent_jobs: int = 20
     max_resubmits: int = 3
+    # A job that reached its time limit is not resubmitted unless asked for:
+    # resubmitting spends the same again, so a time limit could not cap cost.
+    timeout_resubmits: int = 0
     limits: dict = field(default_factory=dict)  # {directive: FieldLimits}
     # Only meaningful for transport=ssh, where the JobServer shares no
     # filesystem with the submit host (see RsyncStager): the base directory
@@ -649,6 +657,7 @@ def _build_section(config, section):
         directives=directives,
         max_concurrent_jobs=int(items.get("max_concurrent_jobs", 20)),
         max_resubmits=int(items.get("max_resubmits", 3)),
+        timeout_resubmits=_int(section, items, "timeout_resubmits") or 0,
         limits=_load_limits(config, section),
         remote_root=items.get("remote_root") or None,
         remote_conda_env=items.get("remote_conda_env") or None,
