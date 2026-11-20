@@ -328,6 +328,13 @@ def test_missing_here_compares_the_remote_listing(tmp_path):
     assert "-printf" in run.call_args[0][0][-1]
     assert [name for name, _ in missing] == ["sub/older", "gone", "link"]
 
+    # A file a hook consumes here (renamed after the copy back) is not checked
+    with patch("seamm_scheduler.stage.subprocess.run", return_value=fake_proc):
+        missing = RsyncStager("host").missing_here(
+            "/r/x/Job_1", str(tmp_path), ignore=("gone", "sub/*")
+        )
+    assert [name for name, _ in missing] == ["link"]
+
 
 def test_remove_remote_refuses_a_shallow_path():
     with patch("seamm_scheduler.stage.subprocess.run") as run:

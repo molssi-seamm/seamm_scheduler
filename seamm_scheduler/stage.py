@@ -68,25 +68,30 @@ class JobStager(ABC):
         ``LocalStager``, which uses the local directory itself."""
         return True
 
-    def missing_here(self, remote_wdir, local_wdir):
+    def missing_here(self, remote_wdir, local_wdir, ignore=()):
         """The files in ``remote_wdir`` that are not the same in ``local_wdir``.
 
         A file counts as copied back when ``local_wdir`` has it at the same
         relative path, with the same size or a newer modification time (the
         JobServer rewrites some files, such as ``job_data.json``, after copying
-        them back). Returns a list of ``(relative path, reason)``; empty when
-        every remote file is here. Always empty for ``LocalStager``.
+        them back). Files matching a pattern in ``ignore`` (``fnmatch``, against
+        the relative path or the file's name) are not checked: those a hook
+        consumes here after the copy back, such as the Thermochemistry step's
+        ``harvest_fragments.json``. Returns a list of ``(relative path,
+        reason)``; empty when every remote file is here. Always empty for
+        ``LocalStager``.
         """
         return []
 
-    def remove_remote(self, remote_wdir, local_wdir):
+    def remove_remote(self, remote_wdir, local_wdir, ignore=()):
         """Remove a finished job's ``remote_wdir``, after checking with
         :meth:`missing_here` that its files are all in ``local_wdir``.
 
-        Returns True if the directory was removed, False if there was nothing
-        to remove (``LocalStager``, whose remote directory is the local one).
-        Raises :class:`StageError`, removing nothing, if any file is missing
-        here or the check fails.
+        ``ignore`` is passed to :meth:`missing_here`. Returns True if the
+        directory was removed, False if there was nothing to remove
+        (``LocalStager``, whose remote directory is the local one). Raises
+        :class:`StageError`, removing nothing, if any file is missing here or the
+        check fails.
         """
         return False
 
@@ -208,7 +213,9 @@ class RsyncStager(JobStager):
         )
         return found.strip() == "yes"
 
-    def missing_here(self, remote_wdir, local_wdir):
+    def missing_here(self, remote_wdir, local_wdir, ignore=()):
+        import fnmatch
+
         listing = self._ssh_output(
             f"cd {shlex.quote(str(remote_wdir))} && "
             "find . -mindepth 1 \\( -type f -o -type l \\) "
@@ -224,6 +231,12 @@ class RsyncStager(JobStager):
                 size, mtime = int(size), float(mtime)
             except ValueError:
                 missing.append((line, "could not read the remote listing"))
+                continue
+            if any(
+                fnmatch.fnmatch(name, pattern)
+                or fnmatch.fnmatch(name.rsplit("/", 1)[-1], pattern)
+                for pattern in ignore
+            ):
                 continue
             path = local / name
             if kind == "l":
@@ -241,14 +254,14 @@ class RsyncStager(JobStager):
                 )
         return missing
 
-    def remove_remote(self, remote_wdir, local_wdir):
+    def remove_remote(self, remote_wdir, local_wdir, ignore=()):
         remote = PurePosixPath(str(remote_wdir))
         # Never anything but a job's own directory: absolute, and not a top level
         if not remote.is_absolute() or len(remote.parts) < 4 or ".." in remote.parts:
             raise StageError(f"refusing to remove {remote_wdir} on {self.host}")
         if not self.remote_exists(remote_wdir):
             return False
-        missing = self.missing_here(remote_wdir, local_wdir)
+        missing = self.missing_here(remote_wdir, local_wdir, ignore=ignore)
         if missing:
             examples = "; ".join(f"{name}: {why}" for name, why in missing[:5])
             raise StageError(

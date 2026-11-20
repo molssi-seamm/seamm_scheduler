@@ -5,6 +5,8 @@ History
     * New on the stagers: ``missing_here()`` lists the files of a job's remote
       directory that are not the same in its local directory, and
       ``remove_remote()`` removes the remote directory only when there are none.
+      Files a hook consumes after the copy back can be left out of the check
+      (``ignore``).
       The JobServer (seamm-jobserver 2026.11.20) uses them to remove a finished
       job's directory on the remote host after copying it back.
     * A queue section can set ``keep_remote_wdir = yes`` to keep those directories.
