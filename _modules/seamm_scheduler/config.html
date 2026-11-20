@@ -410,6 +410,11 @@
 <span class="sd">    How many times a job that reached its time limit is submitted again, to</span>
 <span class="sd">    resume from its checkpoint (default 0: it is marked "error", since the</span>
 <span class="sd">    time limit then caps what a job can spend). At most ``max_resubmits``.</span>
+<span class="sd">``keep_remote_wdir``</span>
+<span class="sd">    ``ssh`` with ``remote_root`` only: ``yes`` keeps a job's directory on the</span>
+<span class="sd">    remote host after the job finished and its files were copied back. By</span>
+<span class="sd">    default (``no``) the JobServer removes it once it has checked that every</span>
+<span class="sd">    file there is here too; a job that failed keeps its remote directory.</span>
 <span class="sd">``poll_interval``</span>
 <span class="sd">    Seconds between polls of the queue (default 60).</span>
 
@@ -502,6 +507,7 @@
     <span class="s2">"max_concurrent_jobs"</span><span class="p">,</span>
     <span class="s2">"max_resubmits"</span><span class="p">,</span>
     <span class="s2">"timeout_resubmits"</span><span class="p">,</span>
+    <span class="s2">"keep_remote_wdir"</span><span class="p">,</span>
     <span class="s2">"default"</span><span class="p">,</span>
     <span class="s2">"remote_root"</span><span class="p">,</span>
     <span class="s2">"remote_conda_env"</span><span class="p">,</span>
@@ -572,6 +578,9 @@
     <span class="c1"># A job that reached its time limit is not resubmitted unless asked for:</span>
     <span class="c1"># resubmitting spends the same again, so a time limit could not cap cost.</span>
     <span class="n">timeout_resubmits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># A finished job's remote directory is removed once its files are back</span>
+    <span class="c1"># (transport=ssh); yes keeps it.</span>
+    <span class="n">keep_remote_wdir</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">limits</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>  <span class="c1"># {directive: FieldLimits}</span>
     <span class="c1"># Only meaningful for transport=ssh, where the JobServer shares no</span>
     <span class="c1"># filesystem with the submit host (see RsyncStager): the base directory</span>
@@ -1041,6 +1050,7 @@
         <span class="n">max_concurrent_jobs</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"max_concurrent_jobs"</span><span class="p">,</span> <span class="mi">20</span><span class="p">)),</span>
         <span class="n">max_resubmits</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"max_resubmits"</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
         <span class="n">timeout_resubmits</span><span class="o">=</span><span class="n">_int</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"timeout_resubmits"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">keep_remote_wdir</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">_bool</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="s2">"keep_remote_wdir"</span><span class="p">)),</span>
         <span class="n">limits</span><span class="o">=</span><span class="n">_load_limits</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">section</span><span class="p">),</span>
         <span class="n">remote_root</span><span class="o">=</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"remote_root"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">remote_conda_env</span><span class="o">=</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"remote_conda_env"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>

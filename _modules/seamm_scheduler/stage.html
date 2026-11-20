@@ -367,7 +367,7 @@
 <span class="sd">list of paths relative to a base directory in one ``rsync``.</span>
 <span class="sd">"""</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span><span class="p">,</span> <span class="n">PurePosixPath</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shlex</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
@@ -427,6 +427,39 @@
 <span class="sd">        resumed or resubmitted there then needs nothing staged in. Always True for</span>
 <span class="sd">        ``LocalStager``, which uses the local directory itself."""</span>
         <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="JobStager.missing_here">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.stage.JobStager.missing_here">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">missing_here</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_wdir</span><span class="p">,</span> <span class="n">local_wdir</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">"""The files in ``remote_wdir`` that are not the same in ``local_wdir``.</span>
+
+<span class="sd">        A file counts as copied back when ``local_wdir`` has it at the same</span>
+<span class="sd">        relative path, with the same size or a newer modification time (the</span>
+<span class="sd">        JobServer rewrites some files, such as ``job_data.json``, after copying</span>
+<span class="sd">        them back). Files matching a pattern in ``ignore`` (``fnmatch``, against</span>
+<span class="sd">        the relative path or the file's name) are not checked: those a hook</span>
+<span class="sd">        consumes here after the copy back, such as the Thermochemistry step's</span>
+<span class="sd">        ``harvest_fragments.json``. Returns a list of ``(relative path,</span>
+<span class="sd">        reason)``; empty when every remote file is here. Always empty for</span>
+<span class="sd">        ``LocalStager``.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="JobStager.remove_remote">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.stage.JobStager.remove_remote">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_remote</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_wdir</span><span class="p">,</span> <span class="n">local_wdir</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">"""Remove a finished job's ``remote_wdir``, after checking with</span>
+<span class="sd">        :meth:`missing_here` that its files are all in ``local_wdir``.</span>
+
+<span class="sd">        ``ignore`` is passed to :meth:`missing_here`. Returns True if the</span>
+<span class="sd">        directory was removed, False if there was nothing to remove</span>
+<span class="sd">        (``LocalStager``, whose remote directory is the local one). Raises</span>
+<span class="sd">        :class:`StageError`, removing nothing, if any file is missing here or the</span>
+<span class="sd">        check fails.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="JobStager.push">
@@ -569,6 +602,70 @@
             <span class="sa">f</span><span class="s2">"test -d </span><span class="si">{</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">remote_wdir</span><span class="p">))</span><span class="si">}</span><span class="s2"> &amp;&amp; echo yes || true"</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">found</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"yes"</span></div>
+
+
+<div class="viewcode-block" id="RsyncStager.missing_here">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.stage.RsyncStager.missing_here">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">missing_here</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_wdir</span><span class="p">,</span> <span class="n">local_wdir</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">()):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">fnmatch</span>
+
+        <span class="n">listing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ssh_output</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"cd </span><span class="si">{</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">remote_wdir</span><span class="p">))</span><span class="si">}</span><span class="s2"> &amp;&amp; "</span>
+            <span class="s2">"find . -mindepth 1 </span><span class="se">\\</span><span class="s2">( -type f -o -type l </span><span class="se">\\</span><span class="s2">) "</span>
+            <span class="s2">"-printf '%P</span><span class="se">\\</span><span class="s2">t</span><span class="si">%s</span><span class="se">\\</span><span class="s2">t%T@</span><span class="se">\\</span><span class="s2">t%y</span><span class="se">\\</span><span class="s2">n'"</span>
+        <span class="p">)</span>
+        <span class="n">local</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">local_wdir</span><span class="p">)</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">listing</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">mtime</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">size</span><span class="p">,</span> <span class="n">mtime</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">size</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">mtime</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">line</span><span class="p">,</span> <span class="s2">"could not read the remote listing"</span><span class="p">))</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">pattern</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">ignore</span>
+            <span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">local</span> <span class="o">/</span> <span class="n">name</span>
+            <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"l"</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">is_symlink</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="s2">"the link is not here"</span><span class="p">))</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">lstat</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="s2">"not here"</span><span class="p">))</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">st_size</span> <span class="o">!=</span> <span class="n">size</span> <span class="ow">and</span> <span class="n">info</span><span class="o">.</span><span class="n">st_mtime</span> <span class="o">&lt;=</span> <span class="n">mtime</span><span class="p">:</span>
+                <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">st_size</span><span class="si">}</span><span class="s2"> bytes here, </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> there, and not newer"</span><span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">missing</span></div>
+
+
+<div class="viewcode-block" id="RsyncStager.remove_remote">
+<a class="viewcode-back" href="../../api/seamm_scheduler.html#seamm_scheduler.stage.RsyncStager.remove_remote">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_remote</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_wdir</span><span class="p">,</span> <span class="n">local_wdir</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">()):</span>
+        <span class="n">remote</span> <span class="o">=</span> <span class="n">PurePosixPath</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">remote_wdir</span><span class="p">))</span>
+        <span class="c1"># Never anything but a job's own directory: absolute, and not a top level</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">remote</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">remote</span><span class="o">.</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="ow">or</span> <span class="s2">".."</span> <span class="ow">in</span> <span class="n">remote</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StageError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"refusing to remove </span><span class="si">{</span><span class="n">remote_wdir</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_exists</span><span class="p">(</span><span class="n">remote_wdir</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_here</span><span class="p">(</span><span class="n">remote_wdir</span><span class="p">,</span> <span class="n">local_wdir</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="n">ignore</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="n">examples</span> <span class="o">=</span> <span class="s2">"; "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">why</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">why</span> <span class="ow">in</span> <span class="n">missing</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>
+            <span class="k">raise</span> <span class="n">StageError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2"> file(s) of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">remote_wdir</span><span class="si">}</span><span class="s2"> are not the "</span>
+                <span class="sa">f</span><span class="s2">"same in </span><span class="si">{</span><span class="n">local_wdir</span><span class="si">}</span><span class="s2">, so it was kept: </span><span class="si">{</span><span class="n">examples</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_ssh</span><span class="p">([</span><span class="s2">"rm"</span><span class="p">,</span> <span class="s2">"-rf"</span><span class="p">,</span> <span class="s2">"--"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">remote</span><span class="p">)])</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="RsyncStager.stage_out">
