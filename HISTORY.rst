@@ -1,6 +1,14 @@
 =======
 History
 =======
+2026.11.20 -- Removing a finished job's remote directory
+    * New on the stagers: ``missing_here()`` lists the files of a job's remote
+      directory that are not the same in its local directory, and
+      ``remove_remote()`` removes the remote directory only when there are none.
+      The JobServer (seamm-jobserver 2026.11.20) uses them to remove a finished
+      job's directory on the remote host after copying it back.
+    * A queue section can set ``keep_remote_wdir = yes`` to keep those directories.
+
 2026.11.14 -- Resubmitting jobs that reached their time limit
     * A queue section can give ``timeout_resubmits``: how many times the JobServer
       resubmits a job that reached its time limit, to resume from its checkpoint.

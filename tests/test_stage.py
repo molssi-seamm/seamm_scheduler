@@ -284,3 +284,108 @@ def test_rsync_stager_remote_exists(stdout, expected):
     argv = run.call_args[0][0]
     assert argv[:2] == ["ssh", "host"]
     assert "test -d /remote/Job_1" in argv[-1]
+
+
+def _gnu_find():
+    """The remote listing uses GNU find's -printf, as on the clusters."""
+    import subprocess
+
+    try:
+        return (
+            subprocess.run(["find", "--version"], capture_output=True).returncode == 0
+        )
+    except OSError:
+        return False
+
+
+def test_local_stager_removes_nothing():
+    """The local stager's remote directory is the local one: never removed."""
+    stager = LocalStager()
+    assert stager.missing_here("/local/Job_1", "/local/Job_1") == []
+    assert stager.remove_remote("/local/Job_1", "/local/Job_1") is False
+
+
+def test_missing_here_compares_the_remote_listing(tmp_path):
+    """A remote file counts as copied back when it is here with the same size,
+    or here and newer (the JobServer rewrites job_data.json after copying)."""
+    import os
+
+    (tmp_path / "sub").mkdir()
+    (tmp_path / "same").write_text("12345")
+    (tmp_path / "rewritten").write_text("a longer, newer file")
+    (tmp_path / "sub" / "older").write_text("123")
+    os.utime(tmp_path / "sub" / "older", (1000.0, 1000.0))
+    listing = (
+        "same\t5\t2000.0\tf\n"
+        "rewritten\t5\t1000.0\tf\n"
+        "sub/older\t9\t2000.0\tf\n"
+        "gone\t1\t1000.0\tf\n"
+        "link\t4\t1000.0\tl\n"
+    )
+    fake_proc = MagicMock(returncode=0, stdout=listing, stderr="")
+    with patch("seamm_scheduler.stage.subprocess.run", return_value=fake_proc) as run:
+        missing = RsyncStager("host").missing_here("/r/x/Job_1", str(tmp_path))
+    assert "-printf" in run.call_args[0][0][-1]
+    assert [name for name, _ in missing] == ["sub/older", "gone", "link"]
+
+
+def test_remove_remote_refuses_a_shallow_path():
+    with patch("seamm_scheduler.stage.subprocess.run") as run:
+        for path in ("/", "/projects", "/projects/seamm", "relative/a/b/Job_1"):
+            with pytest.raises(StageError, match="refusing to remove"):
+                RsyncStager("host").remove_remote(path, "/local/Job_1")
+    run.assert_not_called()
+
+
+def test_remove_remote_keeps_a_directory_not_all_here(tmp_path):
+    """Nothing is removed when a file there is not here."""
+    exists = MagicMock(returncode=0, stdout="yes\n", stderr="")
+    listing = MagicMock(returncode=0, stdout="job.out\t3\t1000.0\tf\n", stderr="")
+    with patch(
+        "seamm_scheduler.stage.subprocess.run", side_effect=[exists, listing]
+    ) as run:
+        with pytest.raises(StageError, match="1 file.*so it was kept: job.out"):
+            RsyncStager("host").remove_remote("/r/x/y/Job_1", str(tmp_path))
+    assert run.call_count == 2  # no rm
+
+
+def test_remove_remote_nothing_there():
+    gone = MagicMock(returncode=0, stdout="", stderr="")
+    with patch("seamm_scheduler.stage.subprocess.run", return_value=gone) as run:
+        assert RsyncStager("host").remove_remote("/r/x/y/Job_1", "/l") is False
+    assert run.call_count == 1
+
+
+@pytest.mark.skipif(not _gnu_find(), reason="needs GNU find (-printf)")
+def test_remove_remote_after_stage_out(tmp_path):
+    """End to end, with an 'ssh' that runs the remote side locally: a directory
+    staged back is removed there; one with a file not here is kept."""
+    import shutil
+    import stat
+
+    if shutil.which("rsync") is None:
+        pytest.skip("rsync is not available")
+    fake_ssh = tmp_path / "fake_ssh"
+    fake_ssh.write_text('#!/bin/sh\nshift\nexec sh -c "$*"\n')
+    fake_ssh.chmod(fake_ssh.stat().st_mode | stat.S_IEXEC)
+    remote = tmp_path / "remote" / "Job_1"
+    local = tmp_path / "local" / "Job_1"
+    (remote / "1" / "iter_1").mkdir(parents=True)
+    local.mkdir(parents=True)
+    (remote / "job.out").write_text("output")
+    (remote / "job_data.json").write_text("{}")
+    (remote / "1" / "iter_1" / "step.out").write_text("step")
+    (remote / "1" / "link").symlink_to("iter_1")
+    stager = RsyncStager("remotehost", ssh_command=str(fake_ssh))
+    stager.stage_out(str(remote), str(local))
+    (local / "job_data.json").write_text('{"state": "finished"}')  # rewritten here
+
+    (remote / "late.txt").write_text("written after the copy back")
+    with pytest.raises(StageError, match="late.txt: not here"):
+        stager.remove_remote(str(remote), str(local))
+    assert remote.is_dir()
+
+    stager.stage_out(str(remote), str(local))
+    assert stager.remove_remote(str(remote), str(local)) is True
+    assert not remote.exists()
+    assert (local / "1" / "iter_1" / "step.out").read_text() == "step"

@@ -20,7 +20,7 @@ directories at once: :meth:`JobStager.push` and :meth:`JobStager.pull` copy a
 list of paths relative to a base directory in one ``rsync``.
 """
 
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import shlex
 import subprocess
 from abc import ABC, abstractmethod
@@ -67,6 +67,28 @@ class JobStager(ABC):
         resumed or resubmitted there then needs nothing staged in. Always True for
         ``LocalStager``, which uses the local directory itself."""
         return True
+
+    def missing_here(self, remote_wdir, local_wdir):
+        """The files in ``remote_wdir`` that are not the same in ``local_wdir``.
+
+        A file counts as copied back when ``local_wdir`` has it at the same
+        relative path, with the same size or a newer modification time (the
+        JobServer rewrites some files, such as ``job_data.json``, after copying
+        them back). Returns a list of ``(relative path, reason)``; empty when
+        every remote file is here. Always empty for ``LocalStager``.
+        """
+        return []
+
+    def remove_remote(self, remote_wdir, local_wdir):
+        """Remove a finished job's ``remote_wdir``, after checking with
+        :meth:`missing_here` that its files are all in ``local_wdir``.
+
+        Returns True if the directory was removed, False if there was nothing
+        to remove (``LocalStager``, whose remote directory is the local one).
+        Raises :class:`StageError`, removing nothing, if any file is missing
+        here or the check fails.
+        """
+        return False
 
     def push(self, local_base, remote_base, paths, *, delete=False):
         """Copy ``paths`` (relative to ``local_base``) to the same places under
@@ -185,6 +207,56 @@ class RsyncStager(JobStager):
             f"test -d {shlex.quote(str(remote_wdir))} && echo yes || true"
         )
         return found.strip() == "yes"
+
+    def missing_here(self, remote_wdir, local_wdir):
+        listing = self._ssh_output(
+            f"cd {shlex.quote(str(remote_wdir))} && "
+            "find . -mindepth 1 \\( -type f -o -type l \\) "
+            "-printf '%P\\t%s\\t%T@\\t%y\\n'"
+        )
+        local = Path(local_wdir)
+        missing = []
+        for line in listing.splitlines():
+            if not line.strip():
+                continue
+            try:
+                name, size, mtime, kind = line.rsplit("\t", 3)
+                size, mtime = int(size), float(mtime)
+            except ValueError:
+                missing.append((line, "could not read the remote listing"))
+                continue
+            path = local / name
+            if kind == "l":
+                if not path.is_symlink() and not path.exists():
+                    missing.append((name, "the link is not here"))
+                continue
+            try:
+                info = path.lstat()
+            except FileNotFoundError:
+                missing.append((name, "not here"))
+                continue
+            if info.st_size != size and info.st_mtime <= mtime:
+                missing.append(
+                    (name, f"{info.st_size} bytes here, {size} there, and not newer")
+                )
+        return missing
+
+    def remove_remote(self, remote_wdir, local_wdir):
+        remote = PurePosixPath(str(remote_wdir))
+        # Never anything but a job's own directory: absolute, and not a top level
+        if not remote.is_absolute() or len(remote.parts) < 4 or ".." in remote.parts:
+            raise StageError(f"refusing to remove {remote_wdir} on {self.host}")
+        if not self.remote_exists(remote_wdir):
+            return False
+        missing = self.missing_here(remote_wdir, local_wdir)
+        if missing:
+            examples = "; ".join(f"{name}: {why}" for name, why in missing[:5])
+            raise StageError(
+                f"{len(missing)} file(s) of {self.host}:{remote_wdir} are not the "
+                f"same in {local_wdir}, so it was kept: {examples}"
+            )
+        self._run_ssh(["rm", "-rf", "--", str(remote)])
+        return True
 
     def stage_out(self, remote_wdir, local_wdir):
         self._rsync(f"{self.host}:{remote_wdir}/", f"{local_wdir}/")
